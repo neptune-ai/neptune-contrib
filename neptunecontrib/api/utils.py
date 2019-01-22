@@ -22,15 +22,15 @@ def concat_experiments_on_channel(experiments, channel_name):
 
     This function helps to compare channel values from a list of experiments
     by combining them in a dataframe. E.g: Say we want to extract the `log_loss`
-    channel values for a list of experiments. The resulting dataframe will have 
+    channel values for a list of experiments. The resulting dataframe will have
     ['id','x_log_loss','y_log_loss'] columns.
 
     Args:
         experiments(list): list of `neptunelib.api.Experiment` objects.
-        channel_name(str): name of the channel for which we want to extract values. 
+        channel_name(str): name of the channel for which we want to extract values.
 
     Returns:
-        `pandas.DataFrame`: Dataframe of ['id','x_CHANNEL_NAME','y_CHANNEL_NAME'] 
+        `pandas.DataFrame`: Dataframe of ['id','x_CHANNEL_NAME','y_CHANNEL_NAME']
         values concatenated from a list of experiments.
 
     Examples:
@@ -48,9 +48,9 @@ def concat_experiments_on_channel(experiments, channel_name):
 
         >>> from neptunelib.api.utils import concat_experiments_on_channel
         >>> compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
-    
+
     Note:
-        If an experiment in the list of experiments does not contain the channel with a specified channel_name 
+        If an experiment in the list of experiments does not contain the channel with a specified channel_name
         it will be omitted.
     """
     combined_df = []
@@ -120,7 +120,7 @@ def strip_prefices(columns, prefices):
         columns(iterable): Iterable of leaderboard column names.
         prefices(list): List of prefices to strip. You can choose one of
             ['channel_', 'parameter_', 'property_']
-            
+
     Returns:
         list: A list of clean column names.
     """
@@ -128,6 +128,6 @@ def strip_prefices(columns, prefices):
     for col in columns:
         for prefix in prefices:
             if col.startswith(prefix):
-                col = col.replace(prefix,'')
+                col = col.replace(prefix, '')
         new_columns.append(col)
     return new_columns

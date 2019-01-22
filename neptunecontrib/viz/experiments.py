@@ -138,9 +138,7 @@ def channel_curve_compare(experiment_df,
 
     bottom_view = alt.layer(line, selectors, points, rules, text,
                             width=width, height=bottom_height
-                            ).transform_filter(
-        interval
-    )
+                           ).transform_filter(interval)
 
     combined = alt.hconcat(alt.vconcat(top_view, bottom_view), legend, data=experiment_df)
     return combined

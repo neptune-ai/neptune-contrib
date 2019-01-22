@@ -10,3 +10,4 @@ attrdict==2.0.0
 ipython==7.2.0
 altair==2.3.0
 scikit-optimize==0.5.2
+neptune-lib==0.0.4

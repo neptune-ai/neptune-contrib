@@ -28,7 +28,7 @@ def df2result(df, metric_col, param_cols, param_types=None):
         df(`pandas.DataFrame`): Dataframe containing metric and hyperparameters.
         metric_col(str): Name of the metric column.
         param_cols(list): Names of the hyperparameter columns.
-        param_types(list or None): Optional list of hyperparameter column types. 
+        param_types(list or None): Optional list of hyperparameter column types.
             By default it will treat all the columns as float but you can also pass str
             for categorical channels. E.g param_types=[float, str, float, float]
 

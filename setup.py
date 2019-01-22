@@ -21,11 +21,11 @@ def main():
         setup(
             name='neptune-contrib',
             version=version(),
-            description='Neptune Python library',
+            description='Neptune Python library contributions',
             author='neptune.ml',
             author_email='contact@neptune.ml',
             url='https://neptune.ml/',
-            long_description='Neptune Python library',
+            long_description='Neptune Python library contributions',
             license='Apache License 2.0',
             install_requires=requirements,
             packages=find_packages(include=['neptunecontrib*']),
