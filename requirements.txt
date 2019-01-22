@@ -1,0 +1,12 @@
+oauthlib
+PyJWT
+requests>=2.20.0
+requests-oauthlib>=1.0.0
+pandas
+bravado
+Pillow==5.4.1
+matplotlib==3.0.2
+attrdict==2.0.0
+ipython==7.2.0
+altair==2.3.0
+scikit-optimize==0.5.2
