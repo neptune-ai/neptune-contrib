@@ -16,31 +16,16 @@
 
 import unittest
 
-import numpy as np
-import matplotlib.pyplot as plt
-from PIL.Image import Image
-import seaborn as sns
-
-from neptunecontrib.monitoring.utils import fig2pil
+from neptunecontrib.viz.utils import df2result
 
 
-class TestFig2Pil(unittest.TestCase):
-    def test_matplotlib_figure(self):
+class TestDf2Result(unittest.TestCase):
+    def test_dummy(self):
         # when
-        figure = plt.figure()
-        pil_figure = fig2pil(figure)
 
         # then
-        self.assertIsInstance(pil_figure, Image)
+        self.assertEqual({}, {})
 
-    def test_seaborn_distplot(self):
-        # when
-        figure = plt.figure()
-        sns.distplot(np.random.random(100))
-        pil_figure = fig2pil(figure)
-
-        # then
-        self.assertIsInstance(pil_figure, Image)
 
 if __name__ == '__main__':
     unittest.main()

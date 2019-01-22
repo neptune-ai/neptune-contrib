@@ -13,19 +13,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-import unittest
-
-from neptunecontrib.api.utils import concat_experiments_on_channel
-
-
-class TestConcatExperimentsOnChannel(unittest.TestCase):
-    def test_dummy(self):
-        # when
-
-        # then
-        self.assertEqual({}, {})
-
-
-if __name__ == '__main__':
-    unittest.main()

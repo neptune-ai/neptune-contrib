@@ -19,8 +19,8 @@ import unittest
 import neptune
 import lightgbm as lgb
 
-from neptunelib.monitoring.lightgbm import neptune_monitor
-from tests.neptunelib.monitoring.objects_factory import get_dategen
+from neptunecontrib.monitoring.lightgbm import neptune_monitor
+from tests.neptunecontrib.monitoring.objects_factory import get_dategen
 
 
 class TestNeptuneMonitor(unittest.TestCase):

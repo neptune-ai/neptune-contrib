@@ -19,14 +19,14 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'neptune-lib'
+project = 'neptune-contrib'
 copyright = '2019, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
 version = '0.0'
 # The full version, including alpha/beta/rc tags
-release = '0.0.3'
+release = '0.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -86,7 +86,7 @@ html_theme = 'sphinx_rtd_theme'
 # documentation.
 #
 html_theme_options = {
-    'canonical_url': 'https://neptune-lib.readthedocs.io/',
+    'canonical_url': 'https://neptune-contrib.readthedocs.io/',
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'navigation_depth': 4,
@@ -138,7 +138,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'neptune-lib.tex', 'neptune-lib Documentation',
+    (master_doc, 'neptune-contrib.tex', 'neptune-contrib Documentation',
      'Neptune Dev Team', 'manual'),
 ]
 
@@ -148,7 +148,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'neptune-lib', 'neptune-lib Documentation',
+    (master_doc, 'neptune-contrib', 'neptune-contrib Documentation',
      [author], 1)
 ]
 
@@ -159,8 +159,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'neptune-lib', 'neptune-lib Documentation',
-     author, 'neptune-lib', 'One line description of project.',
+    (master_doc, 'neptune-contrib', 'neptune-contrib Documentation',
+     author, 'neptune-contrib', 'One line description of project.',
      'Miscellaneous'),
 ]
 

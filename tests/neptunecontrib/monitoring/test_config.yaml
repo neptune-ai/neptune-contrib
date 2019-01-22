@@ -1,0 +1,3 @@
+parameters:
+    lr: 0.01
+    model: 'resnet18'

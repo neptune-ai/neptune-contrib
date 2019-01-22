@@ -19,7 +19,7 @@ import unittest
 import neptune
 import numpy as np
 
-from neptunelib.monitoring.notebooks import LocalNotebookContext
+from neptunecontrib.monitoring.notebooks import LocalNotebookContext
 
 
 class TestLocalNotebookContext(unittest.TestCase):
