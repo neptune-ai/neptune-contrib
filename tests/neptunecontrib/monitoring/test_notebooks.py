@@ -23,11 +23,12 @@ from neptunecontrib.monitoring.notebooks import LocalNotebookContext
 
 
 class TestLocalNotebookContext(unittest.TestCase):
+    CONFIG_FILEPATH = 'tests/neptunecontrib/monitoring/test_config.yaml'
 
     def test_get_params(self):
         # when
         ctx = neptune.Context()
-        ctx = LocalNotebookContext(ctx, config_filepath='tests/neptunelib/monitoring/test_config.yaml')
+        ctx = LocalNotebookContext(ctx, config_filepath=TestLocalNotebookContext.CONFIG_FILEPATH)
 
         # then
         self.assertEqual({'lr': 0.01, 'model': 'resnet18'}, ctx.params)
@@ -35,7 +36,7 @@ class TestLocalNotebookContext(unittest.TestCase):
     def test_x_none(self):
         # when
         ctx = neptune.Context()
-        ctx = LocalNotebookContext(ctx, config_filepath='tests/neptunelib/monitoring/test_config.yaml')
+        ctx = LocalNotebookContext(ctx, config_filepath=TestLocalNotebookContext.CONFIG_FILEPATH)
         for i in range(10):
             ctx.channel_send('test_channel', y=np.random.random())
 
