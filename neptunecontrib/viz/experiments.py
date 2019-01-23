@@ -33,7 +33,7 @@ def channel_curve_compare(experiment_df,
     in your html webpage without any problem.
 
     Args:
-        experiment_df('pandas.DataFrame'): Dataframe containing ['id','x_CHANNEL_NAME','y_CHANNEL_NAME'].
+        experiment_df('pandas.DataFrame'): Dataframe containing ['id','x','CHANNEL_NAME'].
             It can be obtained from a list of experiments by using the
             `neptunelib.api.concat_experiments_on_channel` function. If the len of the dataframe exceeds 5000 it will
             cause the MaxRowsError. Read the Note to learn why and how to disable it.
@@ -79,13 +79,13 @@ def channel_curve_compare(experiment_df,
     """
 
     assert len(experiment_df.columns) == 3, 'Experiment dataframe should have 3 columns \
-        ["id","x_CHANNEL_NAME", "y_CHANNEL_NAME"]. \
+        ["id","x", "CHANNEL_NAME"]. \
         It has {} namely {}'.format(len(experiment_df.columns), experiment_df.columns)
 
     top_height, bottom_height = heights
     prep_cols, channel_name = _preprocess_columns(experiment_df.columns)
     experiment_df.columns = prep_cols
-
+    
     nearest = alt.selection(type='single', nearest=True, on='mouseover', fields=['x'], empty='none')
     interval = alt.selection(type='interval', encodings=['x'])
     legend_selection = alt.selection_multi(fields=['id'])
@@ -145,13 +145,14 @@ def channel_curve_compare(experiment_df,
 
 
 def _preprocess_columns(columns):
-    channel_name = ''
+    channel_name = _get_channel_name(columns)
     prep_cols = []
     for col in columns:
-        if col.startswith('x_'):
-            channel_name = col[2:]
-            col = 'x'
-        elif col.startswith('y_'):
+        if col == channel_name:
             col = 'y'
         prep_cols.append(col)
     return prep_cols, channel_name
+
+
+def _get_channel_name(columns):
+    return [col for col in columns if col not in ['id','x']][0]
