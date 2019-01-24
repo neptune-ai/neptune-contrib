@@ -29,7 +29,7 @@ class TestNeptuneMonitor(unittest.TestCase):
         # when
 
         # then
-        self.assertIsInstance({}, {})
+        self.assertEqual({}, {})
 
         
 class TestSendRuns(unittest.TestCase):
@@ -37,7 +37,7 @@ class TestSendRuns(unittest.TestCase):
         # when
 
         # then
-        self.assertIsInstance({}, {})
+        self.assertEqual({}, {})
 
         
 class TestSendBestParameters(unittest.TestCase):
@@ -45,7 +45,7 @@ class TestSendBestParameters(unittest.TestCase):
         # when
 
         # then
-        self.assertIsInstance({}, {})
+        self.assertEqual({}, {})
        
     
 class TestSendPlotConvergence(unittest.TestCase):
@@ -53,7 +53,7 @@ class TestSendPlotConvergence(unittest.TestCase):
         # when
 
         # then
-        self.assertIsInstance({}, {})
+        self.assertEqual({}, {})
 
         
 class TestSendPlotEvaluations(unittest.TestCase):
@@ -61,7 +61,7 @@ class TestSendPlotEvaluations(unittest.TestCase):
         # when
 
         # then
-        self.assertIsInstance({}, {})
+        self.assertEqual({}, {})
 
         
 class TestSendPlotObjective(unittest.TestCase):
@@ -69,7 +69,7 @@ class TestSendPlotObjective(unittest.TestCase):
         # when
 
         # then
-        self.assertIsInstance({}, {})
+        self.assertEqual({}, {})
         
 if __name__ == '__main__':
     unittest.main()

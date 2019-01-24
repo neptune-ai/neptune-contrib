@@ -1,6 +1,6 @@
 Skopt
 ===========
 
-.. automodule:: neptunelib.monitoring.skopt
+.. automodule:: neptunecontrib.monitoring.skopt
     :members:
     :show-inheritance:

@@ -95,12 +95,12 @@ def axes2fig(axes, fig=None):
         >>> eval_plot = plot_evaluations(result, bins=20)
         >>> type(eval_plot)
         numpy.ndarray
-        
+
         >>> from neptunecontrib.viz.utils import axes2fig
         >>> fig = axes2fig(eval_plot)
         >>> fig
         matplotlib.figure.Figure
-        
+
     """
     try:
         h, w = axes.shape

@@ -1,6 +1,6 @@
 Experiments
 ===========
 
-.. automodule:: neptunelib.viz.experiments
+.. automodule:: neptunecontrib.viz.experiments
     :members:
     :show-inheritance:

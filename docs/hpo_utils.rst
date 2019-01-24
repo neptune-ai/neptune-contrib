@@ -1,6 +1,6 @@
 Utils
 ===========
 
-.. automodule:: neptunelib.hpo.utils
+.. automodule:: neptunecontrib.hpo.utils
     :members:
     :show-inheritance:

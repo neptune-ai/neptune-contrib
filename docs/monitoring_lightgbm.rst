@@ -1,6 +1,6 @@
 LightGBM
 ===========
 
-.. automodule:: neptunelib.monitoring.lightgbm
+.. automodule:: neptunecontrib.monitoring.lightgbm
     :members:
     :show-inheritance:

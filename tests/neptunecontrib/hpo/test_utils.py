@@ -18,8 +18,6 @@ import unittest
 
 import neptunecontrib.hpo.utils as hpo_utils
 
-import make_objective, hyperopt2skopt
-
 
 class TestMakeObjective(unittest.TestCase):
     def test_dummy(self):

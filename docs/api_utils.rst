@@ -1,6 +1,6 @@
 Utils
 ===========
 
-.. automodule:: neptunelib.api.utils
+.. automodule:: neptunecontrib.api.utils
     :members:
     :show-inheritance:

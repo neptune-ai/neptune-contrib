@@ -85,7 +85,7 @@ def channel_curve_compare(experiment_df,
     top_height, bottom_height = heights
     prep_cols, channel_name = _preprocess_columns(experiment_df.columns)
     experiment_df.columns = prep_cols
-    
+
     nearest = alt.selection(type='single', nearest=True, on='mouseover', fields=['x'], empty='none')
     interval = alt.selection(type='interval', encodings=['x'])
     legend_selection = alt.selection_multi(fields=['id'])
@@ -155,4 +155,4 @@ def _preprocess_columns(columns):
 
 
 def _get_channel_name(columns):
-    return [col for col in columns if col not in ['id','x']][0]
+    return [col for col in columns if col not in ['id', 'x']][0]

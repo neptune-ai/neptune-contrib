@@ -248,6 +248,8 @@ min-public-methods=2
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=20
 
+# Enable protected methods access
+disable=protected-access
 
 [IMPORTS]
 

@@ -48,7 +48,7 @@ class TestIsOfflineContext(unittest.TestCase):
         # when
 
         # then
-        self.assertIsInstance({}, {})
+        self.assertEqual({}, {})
         
 if __name__ == '__main__':
     unittest.main()
