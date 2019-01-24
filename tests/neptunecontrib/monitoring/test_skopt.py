@@ -21,29 +21,50 @@ import matplotlib.pyplot as plt
 from PIL.Image import Image
 import seaborn as sns
 
-from neptunecontrib.monitoring.utils import fig2pil, is_offline_context
-
-
-class TestFig2Pil(unittest.TestCase):
-    def test_matplotlib_figure(self):
-        # when
-        figure = plt.figure()
-        pil_figure = fig2pil(figure)
-
-        # then
-        self.assertIsInstance(pil_figure, Image)
-
-    def test_seaborn_distplot(self):
-        # when
-        figure = plt.figure()
-        sns.distplot(np.random.random(100))
-        pil_figure = fig2pil(figure)
-
-        # then
-        self.assertIsInstance(pil_figure, Image)
+import neptunecontrib.monitoring.skopt as sk_monitor
 
         
-class TestIsOfflineContext(unittest.TestCase):
+class TestNeptuneMonitor(unittest.TestCase):
+    def test_dummy(self):
+        # when
+
+        # then
+        self.assertIsInstance({}, {})
+
+        
+class TestSendRuns(unittest.TestCase):
+    def test_dummy(self):
+        # when
+
+        # then
+        self.assertIsInstance({}, {})
+
+        
+class TestSendBestParameters(unittest.TestCase):
+    def test_dummy(self):
+        # when
+
+        # then
+        self.assertIsInstance({}, {})
+       
+    
+class TestSendPlotConvergence(unittest.TestCase):
+    def test_dummy(self):
+        # when
+
+        # then
+        self.assertIsInstance({}, {})
+
+        
+class TestSendPlotEvaluations(unittest.TestCase):
+    def test_dummy(self):
+        # when
+
+        # then
+        self.assertIsInstance({}, {})
+
+        
+class TestSendPlotObjective(unittest.TestCase):
     def test_dummy(self):
         # when
 

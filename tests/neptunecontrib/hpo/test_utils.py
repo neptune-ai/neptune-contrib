@@ -18,10 +18,10 @@ import unittest
 
 import neptunecontrib.hpo.utils as hpo_utils
 
-import make_objective, send_plot_convergence, send_plot_evaluations, send_plot_objective
+import make_objective, hyperopt2skopt
 
 
-class TestConcatExperimentsOnChannel(unittest.TestCase):
+class TestMakeObjective(unittest.TestCase):
     def test_dummy(self):
         # when
 
@@ -29,5 +29,13 @@ class TestConcatExperimentsOnChannel(unittest.TestCase):
         self.assertEqual({}, {})
 
 
+class TestHyperopt2Skopt(unittest.TestCase):
+    def test_dummy(self):
+        # when
+
+        # then
+        self.assertEqual({}, {})
+        
+        
 if __name__ == '__main__':
     unittest.main()

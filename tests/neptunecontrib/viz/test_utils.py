@@ -16,7 +16,7 @@
 
 import unittest
 
-from neptunecontrib.viz.utils import df2result
+from neptunecontrib.viz.utils import df2result, axes2fig
 
 
 class TestDf2Result(unittest.TestCase):
@@ -26,6 +26,13 @@ class TestDf2Result(unittest.TestCase):
         # then
         self.assertEqual({}, {})
 
+        
+class TestAxes2Fig(unittest.TestCase):
+    def test_dummy(self):
+        # when
 
+        # then
+        self.assertEqual({}, {})
+        
 if __name__ == '__main__':
     unittest.main()
