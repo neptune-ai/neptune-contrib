@@ -1,6 +1,7 @@
 oauthlib
 PyJWT
 neptune-cli
+neptune-lib==0.1.0
 requests>=2.20.0
 requests-oauthlib>=1.0.0
 pandas
@@ -11,4 +12,3 @@ attrdict==2.0.0
 ipython==7.2.0
 altair==2.3.0
 scikit-optimize==0.5.2
-neptune-lib==0.0.4
