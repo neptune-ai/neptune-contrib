@@ -1,6 +1,6 @@
 Utils
 ===========
 
-.. automodule:: neptunecontrib.monitoring.utils
+.. automodule:: neptunecontrib.viz.utils
     :members:
     :show-inheritance:

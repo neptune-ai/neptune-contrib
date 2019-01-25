@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 from PIL.Image import Image
 import seaborn as sns
 
-from neptunecontrib.monitoring.utils import fig2pil
+from neptunecontrib.monitoring.utils import fig2pil, is_offline_context
 
 
 class TestFig2Pil(unittest.TestCase):
@@ -42,5 +42,13 @@ class TestFig2Pil(unittest.TestCase):
         # then
         self.assertIsInstance(pil_figure, Image)
 
+        
+class TestIsOfflineContext(unittest.TestCase):
+    def test_dummy(self):
+        # when
+
+        # then
+        self.assertEqual({}, {})
+        
 if __name__ == '__main__':
     unittest.main()

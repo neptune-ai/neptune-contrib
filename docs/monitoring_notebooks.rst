@@ -1,6 +1,6 @@
 Local Notebooks
 ===========
 
-.. automodule:: neptunelib.monitoring.notebooks
+.. automodule:: neptunecontrib.monitoring.notebooks
     :members:
     :show-inheritance:
