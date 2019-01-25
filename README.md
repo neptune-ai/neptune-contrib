@@ -4,11 +4,7 @@
 # Installation
 
 ## Get prerequisites
-* python versions `2.7/3.5/3.6` are supported
-* `neptune-cli` 
-   ```python
-      pip install neptune-cli
-   ```
+* python versions `3.5/3.6` are supported
 
 ## Install lib
 
@@ -20,6 +16,7 @@ pip install neptune-contrib
 If you get stuck, don't worry we are here to help.
 The best order of communication is:
 
+ * [neptune-contrib readthedocs](https://neptune-contrib.readthedocs.io/en/latest/)
  * [neptune community forum](https://community.neptune.ml/)
  * [neptune community slack](https://neptune-community.slack.com) (join by going [here](https://join.slack.com/t/neptune-community/shared_invite/enQtNTI4Mjg3ODk2MjQwLWE5YjI0YThiODViNDY4MDBlNmRmZTkwNTE3YzNiMjQ5MGM2ZTFhNzhjN2YzMTIwNDM3NjQyZThmMDk1Y2Q1ZjY))
  * Github issues
