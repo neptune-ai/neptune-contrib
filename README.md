@@ -4,7 +4,7 @@
 # Installation
 
 ## Get prerequisites
-* python versions `3.5/3.6` are supported
+* python versions `3.5.6/3.6` are supported
 
 ## Install lib
 
