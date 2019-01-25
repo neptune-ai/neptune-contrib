@@ -32,12 +32,14 @@ class TestNeptuneMonitor(unittest.TestCase):
                        'learning_rate': 0.05,
                        'feature_fraction': 0.2
                        }
+        
+        self.ctx = neptune.Context()
 
     def test_k_fold_logging(self):
-        ctx = neptune.Context()
+        self.ctx.reset_all_channels()
 
         for fold_id, (lgb_train, lgb_eval) in enumerate(get_dategen()):
-            monitor = neptune_monitor(ctx=ctx, prefix='{}_'.format(fold_id))
+            monitor = neptune_monitor(ctx=self.ctx, prefix='{}_'.format(fold_id))
 
             gbm = lgb.train(self.params,
                             lgb_train,
@@ -52,13 +54,13 @@ class TestNeptuneMonitor(unittest.TestCase):
                                '1_train_multi_logloss',
                                '1_valid_multi_logloss',
                                '2_train_multi_logloss',
-                               '2_valid_multi_logloss'], ctx.job._channels.keys())
+                               '2_valid_multi_logloss'], self.ctx.job._channels.keys())
 
     def test_no_valid_names(self):
-        ctx = neptune.Context()
+        self.ctx.reset_all_channels()
 
         for lgb_train, lgb_eval in get_dategen():
-            monitor = neptune_monitor(ctx=ctx)
+            monitor = neptune_monitor(ctx=self.ctx)
 
             gbm = lgb.train(self.params,
                             lgb_train,
@@ -69,15 +71,15 @@ class TestNeptuneMonitor(unittest.TestCase):
             break
 
         self.assertCountEqual(['training_multi_logloss',
-                               'valid_1_multi_logloss'], ctx.job._channels.keys())
+                               'valid_1_multi_logloss'], self.ctx.job._channels.keys())
 
     def test_logging_multiple_metrics(self):
-        ctx = neptune.Context()
+        self.ctx.reset_all_channels()
 
         params = self.params
         params['metric'] = ['multi_logloss', 'multi_error']
         for lgb_train, lgb_eval in get_dategen():
-            monitor = neptune_monitor(ctx=ctx)
+            monitor = neptune_monitor(ctx=self.ctx)
 
             gbm = lgb.train(self.params,
                             lgb_train,
@@ -91,7 +93,7 @@ class TestNeptuneMonitor(unittest.TestCase):
         self.assertCountEqual(['train_multi_error',
                                'train_multi_logloss',
                                'valid_multi_error',
-                               'valid_multi_logloss'], ctx.job._channels.keys())
+                               'valid_multi_logloss'], self.ctx.job._channels.keys())
 
 
 if __name__ == '__main__':
