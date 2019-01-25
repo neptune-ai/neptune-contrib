@@ -21,6 +21,7 @@ import subprocess
 from neptunelib.session import Session
 from scipy.optimize import OptimizeResult
 import skopt
+from retrying import retry
 
 
 def make_objective(param_set, command, metric_channel_name, project_name, tag='trash'):
@@ -177,6 +178,7 @@ def _get_random_string(length=64):
     return x
 
 
+@retry(stop_max_attempt_number=50, wait_random_min=1000, wait_random_max=5000)
 def _get_score(exp_id_tag, metric_name, project_name):
     namespace = project_name.split('/')[0]
 
