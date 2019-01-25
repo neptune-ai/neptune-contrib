@@ -10,7 +10,7 @@ def version():
         with open('VERSION') as f:
             return f.readline().strip()
     except IOError:
-        return '0.0.0'
+        return '0.0.1'
 
 
 def main():
@@ -24,9 +24,9 @@ def main():
             description='Neptune Python library contributions',
             author='neptune.ml',
             author_email='contact@neptune.ml',
-            url='https://neptune.ml/',
+            url="https://github.com/neptune-ml/neptune-contrib",
             long_description='Neptune Python library contributions',
-            license='Apache License 2.0',
+            license='MIT License',
             install_requires=requirements,
             packages=find_packages(include=['neptunecontrib*']),
             cmdclass={
