@@ -1,14 +1,14 @@
 oauthlib
 PyJWT
 neptune-cli
-neptune-lib==0.1.0
+neptune-lib==0.1.1
 requests>=2.20.0
 requests-oauthlib>=1.0.0
 pandas
 bravado
 Pillow==5.4.1
-matplotlib==3.0.2
+matplotlib
 attrdict==2.0.0
-ipython==7.2.0
+ipython
 altair==2.3.0
 scikit-optimize==0.5.2
