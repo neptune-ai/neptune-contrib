@@ -26,7 +26,7 @@ author = 'Neptune Dev Team'
 # The short X.Y version
 version = '0.0'
 # The full version, including alpha/beta/rc tags
-release = '0.0.0'
+release = '0.0.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -44,6 +44,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+    'nbsphinx'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -184,3 +185,5 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
+nbsphinx_allow_errors = True
+nbsphinx_execute = 'never'
