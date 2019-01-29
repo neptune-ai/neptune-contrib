@@ -1,5 +1,8 @@
-# Python lib
+# neptune-contrib
 [![Build Status](https://travis-ci.org/neptune-ml/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ml/neptune-contrib)
+
+# Documentation
+See [neptune-contrib documentation site](https://neptune-contrib.readthedocs.io/en/latest/)
 
 # Installation
 
