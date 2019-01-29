@@ -5,8 +5,7 @@ This library is a collection of helpers and extensions that make working
 with `neptune.ml` more effective and better. It is build on top of neptune-cli
 and neptune-lib and gives you option to do things like:
  * interactive visualizations of experiment runs or hyperparameters
- * running hyper parameter sweeps in scikit-optimize, hyperopt or whatever tool you 
- want to use
+ * running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
  * monitor training of the lightGBM models
  * much more
  
@@ -14,9 +13,9 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
 
 .. toctree::
    :maxdepth: 1
-   :caption: Getting Started
+   :caption: Installation
 
-   getting_started
+   installation
 
 .. toctree::
    :maxdepth: 1
