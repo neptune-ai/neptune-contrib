@@ -45,11 +45,13 @@ neptune-contrib is MIT-licensed and the source code is available on `GitHub`_. I
 find yourself in any trouble drop an isse on `Git Issues`_, fire a feature request on
 `Git Feature Request`_ or ask us on the `Neptune community forum`_ or `Neptune Slack`_.
 
+You can join our slack by clicking on the `Neptune Slack Join`_.
+
 
 Contribute
 -----------------------
 
-We keep an updated list of open issues/feature ideas on github project page `Github project`_.
+We keep an updated list of open issues/feature ideas on github project page `Github projects`_.
 If you feel like taking a shot at one of those do go for it!
 In case of any trouble please talk to us on the `Neptune Slack`_.
 
@@ -61,9 +63,10 @@ Indices and tables
 * :ref:`modindex`
 
 
-.. _GitHub: http://github.com/neptune-ml/neptune-contrib
-.. _Git Issues: http://github.com/neptune-ml/neptune-contrib/issues
-.. _Git Feature Request: http://github.com/neptune-ml/neptune-contrib/issues
+.. _GitHub: https://github.com/neptune-ml/neptune-contrib
+.. _Git Issues: https://github.com/neptune-ml/neptune-contrib/issues
+.. _Git Feature Request: https://github.com/neptune-ml/neptune-contrib/issues
 .. _Neptune community forum: http://community.neptune.ml
-.. _Github project: http://github.com/neptune-ml/neptune-contrib/projects
-.. _Neptune Slack: http://slack/neptune-community.com
+.. _Github projects: https://github.com/neptune-ml/neptune-contrib/projects
+.. _Neptune Slack: https://neptune-community.slack.com
+.. _Neptune Slack Join: https://join.slack.com/t/neptune-community/shared_invite/enQtNTI4Mjg3ODk2MjQwLWE5YjI0YThiODViNDY4MDBlNmRmZTkwNTE3YzNiMjQ5MGM2ZTFhNzhjN2YzMTIwNDM3NjQyZThmMDk1Y2Q1ZjY
