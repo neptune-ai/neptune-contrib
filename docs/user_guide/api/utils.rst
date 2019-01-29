@@ -1,4 +1,4 @@
-Utils
+API utils
 ===========
 
 .. automodule:: neptunecontrib.api.utils

@@ -1,4 +1,4 @@
-Utils
+Visualization utils
 ===========
 
 .. automodule:: neptunecontrib.viz.utils

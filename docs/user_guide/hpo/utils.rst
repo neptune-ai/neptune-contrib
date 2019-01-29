@@ -1,4 +1,4 @@
-Utils
+Hyper parameter optimization utils
 ===========
 
 .. automodule:: neptunecontrib.hpo.utils

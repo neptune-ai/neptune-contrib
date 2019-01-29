@@ -1,4 +1,4 @@
-Utils
+Monitoring utils
 ===========
 
 .. automodule:: neptunecontrib.monitoring.utils
