@@ -13,9 +13,10 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
 
 .. toctree::
    :maxdepth: 1
-   :caption: Installation
+   :caption: Get Started
 
    installation
+   overview
 
 .. toctree::
    :maxdepth: 1

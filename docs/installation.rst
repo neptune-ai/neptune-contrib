@@ -1,6 +1,6 @@
 .. _installation:
 
-Installation
+installation
 ============
 
 Install neptune-contrib via pip:
