@@ -1,5 +1,4 @@
-neptune-contrib:
-open-source contributions to Neptune.ml
+neptune-contrib: open-source contributions to Neptune.ml
 ===========================================
 
 This library is a collection of helpers and extensions that make working
