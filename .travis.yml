@@ -1,10 +1,11 @@
 sudo: false
 language: python
 python:
+- '3.5.3'
 - '3.6'
 install:
-- pip install -r -q requirements.txt
-- pip install -r -q test_requirements.txt
+- pip install -q -r requirements.txt
+- pip install -q -r test_requirements.txt
 - pip install tox-travis pylintfileheader
 script:
 - python -m pylint -j 0 -f parseable neptunecontrib tests

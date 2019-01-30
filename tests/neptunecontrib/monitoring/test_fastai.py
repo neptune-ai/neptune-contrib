@@ -14,17 +14,19 @@
 # limitations under the License.
 #
 
+import sys
 import unittest
 
-import neptunecontrib.monitoring.fastai as sk_monitor
+if sys.version_info[0] == 3 and sys.version_info[1] > 5:
+    import neptunecontrib.monitoring.fastai as NeptuneMonitor
 
 
-class TestNeptuneMonitor(unittest.TestCase):
-    def test_dummy(self):
-        # when
+    class TestNeptuneMonitor(unittest.TestCase):
+        def test_dummy(self):
+            # when
 
-        # then
-        self.assertEqual({}, {})
+            # then
+            self.assertEqual({}, {})
 
 if __name__ == '__main__':
     unittest.main()
