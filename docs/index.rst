@@ -32,6 +32,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    hpo.utils <user_guide/hpo/utils>
    monitoring.notebooks <user_guide/monitoring/notebooks>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
+   monitoring.fastai <user_guide/monitoring/fastai>
    monitoring.skopt <user_guide/monitoring/skopt>
    monitoring.utils <user_guide/monitoring/utils>
    viz.experiments <user_guide/viz/experiments>
