@@ -1,8 +1,9 @@
-neptune-contrib: open-source contributions to Neptune.ml
+neptune-contrib:
+open-source contributions to Neptune.ml
 ===========================================
 
 This library is a collection of helpers and extensions that make working
-with `neptune.ml` more effective and better. It is build on top of neptune-cli
+with `Neptune website`_ more effective and better. It is build on top of neptune-cli
 and neptune-lib and gives you option to do things like:
  * interactive visualizations of experiment runs or hyperparameters
  * running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
@@ -66,7 +67,8 @@ Indices and tables
 .. _GitHub: https://github.com/neptune-ml/neptune-contrib
 .. _Git Issues: https://github.com/neptune-ml/neptune-contrib/issues
 .. _Git Feature Request: https://github.com/neptune-ml/neptune-contrib/issues
-.. _Neptune community forum: http://community.neptune.ml
+.. _Neptune website: https://neptune.ml/
+.. _Neptune community forum: https://community.neptune.ml/
 .. _Github projects: https://github.com/neptune-ml/neptune-contrib/projects
 .. _Neptune Slack: https://neptune-community.slack.com
 .. _Neptune Slack Join: https://join.slack.com/t/neptune-community/shared_invite/enQtNTI4Mjg3ODk2MjQwLWE5YjI0YThiODViNDY4MDBlNmRmZTkwNTE3YzNiMjQ5MGM2ZTFhNzhjN2YzMTIwNDM3NjQyZThmMDk1Y2Q1ZjY
