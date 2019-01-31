@@ -14,18 +14,11 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('..'))
 
-# -- Imports mock -----------------------------------------------------
-from unittest.mock import MagicMock
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-MOCK_MODULES = ['altair']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+# -- Imports mock -----------------------------------------------------]
+autodoc_mock_imports = ['altair','fastai.callbacks']
 
 # -- Project information -----------------------------------------------------
 
@@ -34,10 +27,9 @@ copyright = '2019, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
-version = '0.0'
+version = '0.1'
 # The full version, including alpha/beta/rc tags
-release = '0.0.2'
-
+release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -84,7 +76,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -124,7 +115,6 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'neptune-contribdoc'
 
-
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
@@ -153,7 +143,6 @@ latex_documents = [
      'Neptune Dev Team', 'manual'),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -162,7 +151,6 @@ man_pages = [
     (master_doc, 'neptune-contrib', 'neptune-contrib Documentation',
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -174,7 +162,6 @@ texinfo_documents = [
      author, 'neptune-contrib', 'One line description of project.',
      'Miscellaneous'),
 ]
-
 
 # -- Options for Epub output -------------------------------------------------
 
@@ -192,7 +179,6 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
-
 
 # -- Extension configuration -------------------------------------------------
 nbsphinx_allow_errors = True

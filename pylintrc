@@ -271,6 +271,9 @@ int-import-graph=
 # Do not whine about Redefining built-in objects when importing from future.builtins.
 redefining-builtins-modules=future.builtins,past.builtins
 
+# Ignored moduls
+ignored-modules=fastai
+
 
 [CLASSES]
 

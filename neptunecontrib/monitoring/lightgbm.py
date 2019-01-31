@@ -59,18 +59,18 @@ def neptune_monitor(ctx, prefix=''):
         Run `lgb.train` passing `neptune_monitor()` to the `callbacks` parameter:
 
         >>> gbm = lgb.train(params,
-                lgb_train,
-                num_boost_round=500,
-                valid_sets=[lgb_train, lgb_eval],
-                valid_names=['train','valid'],
-                callbacks=[monitor],
-               )
+        >>>                 lgb_train,
+        >>>                 num_boost_round=500,
+        >>>                 valid_sets=[lgb_train, lgb_eval],
+        >>>                 valid_names=['train','valid'],
+        >>>                 callbacks=[monitor],
+        >>>                )
 
     Note:
         If you are running a k-fold validation it is a good idea to add the k-fold prefix
         and pass it to the `neptune_monitor` function:
 
-        >>> prefix=`fold{}_`.format(fold_id)
+        >>> prefix='fold{}_'.format(fold_id)
         >>> monitor = neptune_monitor(prefix)
     """
 

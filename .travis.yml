@@ -4,9 +4,10 @@ python:
 - '3.5.6'
 - '3.6'
 install:
-- pip install -r requirements.txt
-- pip install -r test_requirements.txt
-- pip install tox-travis pylintfileheader
+  - pip install -r requirements.txt
+  - pip install -q -r requirements.txt
+  - pip install -q -r test_requirements.txt
+  - pip install tox-travis pylintfileheader
 script:
 - python -m pylint -j 0 -f parseable neptunecontrib tests
 - tox
