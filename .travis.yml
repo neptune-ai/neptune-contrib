@@ -7,7 +7,6 @@ install:
   - pip install -r requirements.txt
   - pip install -q -r requirements.txt
   - pip install -q -r test_requirements.txt
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install -q fastai; fi
   - pip install tox-travis pylintfileheader
 script:
 - python -m pylint -j 0 -f parseable neptunecontrib tests
