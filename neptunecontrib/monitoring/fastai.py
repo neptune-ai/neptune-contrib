@@ -14,11 +14,9 @@
 # limitations under the License.
 #
 
-import os
 import sys
 
 if sys.version_info[0] == 3 and sys.version_info[1] > 5:
-    os.system('pip install fastai')
     from fastai.callbacks import LearnerCallback
 
 
