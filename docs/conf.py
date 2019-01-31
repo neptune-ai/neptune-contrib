@@ -18,7 +18,7 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # -- Imports mock -----------------------------------------------------]
-autodoc_mock_imports = ['altair','fastai.callbacks']
+autodoc_mock_imports = ['altair', 'fastai', 'fastai.callbacks']
 
 # -- Project information -----------------------------------------------------
 
