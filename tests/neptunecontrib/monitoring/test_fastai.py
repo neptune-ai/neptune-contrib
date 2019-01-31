@@ -18,7 +18,7 @@ import sys
 import unittest
 
 if sys.version_info[0] == 3 and sys.version_info[1] > 5:
-    import neptunecontrib.monitoring.fastai as NeptuneMonitor
+    from neptunecontrib.monitoring.fastai import NeptuneMonitor
 
 
     class TestNeptuneMonitor(unittest.TestCase):
