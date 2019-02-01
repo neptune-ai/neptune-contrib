@@ -16,69 +16,76 @@
 
 import sys
 
-if sys.version_info[0] == 3 and sys.version_info[1] > 5:
+if sys.version_info[0] == 3 and sys.version_info[1] >= 6:
     from fastai.callbacks import LearnerCallback
+else:
+    class LearnerCallback:
+        pass
 
 
-    class NeptuneMonitor(LearnerCallback):
-        """Logs metrics from the fastai learner to Neptune.
-
-        Goes over the `last_metrics` and `smooth_loss` after each batch and epoch
-        and logs them to appropriate Neptune channels.
-
-        See the example experiment here
-        https://app.neptune.ml/neptune-ml/neptune-examples/e/NEP-493/charts.
+    LearnerCallback.__module__ = 'fastai.callbacks'
 
 
-        Args:
-            ctx(`neptune.Context`): Neptune context.
-            prefix(str): Prefix that should be added before the `metric_name`
-                and `valid_name` before logging to the appropriate channel.
-                Defaul is ''.
+class NeptuneMonitor(LearnerCallback):
+    """Logs metrics from the fastai learner to Neptune.
 
-        Examples:
-            Prepare data:
+    Goes over the `last_metrics` and `smooth_loss` after each batch and epoch
+    and logs them to appropriate Neptune channels.
 
-            >>> from fastai.vision import *
-            >>> mnist = untar_data(URLs.MNIST_TINY)
-            >>> tfms = get_transforms(do_flip=False)
-            >>> data = (ImageItemList.from_folder(mnist)
-            >>>               .split_by_folder()
-            >>>               .label_from_folder()
-            >>>               .transform(tfms, size=32)
-            >>>               .databunch()
-            >>>               .normalize(imagenet_stats))
+    See the example experiment here
+    https://app.neptune.ml/neptune-ml/neptune-examples/e/NEP-493/charts.
 
-            Define neptune monitor callback:
 
-            >>> import neptune
-            >>> from neptunecontrib.monitoring.fastai import NeptuneMonitor
-            >>> ctx = neptune.Context()
-            >>> monitor = NeptuneMonitor(ctx=ctx)
+    Args:
+        ctx(`neptune.Context`): Neptune context.
+        prefix(str): Prefix that should be added before the `metric_name`
+            and `valid_name` before logging to the appropriate channel.
+            Defaul is ''.
 
-            Pass neptune monitor callback to the learner:
+    Examples:
+        Prepare data:
 
-            >>> learn = create_cnn(data, models.resnet18,
-            >>>             metrics=accuracy,
-            >>>             callbacks=[neptune_monitor])
-            >>> learn.fit_one_cycle(20, 1e-2)
+        >>> from fastai.vision import *
+        >>> mnist = untar_data(URLs.MNIST_TINY)
+        >>> tfms = get_transforms(do_flip=False)
+        >>> data = (ImageItemList.from_folder(mnist)
+        >>>               .split_by_folder()
+        >>>               .label_from_folder()
+        >>>               .transform(tfms, size=32)
+        >>>               .databunch()
+        >>>               .normalize(imagenet_stats))
 
-        Note:
-            you need to have the fastai library installed on your computer to use this module.
-        """
-        def __init__(self, ctx, learn=None, prefix=''):
-            self._ctx = ctx
-            self._prefix = prefix
-            if learn is not None:
-                super().__init__(learn)
+        Define neptune monitor callback:
 
-        def on_epoch_end(self, **kwargs):
-            self._ctx.channel_send(self._prefix + 'train_smooth_loss', float(kwargs['smooth_loss']))
-            metric_values = kwargs['last_metrics']
-            metric_names = ['valid_last_loss'] + kwargs['metrics']
-            for metric_value, metric_name in zip(metric_values, metric_names):
-                metric_name = getattr(metric_name, '__name__', metric_name)
-                self._ctx.channel_send(self._prefix + metric_name, float(metric_value))
+        >>> import neptune
+        >>> from neptunecontrib.monitoring.fastai import NeptuneMonitor
+        >>> ctx = neptune.Context()
+        >>> monitor = NeptuneMonitor(ctx=ctx)
 
-        def on_batch_end(self, **kwargs):
-            self._ctx.channel_send('{}last_loss'.format(self._prefix), float(kwargs['last_loss']))
+        Pass neptune monitor callback to the learner:
+
+        >>> learn = create_cnn(data, models.resnet18,
+        >>>             metrics=accuracy,
+        >>>             callbacks=[neptune_monitor])
+        >>> learn.fit_one_cycle(20, 1e-2)
+
+    Note:
+        you need to have the fastai library installed on your computer to use this module.
+    """
+
+    def __init__(self, ctx, learn=None, prefix=''):
+        self._ctx = ctx
+        self._prefix = prefix
+        if learn is not None:
+            super().__init__(learn)
+
+    def on_epoch_end(self, **kwargs):
+        self._ctx.channel_send(self._prefix + 'train_smooth_loss', float(kwargs['smooth_loss']))
+        metric_values = kwargs['last_metrics']
+        metric_names = ['valid_last_loss'] + kwargs['metrics']
+        for metric_value, metric_name in zip(metric_values, metric_names):
+            metric_name = getattr(metric_name, '__name__', metric_name)
+            self._ctx.channel_send(self._prefix + metric_name, float(metric_value))
+
+    def on_batch_end(self, **kwargs):
+        self._ctx.channel_send('{}last_loss'.format(self._prefix), float(kwargs['last_loss']))
