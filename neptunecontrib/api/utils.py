@@ -14,7 +14,11 @@
 # limitations under the License.
 #
 
+import warnings
+
 import pandas as pd
+
+warnings.filterwarnings('ignore')
 
 
 def concat_experiments_on_channel(experiments, channel_name):
@@ -46,7 +50,7 @@ def concat_experiments_on_channel(experiments, channel_name):
 
         Construct a channel value dataframe:
 
-        >>> from neptunelib.api.utils import concat_experiments_on_channel
+        >>> from neptunecontrib.api.utils import concat_experiments_on_channel
         >>> compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
 
     Note:
@@ -63,14 +67,46 @@ def concat_experiments_on_channel(experiments, channel_name):
     return combined_df
 
 
-def create_progress_df(leadearboard, metric_colname, time_colname):
-    """Filters leaderboard columns to get the channel column names.
+def extract_project_progress_info(leadearboard, metric_colname, time_colname='finished'):
+    """Extracts the project progress information from the experiment view.
+
+    This function takes the experiment view (leaderboard) and extracts the information
+    that is important for analysing the project progress. It creates additional columns 
+    `metric` (actual experiment metric), `metric_best` (best metric score to date)), 
+    `running_time_day` (total amount of experiment running time for a given day in hours), 
+    'experiment_count_day' (total number of experiments ran in a given day).
+    
+    This function is usually used with the `plot_project_progress` from `neptunecontrib.viz.projects`.
 
     Args:
-        columns(iterable): Iterable of leaderboard column names.
+        leadearboard(`pandas.DataFrame`): Dataframe containing the experiment view of the project.
+            It can be extracted via `project.get_leaderboard()`.
+        metric_colname(str): name of the column containing the metric of interest.
+        time_colname(str): name of the column containing the timestamp. It can be either `finished` 
+            or `created`. Default is 'finished'.
 
     Returns:
-        list: A list of channel column names.
+        `pandas.DataFrame`: Dataframe of ['id', 'metric', 'metric_best', 'running_time', 
+        'running_time_day', 'experiment_count_day', 'owner', 'tags', 'timestamp', 'timestamp_day']
+        columns. 
+
+    Examples:
+        Instantiate a session.
+
+        >>> from neptunelib.api.session import Session
+        >>> session = Session()
+
+        Fetch a project and the experiment view of that project.
+
+        >>> project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+        >>> leaderboard = project.get_leaderboard()
+
+        Create a progress info dataframe.
+
+        >>> from neptunecontrib.api.utils import extract_project_progress_info
+        >>> progress_df = extract_project_progress_info(leadearboard, 
+        >>>                                             metric_colname='channel_IOUT', 
+        >>>                                             time_colname='finished')
     """
     system_columns = ['id', 'owner', 'running_time', 'tags']
     progress_columns = system_columns + [time_colname, metric_colname]

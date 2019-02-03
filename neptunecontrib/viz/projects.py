@@ -13,36 +13,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import warnings
 
 import altair as alt
-improt pandas as pd
+import pandas as pd
+
+warnings.filterwarnings('ignore')
 
 
 def project_progress(progress_df,
                      width=800,
                      heights=(50, 400),
                      line_size=5,
-                     text_size=15):
-    """Creates an interactive curve comparison chart for a list of experiments.
-
-    It lets you tick or untick experiments that you want to compare by clicking on the legend (shift+click for multi),
-    you can select the x range which you want to investigate by selecting it on the top chart and you
-    get shown the actual values on mousehover.
+                     text_size=15,
+                     opacity=0.3
+                    ):
+    """Creates an interactive project progress exploration chart.
+        
+    It lets you choose the resources you want to see ('experiment_count_day' or 'running_time_day'), you
+    can see the metric/id/tags for every experiment on mouseover, you can select the x range which you want to 
+    investigate by selecting it on the top chart and you get shown the actual values on mousehover.
 
     The chart is build on top of the Altair which in turn is build on top of Vega-Lite and Vega.
     That means you can use the objects produces by this script (converting it first to json by .to_json() method)
     in your html webpage without any problem.
 
     Args:
-        experiment_df('pandas.DataFrame'): Dataframe containing ['id','x','CHANNEL_NAME'].
+        progress_df('pandas.DataFrame'): Dataframe containing ['id', 'metric', 'metric_best', 'running_time', 
+            'running_time_day', 'experiment_count_day', 'owner', 'tags', 'timestamp', 'timestamp_day'].
             It can be obtained from a list of experiments by using the
-            `neptunelib.api.concat_experiments_on_channel` function. If the len of the dataframe exceeds 5000 it will
+            `neptunecontrib.api.extract_project_progress_info` function. If the len of the dataframe exceeds 5000 it will
             cause the MaxRowsError. Read the Note to learn why and how to disable it.
         width(int): width of the chart. Default is 800.
         heights(tuple): heights of the subcharts. The first value controls the top chart, the second
             controls the bottom chart. Default is (50,400).
         line_size(int): size of the lines. Default is 5.
-        legend_mark_size(int): size of the marks in legend. Default is 100.
+        text_size(int): size of the text containing metric/id/tags in the middle.
+        opacity(float): opacity of the resource bars in the background. Default is 0.3.
 
     Returns:
         `altair.Chart`: Altair chart object which will be automatically rendered in the notebook. You can
@@ -54,20 +61,22 @@ def project_progress(progress_df,
         >>> from neptunelib.api.session import Session
         >>> session = Session()
 
-        Fetch a project and a list of experiments.
+        Fetch a project and the experiment view of that project.
 
         >>> project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
-        >>> experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
+        >>> leaderboard = project.get_leaderboard()
 
-        Construct a channel value dataframe:
+        Create a progress info dataframe.
 
-        >>> from neptunelib.api.utils import concat_experiments_on_channel
-        >>> compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
+        >>> from neptunecontrib.api.utils import extract_project_progress_info
+        >>> progress_df = extract_project_progress_info(leadearboard, 
+        >>>                                             metric_colname='channel_IOUT', 
+        >>>                                             time_colname='finished')
 
         Plot interactive chart in notebook.
 
-        >>> from neptunelib.viz.experiments import channel_curve_compare
-        >>> channel_curve_compare(compare_df)
+        >>> from neptunecontrib.viz.projects import project_progress
+        >>> project_progress(progress_df)
 
     Note:
         Because Vega-Lite visualizations keep all the chart data in the HTML the visualizations can consume huge
@@ -81,7 +90,7 @@ def project_progress(progress_df,
     top_height, bottom_height = heights
     
     progress_df = _prep_progress_df(progress_df)
-
+    
     nearest = alt.selection(type='single', nearest=True, on='mouseover',
                             fields=['timestamp'], empty='none')
     brush = alt.selection(type='interval', encodings=['x'])
@@ -138,11 +147,11 @@ def project_progress(progress_df,
     ).transform_filter(
         brush
     )
-    exp_line = alt.Chart().mark_area(interpolate='step-after', size=line_size).encode(
+    exp_line = alt.Chart().mark_area(interpolate='step-after').encode(
         x=alt.X('timestamp:T'),
         y=alt.Y('time_or_count:Q', scale=alt.Scale(zero=False)),
-        color=alt.ColorValue('pink'),
-        opacity=alt.OpacityValue(0.5)
+        color=alt.ColorValue('red'),
+        opacity=alt.OpacityValue(0.3)
     ).transform_filter(
         brush
     ).transform_filter(
@@ -182,6 +191,7 @@ def project_progress(progress_df,
     return combined
 
 
+
 def _prep_progress_df(progress_df):
     progress_df['text'] = progress_df.apply(_get_text, axis=1)
 
@@ -198,8 +208,8 @@ def _prep_progress_df(progress_df):
     exp_df['running_time_day'] = exp_df['running_time_day']/(60*60)
     exp_df = exp_df.melt(id_vars=['id'],
                          value_vars=['experiment_count_day', 'running_time_day'],
-                         var_name='time_count',
-                         value_name='time_count_value'
+                         var_name='resource',
+                         value_name='time_or_count'
                          )
 
     progress_df = progress_df.drop(labels=['metric', 'metric_best', 'experiment_count_day', 'running_time_day'], axis=1)
@@ -216,4 +226,3 @@ def _get_text(row):
                                         row['metric'],
                                         ' ({})'.format(' , '.join(row['tags'])))
     return text
-
