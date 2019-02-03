@@ -71,24 +71,24 @@ def extract_project_progress_info(leadearboard, metric_colname, time_colname='fi
     """Extracts the project progress information from the experiment view.
 
     This function takes the experiment view (leaderboard) and extracts the information
-    that is important for analysing the project progress. It creates additional columns 
-    `metric` (actual experiment metric), `metric_best` (best metric score to date)), 
-    `running_time_day` (total amount of experiment running time for a given day in hours), 
+    that is important for analysing the project progress. It creates additional columns
+    `metric` (actual experiment metric), `metric_best` (best metric score to date)),
+    `running_time_day` (total amount of experiment running time for a given day in hours),
     'experiment_count_day' (total number of experiments ran in a given day).
-    
+
     This function is usually used with the `plot_project_progress` from `neptunecontrib.viz.projects`.
 
     Args:
         leadearboard(`pandas.DataFrame`): Dataframe containing the experiment view of the project.
             It can be extracted via `project.get_leaderboard()`.
         metric_colname(str): name of the column containing the metric of interest.
-        time_colname(str): name of the column containing the timestamp. It can be either `finished` 
+        time_colname(str): name of the column containing the timestamp. It can be either `finished`
             or `created`. Default is 'finished'.
 
     Returns:
-        `pandas.DataFrame`: Dataframe of ['id', 'metric', 'metric_best', 'running_time', 
+        `pandas.DataFrame`: Dataframe of ['id', 'metric', 'metric_best', 'running_time',
         'running_time_day', 'experiment_count_day', 'owner', 'tags', 'timestamp', 'timestamp_day']
-        columns. 
+        columns.
 
     Examples:
         Instantiate a session.
@@ -104,8 +104,8 @@ def extract_project_progress_info(leadearboard, metric_colname, time_colname='fi
         Create a progress info dataframe.
 
         >>> from neptunecontrib.api.utils import extract_project_progress_info
-        >>> progress_df = extract_project_progress_info(leadearboard, 
-        >>>                                             metric_colname='channel_IOUT', 
+        >>> progress_df = extract_project_progress_info(leadearboard,
+        >>>                                             metric_colname='channel_IOUT',
         >>>                                             time_colname='finished')
     """
     system_columns = ['id', 'owner', 'running_time', 'tags']
@@ -194,6 +194,7 @@ def strip_prefices(columns, prefices):
                 col = col.replace(prefix, '')
         new_columns.append(col)
     return new_columns
+
 
 def _prep_time_column(progress_df):
     progress_df['timestamp'] = pd.to_datetime(progress_df['timestamp'])
