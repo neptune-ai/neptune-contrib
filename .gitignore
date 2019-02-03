@@ -19,5 +19,4 @@ tests/.pytest_cache
 
 # docs
 docs/_build
-docs/_static
 docs/_templates
