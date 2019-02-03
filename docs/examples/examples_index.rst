@@ -6,3 +6,4 @@
    Monitor fast.ai training <monitor_fastai>
    Log matplotlib charts to neptune <log_matplotlib>
    Work with local notebooks <local_notebooks>
+   Visualize project progress <project_progress>
