@@ -14,7 +14,11 @@
 # limitations under the License.
 #
 
+import warnings
+
 import pandas as pd
+
+warnings.filterwarnings('ignore')
 
 
 def concat_experiments_on_channel(experiments, channel_name):
@@ -46,7 +50,7 @@ def concat_experiments_on_channel(experiments, channel_name):
 
         Construct a channel value dataframe:
 
-        >>> from neptunelib.api.utils import concat_experiments_on_channel
+        >>> from neptunecontrib.api.utils import concat_experiments_on_channel
         >>> compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
 
     Note:
@@ -61,6 +65,65 @@ def concat_experiments_on_channel(experiments, channel_name):
             combined_df.append(channel_df)
     combined_df = pd.concat(combined_df, axis=0)
     return combined_df
+
+
+def extract_project_progress_info(leadearboard, metric_colname, time_colname='finished'):
+    """Extracts the project progress information from the experiment view.
+
+    This function takes the experiment view (leaderboard) and extracts the information
+    that is important for analysing the project progress. It creates additional columns
+    `metric` (actual experiment metric), `metric_best` (best metric score to date)),
+    `running_time_day` (total amount of experiment running time for a given day in hours),
+    'experiment_count_day' (total number of experiments ran in a given day).
+
+    This function is usually used with the `plot_project_progress` from `neptunecontrib.viz.projects`.
+
+    Args:
+        leadearboard(`pandas.DataFrame`): Dataframe containing the experiment view of the project.
+            It can be extracted via `project.get_leaderboard()`.
+        metric_colname(str): name of the column containing the metric of interest.
+        time_colname(str): name of the column containing the timestamp. It can be either `finished`
+            or `created`. Default is 'finished'.
+
+    Returns:
+        `pandas.DataFrame`: Dataframe of ['id', 'metric', 'metric_best', 'running_time',
+        'running_time_day', 'experiment_count_day', 'owner', 'tags', 'timestamp', 'timestamp_day']
+        columns.
+
+    Examples:
+        Instantiate a session.
+
+        >>> from neptunelib.api.session import Session
+        >>> session = Session()
+
+        Fetch a project and the experiment view of that project.
+
+        >>> project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+        >>> leaderboard = project.get_leaderboard()
+
+        Create a progress info dataframe.
+
+        >>> from neptunecontrib.api.utils import extract_project_progress_info
+        >>> progress_df = extract_project_progress_info(leadearboard,
+        >>>                                             metric_colname='channel_IOUT',
+        >>>                                             time_colname='finished')
+    """
+    system_columns = ['id', 'owner', 'running_time', 'tags']
+    progress_columns = system_columns + [time_colname, metric_colname]
+    progress_df = leadearboard[progress_columns]
+    progress_df.columns = ['id', 'owner', 'running_time', 'tags'] + ['timestamp', 'metric']
+
+    progress_df = _prep_time_column(progress_df)
+    progress_df = _prep_metric_column(progress_df)
+
+    progress_df = _get_daily_running_time(progress_df)
+    progress_df = _get_daily_experiment_counts(progress_df)
+    progress_df = _get_current_best(progress_df)
+    progress_df = progress_df[
+        ['id', 'metric', 'metric_best', 'running_time', 'running_time_day', 'experiment_count_day',
+         'owner', 'tags', 'timestamp', 'timestamp_day']]
+
+    return progress_df
 
 
 def get_channel_columns(columns):
@@ -131,3 +194,37 @@ def strip_prefices(columns, prefices):
                 col = col.replace(prefix, '')
         new_columns.append(col)
     return new_columns
+
+
+def _prep_time_column(progress_df):
+    progress_df['timestamp'] = pd.to_datetime(progress_df['timestamp'])
+    progress_df.sort_values('timestamp', inplace=True)
+    progress_df['timestamp_day'] = [d.date() for d in progress_df['timestamp']]
+    return progress_df
+
+
+def _prep_metric_column(progress_df):
+    progress_df['metric'] = progress_df['metric'].astype(float)
+    progress_df.dropna(subset=['metric'], how='all', inplace=True)
+    return progress_df
+
+
+def _get_daily_running_time(progress_df):
+    daily_counts = progress_df.groupby('timestamp_day').sum()['running_time'].reset_index()
+    daily_counts.columns = ['timestamp_day', 'running_time_day']
+    progress_df = pd.merge(progress_df, daily_counts, on='timestamp_day')
+    return progress_df
+
+
+def _get_daily_experiment_counts(progress_df):
+    daily_counts = progress_df.groupby('timestamp_day').count()['metric'].reset_index()
+    daily_counts.columns = ['timestamp_day', 'experiment_count_day']
+    progress_df = pd.merge(progress_df, daily_counts, on='timestamp_day')
+    return progress_df
+
+
+def _get_current_best(progress_df):
+    current_best = progress_df['metric'].cummax()
+    current_best = current_best.fillna(method='bfill')
+    progress_df['metric_best'] = current_best
+    return progress_df
