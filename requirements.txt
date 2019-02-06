@@ -1,7 +1,7 @@
 oauthlib
 PyJWT
 neptune-cli
-neptune-lib==0.1.1
+neptune-lib==0.1.2
 requests>=2.20.0
 requests-oauthlib>=1.0.0
 pandas
