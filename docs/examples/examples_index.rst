@@ -7,4 +7,4 @@
    Log matplotlib charts to neptune <log_matplotlib>
    Work with local notebooks <local_notebooks>
    Visualize project progress <project_progress>
-   Sync .json file with Neptune <sync_with_json>
+   Sync experiments with Neptune via json file <sync_with_json>
