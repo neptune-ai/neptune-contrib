@@ -21,8 +21,10 @@ that contains your hyper parameters, metrics, tags or properties and send that t
 
 Attributes:
     filepath(str): filepath to the `.json` file that contains experiment data. It can have 
-        ['tags', 'channels', 'properties', 'parameters', 'name'] sections.
-    project_name(str): Full name of the project. E.g. "neptune-ml/neptune-examples"
+        ['tags', 'channels', 'properties', 'parameters', 'name'] sections. 
+        You can pass it either as --filepath or -f.
+    project_name(str): Full name of the project. E.g. "neptune-ml/neptune-examples",
+        You can pass it either as --project_name or -p.
 
 Example:
     Run the experiment and create experiment json in any language.
@@ -42,8 +44,10 @@ Example:
     >>> }
 
     Now you can sync your file with neptune. 
-        $ python neptunecontrib.sync.with_json --project neptune-ml/neptune-examples
-        --filepath experiment_data.json
+    
+    $ python neptunecontrib.sync.with_json \
+      --project_name neptune-ml/neptune-examples \
+      --filepath experiment_data.json
 """
 
 import argparse
@@ -82,15 +86,18 @@ ctx = neptune.Context()
     
 with open('{}', 'r') as fp:
     data = json.load(fp)
-        
-for name, channel in data['channels'].items():
-    for x, y in zip(channel['x'], channel['y']):
-        ctx.channel_send(name, x, y)
-    
-for name, value in data['properties'].items():
-    ctx.properties[name] = value
+
+if 'channels' in data.keys():
+    for name, channel in data['channels'].items():
+        for x, y in zip(channel['x'], channel['y']):
+            ctx.channel_send(name, x, y)
+
+if 'properties' in data.keys():
+    for name, value in data['properties'].items():
+        ctx.properties[name] = value
             
-ctx.tags.extend(data['tags'])
+if 'tags' in data.keys():
+    ctx.tags.extend(data['tags'])
 """
     
     main_file.write(main_content.format(experiment_filepath))
@@ -100,10 +107,13 @@ def write_config_content(config_file, experiment_filepath):
     with open(experiment_filepath, 'r') as fp:
         data = json.load(fp)
     
-    config_file.write('name: {}\n\n'.format(data['name']))
-    config_file.write('parameters:\n')
-    for name, value in data['parameters'].items():
-        config_file.write('   {}: {}\n'.format(name, value))
+    if 'name' in data.keys():
+        config_file.write('name: {}\n\n'.format(data['name']))
+        
+    if 'parameters' in data.keys():
+        config_file.write('parameters:\n')
+        for name, value in data['parameters'].items():
+            config_file.write('   {}: {}\n'.format(name, value))
     
 if __name__ == '__main__':
     
