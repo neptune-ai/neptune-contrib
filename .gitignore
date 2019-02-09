@@ -20,3 +20,6 @@ tests/.pytest_cache
 # docs
 docs/_build
 docs/_templates
+
+# nbooks
+*.ipynb_checkpoints
