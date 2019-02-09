@@ -117,28 +117,42 @@ class TelegramBot:
                 if args[0] == 'link':
                     self._experiment_link(bot, update, args)
                 elif args[0] == 'plot':
-                    self._experiment_plot(update, args)
+                    self._experiment_plot(bot, update, args)
                 else:
                     self._experiment_help(bot, update)
             else:
                 self._experiment_help(bot, update)
 
     def unknown(self, bot, update):
-        bot.send_message(chat_id=update.message.chat_id, text="Sorry, I only undestand /project, \
-            /experiments, /experiment")
+        bot.send_message(chat_id=update.message.chat_id,
+                         text="Sorry, I only undestand /project, /experiments, /experiment")
 
     def _project_list(self, bot, update, args):
-        namespace = args[1]
-        project_names = self.session.get_projects(namespace).keys()
-        msg = '\n'.join(project_names)
+        if len(args) != 1:
+            msg = ['message should have a format:',
+                   '/project list NAMESPACE',
+                   'for example:',
+                   '/project list neptune-ml']
+            msg = '\n'.join(msg)
+        else:
+            namespace = args[1]
+            project_names = self.session.get_projects(namespace).keys()
+            msg = '\n'.join(project_names)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _project_select(self, bot, update, args):
-        self.project_name = args[1]
-        namespace = self.project_name.split('/')[0]
-        self.neptune_project = self.session.get_projects(namespace)[self.project_name]
+        if len(args) != 2:
+            msg = ['message should have a format:',
+                   '/project select NAMESPACE/PROJECT_NAME',
+                   'for example:',
+                   '/project select neptune-ml/neptune-examples']
+            msg = '\n'.join(msg)
+        else:
+            self.project_name = args[1]
+            namespace = self.project_name.split('/')[0]
+            self.neptune_project = self.session.get_projects(namespace)[self.project_name]
 
-        msg = 'Selected a project: {}'.format(self.project_name)
+            msg = 'Selected a project: {}'.format(self.project_name)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _project_help(self, bot, update):
@@ -149,44 +163,65 @@ class TelegramBot:
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiments_last(self, bot, update, args):
-        nr_exps = int(args[1])
-        leaderboard = self.neptune_project.get_leaderboard()
-        leaderboard['finished'] = pd.to_datetime(leaderboard['finished'])
-        leaderboard.sort_values('finished', ascending=False, inplace=True)
-        ids = leaderboard['id'].tolist()[:nr_exps]
-        ids = ['id'] + ids
-        msg = '\n'.join(ids)
+        if len(args) != 3:
+            msg = ['message should have a format:',
+                   '/experiments last NR_EXPS TIMESTAMP',
+                   'for example:',
+                   '/experiments last 5 finished']
+            msg = '\n'.join(msg)
+        else:
+            nr_exps = int(args[1])
+            timestamp = args[2]
+
+            if timestamp not in ['created', 'finished']:
+                msg = 'choose created or finished as timestamp'
+            else:
+                leaderboard = self.neptune_project.get_leaderboard()
+                leaderboard[timestamp] = pd.to_datetime(leaderboard[timestamp])
+                leaderboard.sort_values(timestamp, ascending=False, inplace=True)
+                ids = leaderboard['id'].tolist()[:nr_exps]
+                ids = ['id'] + ids
+                msg = '\n'.join(ids)
+
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiments_best(self, bot, update, args):
-        if len(args) == 2:
-            args.append(1)
+        if len(args) != 3:
+            msg = ['message should have a format:',
+                   '/experiments best METRIC NR_EXPS',
+                   'for example:',
+                   '/experiments best log_loss 3']
+            msg = '\n'.join(msg)
+        else:
+            metric_name = args[1]
+            metric_column = 'channel_' + metric_name
+            nr_exps = int(args[2])
 
-        metric_name = args[1]
-        metric_column = 'channel_' + metric_name
-        nr_exps = int(args[2])
+            leaderboard = self.neptune_project.get_leaderboard()
+            scores = leaderboard.sort_values([metric_column], ascending=False)[['id', metric_column]]
 
-        leaderboard = self.neptune_project.get_leaderboard()
-        scores = leaderboard.sort_values([metric_column], ascending=False)[['id', metric_column]]
-
-        msg = 'id | {}\n'.format(metric_name)
-        for idx, metric in scores.values[:nr_exps]:
-            msg = msg + '{} | {}\n'.format(idx, metric)
+            msg = 'id | {}\n'.format(metric_name)
+            for idx, metric in scores.values[:nr_exps]:
+                msg = msg + '{} | {}\n'.format(idx, metric)
 
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiments_state(self, bot, update, args):
-        if len(args) == 2:
-            args.append(5)
-
-        state = args[1]
-        nr_exps = int(args[2])
-        leaderboard = self.neptune_project.get_leaderboard(state=state)
-        leaderboard['finished'] = pd.to_datetime(leaderboard['finished'])
-        leaderboard.sort_values('finished', ascending=False, inplace=True)
-        ids = leaderboard['id'].tolist()[:nr_exps]
-        ids = ['id'] + ids
-        msg = '\n'.join(ids)
+        if len(args) != 3:
+            msg = ['message should have a format:',
+                   '/experiments state STATE NR_EXPS',
+                   'for example:',
+                   '/experiments state running 4']
+            msg = '\n'.join(msg)
+        else:
+            state = args[1]
+            nr_exps = int(args[2])
+            leaderboard = self.neptune_project.get_leaderboard(state=state)
+            leaderboard['created'] = pd.to_datetime(leaderboard['created'])
+            leaderboard.sort_values('created', ascending=False, inplace=True)
+            ids = leaderboard['id'].tolist()[:nr_exps]
+            ids = ['id'] + ids
+            msg = '\n'.join(ids)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiments_help(self, bot, update):
@@ -198,33 +233,48 @@ class TelegramBot:
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiment_link(self, bot, update, args):
-        short_id = args[1]
-        namespace, project = self.project_name.split('/')
+        if len(args) != 2:
+            msg = ['message should have a format:',
+                   '/experiment link SHORT_ID',
+                   'for example:',
+                   '/experiment link NEP-508']
+            msg = '\n'.join(msg)
+        else:
+            short_id = args[1]
+            namespace, project = self.project_name.split('/')
 
-        msg = 'https://app.neptune.ml/o/{}/org/{}/e/{}/details'.format(namespace, project, short_id)
+            msg = 'https://app.neptune.ml/o/{}/org/{}/e/{}/details'.format(namespace, project, short_id)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
-    def _experiment_plot(self, update, args):
-        short_id = args[1]
-        if len(args) == 2:
-            metric_names = [args[2]]
+    def _experiment_plot(self, bot, update, args):
+        if len(args) < 3:
+            msg = ['message should have a format:',
+                   '/experiment plot SHORT_ID METRIC_NAME OTHER_METRIC_NAME',
+                   'for example:',
+                   '/experiment plot NEP-508 train_loss valid_loss']
+            msg = '\n'.join(msg)
+            bot.send_message(chat_id=update.message.chat_id, text=msg)
         else:
-            metric_names = args[2:]
+            short_id = args[1]
+            if len(args) == 2:
+                metric_names = [args[2]]
+            else:
+                metric_names = args[2:]
 
-        experiment = self.neptune_project.get_experiments(id=short_id)[0]
-        data = experiment.get_numeric_channels_values(*metric_names)
+            experiment = self.neptune_project.get_experiments(id=short_id)[0]
+            data = experiment.get_numeric_channels_values(*metric_names)
 
-        fig = plt.figure()
-        for channel_name in data.columns:
-            if channel_name != 'x':
-                plt.plot('x', channel_name, data=data,
-                         marker='', linewidth=2, label=channel_name)
-        plt.legend()
+            fig = plt.figure()
+            for channel_name in data.columns:
+                if channel_name != 'x':
+                    plt.plot('x', channel_name, data=data,
+                             marker='', linewidth=2, label=channel_name)
+            plt.legend()
 
-        buffer = BytesIO()
-        fig.savefig(buffer, format='png')
-        buffer.seek(0)
-        update.message.reply_photo(buffer)
+            buffer = BytesIO()
+            fig.savefig(buffer, format='png')
+            buffer.seek(0)
+            update.message.reply_photo(buffer)
 
     def _experiment_help(self, bot, update):
         msg = """Available options are:\n
