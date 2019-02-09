@@ -2,16 +2,6 @@ import os
 
 from setuptools import find_packages, setup
 
-import git_version
-
-
-def version():
-    try:
-        with open('VERSION') as f:
-            return f.readline().strip()
-    except IOError:
-        return '0.0.1'
-
 
 def main():
     root_dir = os.path.dirname(__file__)
@@ -20,7 +10,7 @@ def main():
         requirements = [r.strip() for r in f]
         setup(
             name='neptune-contrib',
-            version=version(),
+            version='0.2.0',
             description='Neptune Python library contributions',
             author='neptune.ml',
             author_email='contact@neptune.ml',
@@ -29,9 +19,6 @@ def main():
             license='MIT License',
             install_requires=requirements,
             packages=find_packages(include=['neptunecontrib*']),
-            cmdclass={
-                'git_version': git_version.GitVersion,
-            }
         )
 
 
