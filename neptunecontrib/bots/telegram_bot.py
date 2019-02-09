@@ -128,7 +128,7 @@ class TelegramBot:
                          text="Sorry, I only undestand /project, /experiments, /experiment")
 
     def _project_list(self, bot, update, args):
-        if len(args) != 1:
+        if len(args) != 2:
             msg = ['message should have a format:',
                    '/project list NAMESPACE',
                    'for example:',
