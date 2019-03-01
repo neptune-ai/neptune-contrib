@@ -17,8 +17,7 @@
 import neptune
 import skopt.plots as sk_plots
 
-from neptunecontrib.monitoring.utils import fig2pil
-from neptunecontrib.viz.utils import axes2fig
+from neptunecontrib.monitoring.utils import fig2pil, axes2fig
 
 
 class NeptuneMonitor:
