@@ -17,9 +17,7 @@
 import random
 import string
 import subprocess
-from itertools import product
 
-import matplotlib.pyplot as plt
 from neptunelib.session import Session
 import pandas as pd
 from scipy.optimize import OptimizeResult
@@ -191,86 +189,62 @@ def df2result(df, metric_col, param_cols, param_types=None):
 
 
 def optuna2skopt(results):
-    """Converts optuna trials to scipy OptimizeResult.
+    """Converts optuna results to scipy OptimizeResult.
 
     Helper function that converts the optuna Trials instance into scipy OptimizeResult
     format.
 
     Args:
-        trials(`hyperopt.base.Trials`): hyperopt trials object which stores training
-            information from the fmin() optimization function.
-        space(`collections.OrderedDict`): Hyper parameter space over which
-            hyperopt will search. It is important to have this as OrderedDict rather
-            than a simple dictionary because otherwise the parameter names will be
-            shuffled.
+        results(`pandas.DataFrame`): Dataframe containing scores and hyperparameters.
+            It is the output of running study.trials_dataframe().
 
     Returns:
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
 
-
     Examples:
-        Prepare the space of hyperparameters to search over.
+        Run your optuna study.
 
-        >>> from hyperopt import hp, tpe, fmin, Trials
-        >>> space = OrderedDict(num_leaves=hp.choice('num_leaves', range(10, 60, 1)),
-                    max_depth=hp.choice('max_depth', range(2, 30, 1)),
-                    feature_fraction=hp.uniform('feature_fraction', 0.1, 0.9)
-                   )
+        >>> study = optuna.create_study()
+        >>> study.optimize(objective, n_trials=100)
 
-        Create an objective and run your hyperopt training
-
-        >>> trials = Trials()
-        >>> _ = fmin(objective, space, trials=trials, algo=tpe.suggest, max_evals=100)
-
-        Convert trials object to the OptimizeResult object.
+        Convert trials_dataframe object to the OptimizeResult object.
 
         >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.hyperopt2skopt(trials, space)
+        >>> results = hp_utils.optuna2skopt(study.trials_dataframe())
     """
+
     results_ = results['params']
     results_['target'] = -1.0 * results['value']
     return df2result(results_,
                      metric_col='target',
-                     param_cols=[col for col in results_.columns if col !='target'])
+                     param_cols=[col for col in results_.columns if col != 'target'])
 
 
 def bayes2skopt(results):
-    """Converts optuna trials to scipy OptimizeResult.
+    """Converts BayesOptimization results to scipy OptimizeResult.
 
     Helper function that converts the optuna Trials instance into scipy OptimizeResult
     format.
 
     Args:
-        trials(`hyperopt.base.Trials`): hyperopt trials object which stores training
-            information from the fmin() optimization function.
-        space(`collections.OrderedDict`): Hyper parameter space over which
-            hyperopt will search. It is important to have this as OrderedDict rather
-            than a simple dictionary because otherwise the parameter names will be
-            shuffled.
+        results(`pandas.DataFrame`): Dataframe containing scores and hyperparameters.
+            It is the output of running study.trials_dataframe().
 
     Returns:
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
 
-
     Examples:
-        Prepare the space of hyperparameters to search over.
+        Run BayesOptimize maximization.
 
-        >>> from hyperopt import hp, tpe, fmin, Trials
-        >>> space = OrderedDict(num_leaves=hp.choice('num_leaves', range(10, 60, 1)),
-                    max_depth=hp.choice('max_depth', range(2, 30, 1)),
-                    feature_fraction=hp.uniform('feature_fraction', 0.1, 0.9)
-                   )
+        >>> bayes_optimization = BayesianOptimization(objective, space)
+        >>> bayes_optimization.maximize(init_points=10, n_iter=100, xi=0.06)
 
-        Create an objective and run your hyperopt training
-
-        >>> trials = Trials()
-        >>> _ = fmin(objective, space, trials=trials, algo=tpe.suggest, max_evals=100)
-
-        Convert trials object to the OptimizeResult object.
+        Convert bayes.space.res() object to the OptimizeResult object.
 
         >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.hyperopt2skopt(trials, space)
+        >>> results = hp_utils.bayes2skopt(bayes_optimization.space.res())
     """
+
     results = [{'target': trial['target'], **trial['params']} for trial in results]
     results_df = pd.DataFrame(results)
     return df2result(results_df,
@@ -297,6 +271,7 @@ def _convert_to_param_space(df, param_cols, param_types):
             raise NotImplementedError
     skopt_space = skopt.Space(dimensions)
     return skopt_space
+
 
 def _convert_space_hop_skopt(space):
     dimensions = []

@@ -14,17 +14,10 @@
 # limitations under the License.
 #
 
-import os
-from functools import reduce
-import itertools
-
 import matplotlib.pyplot as plt
-import numpy as np
 import neptune
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.utils.multiclass import unique_labels
 from scikitplot.metrics import plot_roc, plot_precision_recall, plot_confusion_matrix
 
 from neptunecontrib.monitoring.utils import fig2pil
@@ -36,7 +29,7 @@ def send_binary_classification_report(ctx, y_true, y_pred,
                                       channel_name='classification report'):
     """Creates binary classification report and logs it in Neptune.
 
-    This function creates ROC AUC curve, confusion matrix, precision recall curve and 
+    This function creates ROC AUC curve, confusion matrix, precision recall curve and
     prediction distribution charts and logs it to the 'classification report' channel in Neptune.
 
     Args:
@@ -290,13 +283,12 @@ def plot_prediction_distribution(y_true, y_pred, ax=None, figsize=None):
     """
 
     if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=figsize)
+        _, ax = plt.subplots(1, 1, figsize=figsize)
 
     ax.set_title('Prediction Distribution', fontsize='large')
 
     df = pd.DataFrame({'Prediction': y_pred,
-                       'True label': y_true
-                       })
+                       'True label': y_true})
 
     sns.distplot(df[df['True label'] == 0]['Prediction'], label='negative', ax=ax)
     sns.distplot(df[df['True label'] == 1]['Prediction'], label='positive', ax=ax)

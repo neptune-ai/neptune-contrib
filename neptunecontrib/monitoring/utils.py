@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+from itertools import product
+
+import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
