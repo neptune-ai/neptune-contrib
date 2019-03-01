@@ -191,6 +191,42 @@ def df2result(df, metric_col, param_cols, param_types=None):
 
 
 def optuna2skopt(results):
+    """Converts optuna trials to scipy OptimizeResult.
+
+    Helper function that converts the optuna Trials instance into scipy OptimizeResult
+    format.
+
+    Args:
+        trials(`hyperopt.base.Trials`): hyperopt trials object which stores training
+            information from the fmin() optimization function.
+        space(`collections.OrderedDict`): Hyper parameter space over which
+            hyperopt will search. It is important to have this as OrderedDict rather
+            than a simple dictionary because otherwise the parameter names will be
+            shuffled.
+
+    Returns:
+        `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
+
+
+    Examples:
+        Prepare the space of hyperparameters to search over.
+
+        >>> from hyperopt import hp, tpe, fmin, Trials
+        >>> space = OrderedDict(num_leaves=hp.choice('num_leaves', range(10, 60, 1)),
+                    max_depth=hp.choice('max_depth', range(2, 30, 1)),
+                    feature_fraction=hp.uniform('feature_fraction', 0.1, 0.9)
+                   )
+
+        Create an objective and run your hyperopt training
+
+        >>> trials = Trials()
+        >>> _ = fmin(objective, space, trials=trials, algo=tpe.suggest, max_evals=100)
+
+        Convert trials object to the OptimizeResult object.
+
+        >>> import neptunecontrib.hpo.utils as hp_utils
+        >>> results = hp_utils.hyperopt2skopt(trials, space)
+    """
     results_ = results['params']
     results_['target'] = -1.0 * results['value']
     return df2result(results_,
@@ -199,52 +235,47 @@ def optuna2skopt(results):
 
 
 def bayes2skopt(results):
+    """Converts optuna trials to scipy OptimizeResult.
+
+    Helper function that converts the optuna Trials instance into scipy OptimizeResult
+    format.
+
+    Args:
+        trials(`hyperopt.base.Trials`): hyperopt trials object which stores training
+            information from the fmin() optimization function.
+        space(`collections.OrderedDict`): Hyper parameter space over which
+            hyperopt will search. It is important to have this as OrderedDict rather
+            than a simple dictionary because otherwise the parameter names will be
+            shuffled.
+
+    Returns:
+        `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
+
+
+    Examples:
+        Prepare the space of hyperparameters to search over.
+
+        >>> from hyperopt import hp, tpe, fmin, Trials
+        >>> space = OrderedDict(num_leaves=hp.choice('num_leaves', range(10, 60, 1)),
+                    max_depth=hp.choice('max_depth', range(2, 30, 1)),
+                    feature_fraction=hp.uniform('feature_fraction', 0.1, 0.9)
+                   )
+
+        Create an objective and run your hyperopt training
+
+        >>> trials = Trials()
+        >>> _ = fmin(objective, space, trials=trials, algo=tpe.suggest, max_evals=100)
+
+        Convert trials object to the OptimizeResult object.
+
+        >>> import neptunecontrib.hpo.utils as hp_utils
+        >>> results = hp_utils.hyperopt2skopt(trials, space)
+    """
     results = [{'target': trial['target'], **trial['params']} for trial in results]
     results_df = pd.DataFrame(results)
     return df2result(results_df,
                      metric_col='target',
                      param_cols=[col for col in results_df.columns if col != 'target'])
-
-
-def axes2fig(axes, fig=None):
-    """Converts ndarray of matplotlib object to matplotlib figure.
-
-    Scikit-optimize plotting functions return ndarray of axes. This can be tricky
-    to work with so you can use this function to convert it to the standard figure format.
-
-    Args:
-        axes(`numpy.ndarray`): Array of matplotlib axes objects.
-        fig('matplotlib.figure.Figure'): Matplotlib figure on which you may want to plot
-            your axes. Default None.
-
-    Returns:
-        'matplotlib.figure.Figure': Matplotlib figure with axes objects as subplots.
-
-    Examples:
-        Assuming you have a `scipy.optimize.OptimizeResult` object you want to plot.
-
-        >>> from skopt.plots import plot_evaluations
-        >>> eval_plot = plot_evaluations(result, bins=20)
-        >>> type(eval_plot)
-        numpy.ndarray
-
-        >>> from neptunecontrib.viz.utils import axes2fig
-        >>> fig = axes2fig(eval_plot)
-        >>> fig
-        matplotlib.figure.Figure
-
-    """
-    try:
-        h, w = axes.shape
-        if not fig:
-            fig = plt.figure(figsize=(h * 3, w * 3))
-        for i, j in product(range(h), range(w)):
-            fig._axstack.add(fig._make_key(axes[i, j]), axes[i, j])
-    except AttributeError:
-        if not fig:
-            fig = plt.figure(figsize=(6, 6))
-        fig._axstack.add(fig._make_key(axes), axes)
-    return fig
 
 
 def _prep_df(df, param_cols, param_types):
