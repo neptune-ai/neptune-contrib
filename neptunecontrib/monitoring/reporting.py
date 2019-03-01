@@ -244,13 +244,11 @@ def plot_binary_classification_report(y_true, y_pred, threshold=0.5, figsize=(16
     prediction distribution charts and logs it to the 'classification report' channel in Neptune.
 
     Args:
-        ctx(`neptune.Context`): Neptune context.
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred (array-like, shape (n_samples, 2)): Predictions both for negative and positive class
             in the float format.
         threshold(float): threshold to be applied for the class asignment.
         figsize(tuple): size of the matplotlib.pyplot figure object
-        channel_name(str): name of the neptune channel. Default is 'classification report'.
 
     Returns:
          (`matplotlib.figure`): Figure object with binary classification report.
