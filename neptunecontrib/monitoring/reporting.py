@@ -66,12 +66,7 @@ def send_binary_classification_report(ctx, y_true, y_pred,
         >>> send_binary_classification_report(ctx, y_test, y_test_pred)
 
     """
-    fig, axs = plt.subplots(2, 2, figsize=figsize)
-    plot_roc(y_true, y_pred, ax=axs[0, 0])
-    plot_precision_recall(y_true, y_pred, ax=axs[0, 1])
-    plot_prediction_distribution(y_true, y_pred[:, 1], ax=axs[1, 0])
-    plot_confusion_matrix(y_true, y_pred[:, 1] > threshold, ax=axs[1, 1])
-    fig.tight_layout()
+    fig = plot_binary_classification_report(y_true, y_pred, threshold=threshold, figsize=figsize)
     npt_pred_dist = neptune.Image(name='chart', description='', data=fig2pil(fig))
     ctx.channel_send(channel_name, npt_pred_dist)
 
@@ -242,6 +237,56 @@ def send_precision_recall(ctx, y_true, y_pred, figsize=(16, 12), channel_name='p
     ctx.channel_send(channel_name, npt_roc_auc)
 
 
+def plot_binary_classification_report(y_true, y_pred, threshold=0.5, figsize=(16, 12)):
+    """Creates binary classification report.
+
+    This function creates ROC AUC curve, confusion matrix, precision recall curve and
+    prediction distribution charts and logs it to the 'classification report' channel in Neptune.
+
+    Args:
+        y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
+        y_pred (array-like, shape (n_samples, 2)): Predictions both for negative and positive class
+            in the float format.
+        threshold(float): threshold to be applied for the class asignment.
+        figsize(tuple): size of the matplotlib.pyplot figure object
+
+    Returns:
+         (`matplotlib.figure`): Figure object with binary classification report.
+
+    Examples:
+        Train the model and make predictions on test.
+
+        >>> from sklearn.datasets import make_classification
+        >>> from sklearn.ensemble import RandomForestClassifier
+        >>> from sklearn.model_selection import train_test_split
+        >>> from sklearn.metrics import classification_report
+        >>>
+        >>> X, y = make_classification(n_samples=2000)
+        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+        >>>
+        >>> model = RandomForestClassifier()
+        >>> model.fit(X_train, y_train)
+        >>>
+        >>> y_test_pred = model.predict_proba(X_test)
+
+        Log classification report to Neptune.
+
+        >>> import neptune
+        >>> from neptunecontrib.monitoring.reporting import send_binary_classification_report
+        >>>
+        >>> ctx = neptune.Context()
+        >>> send_binary_classification_report(ctx, y_test, y_test_pred)
+
+    """
+    fig, axs = plt.subplots(2, 2, figsize=figsize)
+    plot_roc(y_true, y_pred, ax=axs[0, 0])
+    plot_precision_recall(y_true, y_pred, ax=axs[0, 1])
+    plot_prediction_distribution(y_true, y_pred[:, 1], ax=axs[1, 0])
+    plot_confusion_matrix(y_true, y_pred[:, 1] > threshold, ax=axs[1, 1])
+    fig.tight_layout()
+    return fig
+
+
 def plot_prediction_distribution(y_true, y_pred, ax=None, figsize=None):
     """Generates prediction distribution plot from predictions and true labels.
 
@@ -254,6 +299,7 @@ def plot_prediction_distribution(y_true, y_pred, ax=None, figsize=None):
             plot the curve. If None, the plot is drawn on a new set of axes.
         figsize (2-tuple, optional): Tuple denoting figure size of the plot
             e.g. (6, 6). Defaults to ``None``.
+
     Returns:
         ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
             drawn.
