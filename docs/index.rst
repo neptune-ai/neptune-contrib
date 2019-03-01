@@ -34,6 +34,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    monitoring.notebooks <user_guide/monitoring/notebooks>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.fastai <user_guide/monitoring/fastai>
+   monitoring.reporting <user_guide/monitoring/reporting>
    monitoring.skopt <user_guide/monitoring/skopt>
    monitoring.utils <user_guide/monitoring/utils>
    sync.with_json <user_guide/sync/with_json>
