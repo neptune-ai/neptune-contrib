@@ -1,6 +1,10 @@
 # neptune-contrib
 [![Build Status](https://travis-ci.org/neptune-ml/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ml/neptune-contrib)
 
+# Note
+This lib is compatible with `neptune-cli` and some part may not work `neptune-client`.
+It will be updated for `neptune-client` soon (ETA `4.7.2019`).
+
 # Documentation
 See [neptune-contrib documentation site](https://neptune-contrib.readthedocs.io)
 
