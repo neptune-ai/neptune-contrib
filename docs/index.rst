@@ -1,6 +1,12 @@
 neptune-contrib: open-source contributions to Neptune.ml
 ===========================================
 
+Note
+-----------------------
+
+This lib is compatible with `neptune-cli` and some part may not work `neptune-client`.
+It will be updated for `neptune-client` soon (ETA `4.7.2019`).
+
 This library is a collection of helpers and extensions that make working
 with `Neptune website`_ more effective and better. It is build on top of neptune-cli
 and neptune-lib and gives you option to do things like:
