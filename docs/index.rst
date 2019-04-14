@@ -1,6 +1,10 @@
 neptune-contrib: open-source contributions to Neptune.ml
 ===========================================
 
+**Note**
+This lib is compatible with `neptune-cli` and some part may not work with `neptune-client`.
+It will be updated for `neptune-client` soon (ETA `4.7.2019`).
+
 This library is a collection of helpers and extensions that make working
 with `Neptune website`_ more effective and better. It is build on top of neptune-client
 and neptune-lib and gives you option to do things like:
@@ -33,6 +37,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    bots.telegram_bot <user_guide/bots/telegram_bot>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.fastai <user_guide/monitoring/fastai>
+   monitoring.reporting <user_guide/monitoring/reporting>
    monitoring.skopt <user_guide/monitoring/skopt>
    monitoring.utils <user_guide/monitoring/utils>
    sync.with_json <user_guide/sync/with_json>
