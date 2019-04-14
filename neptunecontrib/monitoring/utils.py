@@ -21,47 +21,6 @@ import numpy as np
 from PIL import Image
 
 
-def fig2pil(fig):
-    """Converts matplotlib fig to PIL.Image
-
-    Args:
-        fig(`matplotlib.pyplot.figure`): Any matplotlib figure.
-
-    Returns:
-        `PIL.Image`: figure, converted to PIL Image.
-
-    Examples:
-        Create a figure:
-
-        >>> import matplotlib.pyplot as plt
-        >>> import numpy as np
-        >>> import seaborn as sns
-        >>> fig = plt.figure(figsize=(16,12))
-        >>> sns.distplot(np.random.random(100))
-
-        Convert to PIL.
-
-        >>> pil_figure = fig2pil(fig)
-
-    Note:
-        On some machines, using this function has cause matplotlib errors.
-        What helped every time was to change matplotlib backend by adding the following snippet
-        towards the top of your script:
-
-        >>> import matplotlib
-        >>> matplotlib.use('Agg')
-    """
-    fig.canvas.draw()
-
-    w, h = fig.canvas.get_width_height()
-    buf = np.frombuffer(fig.canvas.tostring_argb(), dtype=np.uint8)
-    buf.shape = (w, h, 4)
-    buf = np.roll(buf, 3, axis=2)
-
-    w, h, _ = buf.shape
-    return Image.frombytes("RGBA", (w, h), buf.tostring())
-
-
 def is_offline_context(context):
     """Checks whether the context is offline.
 

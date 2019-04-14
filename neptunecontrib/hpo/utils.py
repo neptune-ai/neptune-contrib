@@ -18,67 +18,10 @@ import random
 import string
 import subprocess
 
-from neptunelib.session import Session
 import pandas as pd
 from scipy.optimize import OptimizeResult
 import skopt
 from retrying import retry
-
-
-def make_objective(param_set, command, metric_channel_name, project_name, tag='trash'):
-    """Converts `neptune run` script to a python function that returns a score.
-
-    Helper function that wraps your train_evaluate_model.py script into a function
-    that takes hyper parameters as input and returns the score on a specified metric.
-
-    Args:
-        param_set(dict): Dictionary of parameter name parameter value. The objective
-            function is evaluated on those parameters.
-        command(list):bash neptune command represented as a list. It is assumed
-            that the .py script path is a last element.
-            E.g. ['neptune run --config neptune.yaml', 'main.py']
-        metric_channel_name(str): name of the property where the evaluation
-            result is stored. It is crucial that the single run result is stored
-            as property.E.g. ctx.properties[metric_channel_name] = 0.8.
-        project_name(str): NAME_SPACE/PROJECT_NAME. E.g. 'neptune-ml/neptune-examples'
-        tag(str): Tag that should be added to the single run experiment.
-            It is useful to add this tag so that you can group or get rid of the single run
-            experiments in your project. Default is 'trash'.
-
-    Returns:
-        float: Score that was reported in the `ctx.properties[metric_channel_name]`
-        of the run of train_evaluate_model.py script.
-
-
-    Examples:
-        Prepare the space of hyperparameters to search over.
-
-        >>> space = [skopt.space.Integer(10, 60, name='num_leaves'),
-                     skopt.space.Integer(2, 30, name='max_depth'),
-                     skopt.space.Real(0.1, 0.9, name='feature_fraction', prior='uniform')]
-
-        Define the objective.
-
-        >>> @skopt.utils.use_named_args(space)
-            def objective(**params):
-                return hp_utils.make_objective(params,
-                                               command=['neptune run --config neptune.yaml',
-                                               'train_evaluate.py'],
-                                               metric_channel_name='valid_accuracy',
-                                               project_name='neptune-ml/neptune-examples')
-
-        Run skopt training.
-
-        >>> results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
-
-    """
-    command, exp_id_tag = _create_command_and_id_tag(command, param_set, tag)
-
-    subprocess.call(command, shell=True)
-
-    score = _get_score(exp_id_tag, metric_channel_name, project_name)
-    return score
 
 
 def hyperopt2skopt(trials, space):
@@ -155,7 +98,7 @@ def df2result(df, metric_col, param_cols, param_types=None):
     Examples:
         Instantiate a session.
 
-        >>> from neptunelib.api.session import Session
+        >>> from neptune.sessions import Session
         >>> session = Session()
 
         Fetch a project and a list of experiments.
@@ -250,80 +193,3 @@ def bayes2skopt(results):
     return df2result(results_df,
                      metric_col='target',
                      param_cols=[col for col in results_df.columns if col != 'target'])
-
-
-def _prep_df(df, param_cols, param_types):
-    for col, col_type in zip(param_cols, param_types):
-        df[col] = df[col].astype(col_type)
-    return df
-
-
-def _convert_to_param_space(df, param_cols, param_types):
-    dimensions = []
-    for colname, col_type in zip(param_cols, param_types):
-        if col_type == str:
-            dimensions.append(skopt.space.Categorical(categories=df[colname].unique(),
-                                                      name=colname))
-        elif col_type == float:
-            low, high = df[colname].min(), df[colname].max()
-            dimensions.append(skopt.space.Real(low, high, name=colname))
-        else:
-            raise NotImplementedError
-    skopt_space = skopt.Space(dimensions)
-    return skopt_space
-
-
-def _convert_space_hop_skopt(space):
-    dimensions = []
-    for name, specs in space.items():
-        specs = str(specs).split('\n')
-        method = specs[3].split(' ')[-1]
-        bounds = specs[4:]
-        if len(bounds) == 1:
-            bounds = bounds[0].split('range')[-1]
-            bounds = bounds.replace('(', '').replace(')', '').replace('}', '')
-            low, high = [float(v) for v in bounds.split(',')]
-        else:
-            vals = [float(b.split('Literal')[-1].replace('}', '').replace('{', ''))
-                    for b in bounds]
-            low = min(vals)
-            high = max(vals)
-        if method == 'randint':
-            dimensions.append(skopt.space.Integer(low, high, name=name))
-        elif method == 'uniform':
-            dimensions.append(skopt.space.Real(low, high, name=name, prior='uniform'))
-        elif method == 'loguniform':
-            dimensions.append(skopt.space.Real(low, high, name=name, prior='log-uniform'))
-        else:
-            raise NotImplementedError
-    skopt_space = skopt.Space(dimensions)
-    return skopt_space
-
-
-def _create_command_and_id_tag(command, param_set, tag):
-    command.insert(-1, '--tag {}'.format(tag))
-    for name, value in param_set.items():
-        command.insert(-1, "--parameter {}:{}".format(name, value))
-
-    exp_id_tag = _get_random_string()
-    command.insert(-1, '--tag {}'.format(exp_id_tag))
-
-    command = " ".join(command)
-    return command, exp_id_tag
-
-
-def _get_random_string(length=64):
-    x = ''.join(random.choice(string.ascii_lowercase + string.digits)
-                for _ in range(length))
-    return x
-
-
-@retry(stop_max_attempt_number=50, wait_random_min=1000, wait_random_max=5000)
-def _get_score(exp_id_tag, metric_name, project_name):
-    namespace = project_name.split('/')[0]
-
-    session = Session()
-    project = session.get_projects(namespace)[project_name]
-    experiment = project.get_experiments(tag=[exp_id_tag])[0]
-    score = float(experiment.properties[metric_name].tolist()[0])
-    return score

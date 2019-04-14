@@ -14,7 +14,9 @@
 # limitations under the License.
 #
 
-def neptune_monitor(ctx, prefix=''):
+import neptune
+
+def neptune_monitor(experiment=None, prefix=''):
     """Logs lightGBM learning curves to Neptune.
 
     Goes over the list of metrics and valid_sets passed to the `lgb.train`
@@ -74,9 +76,11 @@ def neptune_monitor(ctx, prefix=''):
         >>> monitor = neptune_monitor(prefix)
     """
 
+    _exp = experiment if experiment else neptune
+    
     def callback(env):
         for name, loss_name, loss_value, _ in env.evaluation_result_list:
             channel_name = '{}{}_{}'.format(prefix, name, loss_name)
-            ctx.channel_send(channel_name, x=env.iteration, y=loss_value)
+            _exp.send_metric(channel_name, x=env.iteration, y=loss_value)
 
     return callback

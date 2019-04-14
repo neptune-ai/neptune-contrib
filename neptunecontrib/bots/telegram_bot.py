@@ -16,7 +16,7 @@
 
 """Spins of a Neptune bot with which you can interact on telegram
 
-You can see which experiments are running, check the best experiemnts based
+You can see which experiments are running, check the best experiements based
 on defined metric and even plot it in Telegram.
 
 Full list of options:
@@ -59,7 +59,7 @@ Example:
 import argparse
 from io import BytesIO
 
-from neptunelib.session import Session
+from neptune.sessions import Session
 import matplotlib.pyplot as plt
 import pandas as pd
 from telegram.ext import Updater

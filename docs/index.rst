@@ -2,7 +2,7 @@ neptune-contrib: open-source contributions to Neptune.ml
 ===========================================
 
 This library is a collection of helpers and extensions that make working
-with `Neptune website`_ more effective and better. It is build on top of neptune-cli
+with `Neptune website`_ more effective and better. It is build on top of neptune-client
 and neptune-lib and gives you option to do things like:
  * interactive visualizations of experiment runs or hyperparameters
  * running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
@@ -31,7 +31,6 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    api.utils <user_guide/api/utils>
    hpo.utils <user_guide/hpo/utils>
    bots.telegram_bot <user_guide/bots/telegram_bot>
-   monitoring.notebooks <user_guide/monitoring/notebooks>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.fastai <user_guide/monitoring/fastai>
    monitoring.skopt <user_guide/monitoring/skopt>
