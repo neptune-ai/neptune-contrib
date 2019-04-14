@@ -16,7 +16,7 @@
 
 """Spins of a Neptune bot with which you can interact on telegram
 
-You can see which experiments are running, check the best experiemnts based
+You can see which experiments are running, check the best experiements based
 on defined metric and even plot it in Telegram.
 
 Full list of options:
@@ -34,8 +34,11 @@ Full list of options:
 Attributes:
     telegram_api_token(str): Your telegram bot api token.
         You can pass it either as --telegram_api_token or -t.
-    neptune_api_token(str): Your neptune api token.
+    neptune_api_token(str): Your neptune api token. If you
+        set the NEPTUNE_API_TOKEN environemnt variable, you
+        don't have to pass it here.
         You can pass it either as --neptune_api_token or -n.
+        Default None.
 
 Example:
     Spin off your bot.
@@ -59,7 +62,7 @@ Example:
 import argparse
 from io import BytesIO
 
-from neptunelib.session import Session
+from neptune.sessions import Session
 import matplotlib.pyplot as plt
 import pandas as pd
 from telegram.ext import Updater
@@ -296,7 +299,7 @@ class TelegramBot:
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--telegram_api_token')
-    parser.add_argument('-n', '--neptune_api_token')
+    parser.add_argument('-n', '--neptune_api_token', default=None)
     return parser.parse_args()
 
 

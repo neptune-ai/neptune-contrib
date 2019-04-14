@@ -16,6 +16,8 @@
 
 import sys
 
+import neptune
+
 if sys.version_info[0] == 3 and sys.version_info[1] >= 6:
     from fastai.callbacks import LearnerCallback
 else:
@@ -55,37 +57,38 @@ class NeptuneMonitor(LearnerCallback):
         >>>               .databunch()
         >>>               .normalize(imagenet_stats))
 
-        Define neptune monitor callback:
+        Now, create Neptune experiment, instantiate the monitor and pass
+        it to callbacks.
 
         >>> import neptune
         >>> from neptunecontrib.monitoring.fastai import NeptuneMonitor
-        >>> ctx = neptune.Context()
-        >>> monitor = NeptuneMonitor(ctx=ctx)
-
-        Pass neptune monitor callback to the learner:
-
-        >>> learn = create_cnn(data, models.resnet18,
-        >>>             metrics=accuracy,
-        >>>             callbacks=[neptune_monitor])
-        >>> learn.fit_one_cycle(20, 1e-2)
+        >>>
+        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>>
+        >>> with neptune.create_experiment():
+        >>>    monitor = NeptuneMonitor()
+        >>>    learn = create_cnn(data, models.resnet18,
+        >>>                       metrics=accuracy,
+        >>>                       callbacks=[neptune_monitor])
+        >>>    learn.fit_one_cycle(20, 1e-2)
 
     Note:
         you need to have the fastai library installed on your computer to use this module.
     """
 
-    def __init__(self, ctx, learn=None, prefix=''):
-        self._ctx = ctx
+    def __init__(self, experiment=None, learn=None, prefix=''):
+        self._exp = experiment if experiment else neptune
         self._prefix = prefix
         if learn is not None:
             super().__init__(learn)
 
     def on_epoch_end(self, **kwargs):
-        self._ctx.channel_send(self._prefix + 'train_smooth_loss', float(kwargs['smooth_loss']))
+        self._exp.send_metric(self._prefix + 'train_smooth_loss', float(kwargs['smooth_loss']))
         metric_values = kwargs['last_metrics']
         metric_names = ['valid_last_loss'] + kwargs['metrics']
         for metric_value, metric_name in zip(metric_values, metric_names):
             metric_name = getattr(metric_name, '__name__', metric_name)
-            self._ctx.channel_send(self._prefix + metric_name, float(metric_value))
+            self._exp.send_metric(self._prefix + metric_name, float(metric_value))
 
     def on_batch_end(self, **kwargs):
-        self._ctx.channel_send('{}last_loss'.format(self._prefix), float(kwargs['last_loss']))
+        self._exp.send_metric('{}last_loss'.format(self._prefix), float(kwargs['last_loss']))

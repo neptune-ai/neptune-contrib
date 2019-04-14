@@ -30,7 +30,7 @@ def concat_experiments_on_channel(experiments, channel_name):
     ['id','x_log_loss','y_log_loss'] columns.
 
     Args:
-        experiments(list): list of `neptunelib.api.Experiment` objects.
+        experiments(list): list of `neptune.experiments.Experiment` objects.
         channel_name(str): name of the channel for which we want to extract values.
 
     Returns:
@@ -40,7 +40,7 @@ def concat_experiments_on_channel(experiments, channel_name):
     Examples:
         Instantiate a session.
 
-        >>> from neptunelib.api.session import Session
+        >>> from neptune.sessions import Session
         >>> session = Session()
 
         Fetch a project and a list of experiments.
@@ -93,7 +93,7 @@ def extract_project_progress_info(leadearboard, metric_colname, time_colname='fi
     Examples:
         Instantiate a session.
 
-        >>> from neptunelib.api.session import Session
+        >>> from neptune.sessions import Session
         >>> session = Session()
 
         Fetch a project and the experiment view of that project.

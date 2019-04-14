@@ -10,37 +10,6 @@ This library contains tools that help you with:
 
 Some cool functions are:
 
-**neptunecontrib.monitoring.notebooks.LocalNotebookContext**
-
-which lets you develop in your local notebooks. 
-
-.. code:: ipython3
-
-    from neptunecontrib.monitoring.notebooks import LocalNotebookContext
-    ctx = NotebookContext(ctx, config_filepath='neptune.yaml') 
-
-You can now access hyperparamters:
-
-.. code:: ipython3
-
-    ctx.params
-
-.. parsed-literal::
-
-    AttrDict({'power': 3})
-
-And monitor training just as if you were
-running cloud notebooks.
-
-.. code:: ipython3
-
-    for i in range(100):
-        ctx.channel_send('random_channel', i, 2 + i**2)
-        ctx.channel_send('other_random_channel', y=5 + i**7)
-        ctx.channel_send('text_channel','blabla')
-
-.. image:: examples/local_notebooks_files/local_notebooks_11_0.png
-
 **neptunecontrib.viz.experiments.channel_curve_compare** 
 
 which lets you visualize learning curves on an interactive chart. You can choose which curves you want to view by clicking on the legend, select the x range on the top chart and view it in detail on the bottom. 
@@ -91,29 +60,8 @@ which lets you visualize learning curves on an interactive chart. You can choose
       </script>
     </body>
     </html>
-    
-**neptunecontrib.hpo.utils.make_objective** 
 
-which lets you convert commands like 
- 
-.. code-block:: console
-
-    neptune run --config neptune.yaml main.py
-   
-into python function that return a score.
- 
-.. code:: ipython3
-
-    import neptunecontrib.hpo.utils as hp_utils
-    
-    def objective(params):
-        return hp_utils.make_objective(params,
-                                       command=['neptune run --config neptune.yaml','main.py'],
-                                       metric_channel_name=METRIC_CHANNEL_NAME,
-                                       project_name=PROJECT_NAME)
                                        
- 
-
 **neptunecontrib.hpo.utils.hyperopt2skopt** 
 
 which lets you convert hyperopt.Trails object into scipy.optimize.OptimizeResults and visualize it with scikit-optimize diagnostic tools.
