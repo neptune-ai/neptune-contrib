@@ -70,7 +70,7 @@ Example:
       --neptune_api_token 'ey7123qwwskdnaqsojnd1ru0129e12e=='
       --project_name neptune-ml/neptune-examples \
       --filepath experiment_data.json
-      
+
 Note:
     If you keep your neptune api token in the NEPTUNE_API_TOKEN environment variable
     you can skip the --neptune_api_token
@@ -79,24 +79,24 @@ Note:
 
 import argparse
 import json
-from subprocess import call
 
 import neptune
+
 
 def main(arguments):
     with open(arguments.filepath, 'r') as fp:
         json_exp = json.load(fp)
-    
+
     neptune.init(api_token=arguments.neptune_api_token,
                  project_qualified_name=arguments.project_name)
-    
+
     with neptune.create_experiment(name=json_exp['name'],
                                    description=json_exp['description'],
                                    params=json_exp['params'],
                                    properties=json_exp['properties'],
                                    tags=json_exp['tags'],
                                    upload_source_files=json_exp['upload_source_files']):
-        
+
         for name, channel_xy in json_exp['send_metric'].items():
             for x, y in zip(channel_xy['x'], channel_xy['y']):
                 neptune.send_metric(name, x=x, y=y)
@@ -108,7 +108,7 @@ def main(arguments):
         for name, channel_xy in json_exp['send_image'].items():
             for x, y in zip(channel_xy['x'], channel_xy['y']):
                 neptune.send_image(name, x=x, y=y)
-                
+
 
 def parse_args():
     parser = argparse.ArgumentParser()

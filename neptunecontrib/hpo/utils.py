@@ -14,14 +14,9 @@
 # limitations under the License.
 #
 
-import random
-import string
-import subprocess
-
 import pandas as pd
 from scipy.optimize import OptimizeResult
 import skopt
-from retrying import retry
 
 
 def hyperopt2skopt(trials, space):
@@ -193,3 +188,51 @@ def bayes2skopt(results):
     return df2result(results_df,
                      metric_col='target',
                      param_cols=[col for col in results_df.columns if col != 'target'])
+
+
+def _prep_df(df, param_cols, param_types):
+    for col, col_type in zip(param_cols, param_types):
+        df[col] = df[col].astype(col_type)
+    return df
+
+
+def _convert_to_param_space(df, param_cols, param_types):
+    dimensions = []
+    for colname, col_type in zip(param_cols, param_types):
+        if col_type == str:
+            dimensions.append(skopt.space.Categorical(categories=df[colname].unique(),
+                                                      name=colname))
+        elif col_type == float:
+            low, high = df[colname].min(), df[colname].max()
+            dimensions.append(skopt.space.Real(low, high, name=colname))
+        else:
+            raise NotImplementedError
+    skopt_space = skopt.Space(dimensions)
+    return skopt_space
+
+
+def _convert_space_hop_skopt(space):
+    dimensions = []
+    for name, specs in space.items():
+        specs = str(specs).split('\n')
+        method = specs[3].split(' ')[-1]
+        bounds = specs[4:]
+        if len(bounds) == 1:
+            bounds = bounds[0].split('range')[-1]
+            bounds = bounds.replace('(', '').replace(')', '').replace('}', '')
+            low, high = [float(v) for v in bounds.split(',')]
+        else:
+            vals = [float(b.split('Literal')[-1].replace('}', '').replace('{', ''))
+                    for b in bounds]
+            low = min(vals)
+            high = max(vals)
+        if method == 'randint':
+            dimensions.append(skopt.space.Integer(low, high, name=name))
+        elif method == 'uniform':
+            dimensions.append(skopt.space.Real(low, high, name=name, prior='uniform'))
+        elif method == 'loguniform':
+            dimensions.append(skopt.space.Real(low, high, name=name, prior='log-uniform'))
+        else:
+            raise NotImplementedError
+    skopt_space = skopt.Space(dimensions)
+    return skopt_space

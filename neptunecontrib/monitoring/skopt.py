@@ -20,8 +20,7 @@ import matplotlib.pyplot as plt
 import neptune
 import skopt.plots as sk_plots
 
-# from neptunecontrib.monitoring.utils import axes2fig
-from monitoring.utils import axes2fig
+from neptunecontrib.monitoring.utils import axes2fig
 
 
 class NeptuneMonitor:
@@ -51,9 +50,9 @@ class NeptuneMonitor:
 
     def __call__(self, res):
         self._exp.send_metric('run_score',
-                               x=self._iteration, y=res.func_vals[-1])
+                              x=self._iteration, y=res.func_vals[-1])
         self._exp.send_text('run_parameters',
-                             x=self._iteration, y=NeptuneMonitor._get_last_params(res))
+                            x=self._iteration, y=NeptuneMonitor._get_last_params(res))
         self._iteration += 1
 
     @staticmethod
@@ -61,8 +60,8 @@ class NeptuneMonitor:
         param_vals = res.x_iters[-1]
         named_params = _format_to_named_params(param_vals, res)
         return str(named_params)
-    
-    
+
+
 def send_runs(results, experiment=None):
     """Logs runs results and parameters to neptune.
 
@@ -90,14 +89,14 @@ def send_runs(results, experiment=None):
         >>> sk_monitor.send_best_parameters(results)
 
     """
-    
-    self._exp = experiment if experiment else neptune
-        
+
+    _exp = experiment if experiment else neptune
+
     for loss, params in zip(results.func_vals, results.x_iters):
         _exp.send_metric('run_score', y=loss)
 
         named_params = _format_to_named_params(params, results)
-        ctx.send_text('run_parameters', str(named_params))
+        _exp.send_text('run_parameters', str(named_params))
 
 
 def send_best_parameters(results, experiment=None):
@@ -128,7 +127,7 @@ def send_best_parameters(results, experiment=None):
 
     """
     _exp = experiment if experiment else neptune
-    
+
     named_params = _format_to_named_params(results.x, results)
     _exp.set_property('best_parameters', str(named_params))
 
@@ -161,12 +160,12 @@ def send_plot_convergence(results, experiment=None, channel_name='convergence'):
         >>> sk_monitor.send_plot_convergence(results)
 
     """
-    
+
     _exp = experiment if experiment else neptune
-    
-    fig, ax = plt.subplots(figsize=(16,12))
+
+    fig, ax = plt.subplots(figsize=(16, 12))
     sk_plots.plot_convergence(results, ax=ax)
-        
+
     with tempfile.NamedTemporaryFile(suffix='.png') as f:
         fig.savefig(f.name)
         _exp.send_image(channel_name, f.name)
@@ -201,10 +200,10 @@ def send_plot_evaluations(results, experiment=None, channel_name='evaluations'):
 
     """
     _exp = experiment if experiment else neptune
-    
-    fig, ax = plt.subplots(figsize=(16,12))
+
+    fig = plt.figure(figsize=(16, 12))
     fig = axes2fig(sk_plots.plot_evaluations(results, bins=10), fig=fig)
-    
+
     with tempfile.NamedTemporaryFile(suffix='.png') as f:
         fig.savefig(f.name)
         _exp.send_image(channel_name, f.name)
@@ -226,7 +225,7 @@ def send_plot_objective(results, experiment=None, channel_name='objective'):
         Run skopt training.
 
         >>> results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
+        >>>                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
         Send skopt plot_objective figure to neptune.
 
@@ -238,11 +237,11 @@ def send_plot_objective(results, experiment=None, channel_name='objective'):
         >>> sk_monitor.send_plot_objective(results)
 
     """
-    
+
     _exp = experiment if experiment else neptune
-    fig, ax = plt.subplots(figsize=(16,12))
-        
-    try:    
+    fig = plt.figure(figsize=(16, 12))
+
+    try:
         fig = axes2fig(sk_plots.plot_objective(results), fig=fig)
         with tempfile.NamedTemporaryFile(suffix='.png') as f:
             fig.savefig(f.name)
@@ -252,4 +251,4 @@ def send_plot_objective(results, experiment=None, channel_name='objective'):
 
 
 def _format_to_named_params(params, result):
-    return([(dimension.name, param) for dimension, param in zip(result.space, params)])
+    return ([(dimension.name, param) for dimension, param in zip(result.space, params)])

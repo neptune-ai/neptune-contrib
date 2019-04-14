@@ -17,31 +17,6 @@
 from itertools import product
 
 import matplotlib.pyplot as plt
-import numpy as np
-from PIL import Image
-
-
-def is_offline_context(context):
-    """Checks whether the context is offline.
-
-    Args:
-        context(`neptune.Context`): Neptune context.
-
-    Returns:
-        bool: Whether or not the context is offline.
-
-    Examples:
-        Create a Neptune context:
-
-        >>> import neptune
-        >>> context = neptune.Context()
-
-        Check if it is offline:
-
-        >>> is_offline_context(context)
-        True
-    """
-    return context.params.__class__.__name__ == 'OfflineContextParams'
 
 
 def axes2fig(axes, fig=None):
