@@ -57,19 +57,20 @@ class NeptuneMonitor(LearnerCallback):
         >>>               .databunch()
         >>>               .normalize(imagenet_stats))
 
-        Define neptune monitor callback:
+        Now, create Neptune experiment, instantiate the monitor and pass
+        it to callbacks.
 
         >>> import neptune
         >>> from neptunecontrib.monitoring.fastai import NeptuneMonitor
+        >>>
         >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        >>> monitor = NeptuneMonitor()
-
-        Pass neptune monitor callback to the learner:
-
-        >>> learn = create_cnn(data, models.resnet18,
-        >>>             metrics=accuracy,
-        >>>             callbacks=[neptune_monitor])
-        >>> learn.fit_one_cycle(20, 1e-2)
+        >>>
+        >>> with neptune.create_experiment():
+        >>>    monitor = NeptuneMonitor()
+        >>>    learn = create_cnn(data, models.resnet18,
+        >>>                       metrics=accuracy,
+        >>>                       callbacks=[neptune_monitor])
+        >>>    learn.fit_one_cycle(20, 1e-2)
 
     Note:
         you need to have the fastai library installed on your computer to use this module.

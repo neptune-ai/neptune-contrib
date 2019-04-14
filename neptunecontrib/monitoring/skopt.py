@@ -16,10 +16,12 @@
 
 import tempfile
 
+import matplotlib.pyplot as plt
 import neptune
 import skopt.plots as sk_plots
 
-from neptunecontrib.monitoring.utils import axes2fig
+# from neptunecontrib.monitoring.utils import axes2fig
+from monitoring.utils import axes2fig
 
 
 class NeptuneMonitor:
@@ -50,15 +52,15 @@ class NeptuneMonitor:
     def __call__(self, res):
         self._exp.send_metric('run_score',
                                x=self._iteration, y=res.func_vals[-1])
-        self._exp.send_metric('run_parameters',
-                               x=self._iteration, y=NeptuneMonitor._get_last_params(res))
+        self._exp.send_text('run_parameters',
+                             x=self._iteration, y=NeptuneMonitor._get_last_params(res))
         self._iteration += 1
 
     @staticmethod
     def _get_last_params(res):
         param_vals = res.x_iters[-1]
         named_params = _format_to_named_params(param_vals, res)
-        return named_params
+        return str(named_params)
     
     
 def send_runs(results, experiment=None):
@@ -95,7 +97,7 @@ def send_runs(results, experiment=None):
         _exp.send_metric('run_score', y=loss)
 
         named_params = _format_to_named_params(params, results)
-        ctx.send_text('run_parameters', named_params)
+        ctx.send_text('run_parameters', str(named_params))
 
 
 def send_best_parameters(results, experiment=None):
@@ -128,7 +130,7 @@ def send_best_parameters(results, experiment=None):
     _exp = experiment if experiment else neptune
     
     named_params = _format_to_named_params(results.x, results)
-    _exp.set_property('best_parameters', named_params)
+    _exp.set_property('best_parameters', str(named_params))
 
 
 def send_plot_convergence(results, experiment=None, channel_name='convergence'):

@@ -1,7 +1,6 @@
 .. toctree::
    Interactive experiment run comparison <interactive_compare_experiments>
    Hyper parameter comparison <explore_hyperparams_skopt>
-   Run skopt/hyperopt hyperparameter sweep <run_hyperparameter_search>
    Log model diagnostics <log_model_diagnostics>
    Monitor lightGBM training <monitor_lgbm>
    Monitor fast.ai training <monitor_fastai>

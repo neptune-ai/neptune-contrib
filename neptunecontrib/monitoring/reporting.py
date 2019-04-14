@@ -22,8 +22,6 @@ import pandas as pd
 import seaborn as sns
 from scikitplot.metrics import plot_roc, plot_precision_recall, plot_confusion_matrix
 
-from neptunecontrib.monitoring.utils import fig2pil
-
 
 def send_binary_classification_report(y_true, y_pred,
                                       experiment=None,
@@ -87,7 +85,7 @@ def send_prediction_distribution(y_true, y_pred,
 
     Args:
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
-        y_pred (array-like, shape (n_samples)): Predictions both for the positive class in the float format.
+        y_pred (array-like, shape (n_samples)): Predictions for the positive class in the float format.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         figsize(tuple): size of the matplotlib.pyplot figure object
         channel_name(str): name of the neptune channel. Default is 'prediction distribution'.
@@ -181,13 +179,16 @@ def send_roc_auc_curve(y_true, y_pred,
         fig.savefig(f.name)
         _exp.send_image(channel_name, f.name)
 
-def send_confusion_matrix(ctx, y_true, y_pred, figsize=(16, 12), channel_name='confusion_matrix'):
+def send_confusion_matrix(y_true, y_pred, 
+                          experiment=None,
+                          figsize=(16, 12), 
+                          channel_name='confusion_matrix'):
     """Creates ROC AUC curve and logs it in Neptune.
 
     Args:
-        ctx(`neptune.Context`): Neptune context.
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred (array-like, shape (n_samples)): Positive class predictions in the binary format.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         figsize(tuple): size of the matplotlib.pyplot figure object
         channel_name(str): name of the neptune channel. Default is 'ROC AUC curve'.
 
@@ -221,12 +222,17 @@ def send_confusion_matrix(ctx, y_true, y_pred, figsize=(16, 12), channel_name='c
     fig, ax = plt.subplots(figsize=figsize)
     plot_confusion_matrix(y_true, y_pred, ax=ax)
 
+    _exp = experiment if experiment else neptune
+    
     with tempfile.NamedTemporaryFile(suffix='.png') as f:
         fig.savefig(f.name)
         _exp.send_image(channel_name, f.name)
 
 
-def send_precision_recall(ctx, y_true, y_pred, figsize=(16, 12), channel_name='precision_recall_curve'):
+def send_precision_recall(y_true, y_pred, 
+                          experiment=None,
+                          figsize=(16, 12), 
+                          channel_name='precision_recall_curve'):
     """Creates precision recall curve and logs it in Neptune.
 
     Args:
@@ -234,6 +240,7 @@ def send_precision_recall(ctx, y_true, y_pred, figsize=(16, 12), channel_name='p
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred (array-like, shape (n_samples, 2)): Predictions both for negative and positive class
             in the float format.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         figsize(tuple): size of the matplotlib.pyplot figure object
         channel_name(str): name of the neptune channel. Default is 'ROC AUC curve'.
 
@@ -264,6 +271,9 @@ def send_precision_recall(ctx, y_true, y_pred, figsize=(16, 12), channel_name='p
         >>>    send_precision_recall(ctx, y_test, y_test_pred)
 
     """
+    
+    _exp = experiment if experiment else neptune
+
     fig, ax = plt.subplots(figsize=figsize)
     plot_precision_recall(y_true, y_pred, ax=ax)
 
