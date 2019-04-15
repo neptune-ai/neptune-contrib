@@ -14,10 +14,13 @@
 # limitations under the License.
 #
 
+import tempfile
+
+import matplotlib.pyplot as plt
 import neptune
 import skopt.plots as sk_plots
 
-from neptunecontrib.monitoring.utils import fig2pil, axes2fig
+from neptunecontrib.monitoring.utils import axes2fig
 
 
 class NeptuneMonitor:
@@ -28,8 +31,10 @@ class NeptuneMonitor:
 
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>> ctx = neptune.Context()
-        >>> monitor = sk_utils.NeptuneMonitor(ctx)
+        >>>
+        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>>
+        >>> monitor = sk_utils.NeptuneMonitor()
 
         Run skopt training passing monitor as a a callback
 
@@ -39,25 +44,25 @@ class NeptuneMonitor:
 
     """
 
-    def __init__(self, ctx):
-        self._ctx = ctx
+    def __init__(self, experiment=None):
+        self._exp = experiment if experiment else neptune
         self._iteration = 0
 
     def __call__(self, res):
-        self._ctx.channel_send('hyperparameter_search_score',
-                               x=self._iteration, y=res.func_vals[-1])
-        self._ctx.channel_send('search_parameters',
-                               x=self._iteration, y=NeptuneMonitor._get_last_params(res))
+        self._exp.send_metric('run_score',
+                              x=self._iteration, y=res.func_vals[-1])
+        self._exp.send_text('run_parameters',
+                            x=self._iteration, y=NeptuneMonitor._get_last_params(res))
         self._iteration += 1
 
     @staticmethod
     def _get_last_params(res):
         param_vals = res.x_iters[-1]
         named_params = _format_to_named_params(param_vals, res)
-        return named_params
+        return str(named_params)
 
 
-def send_runs(results, ctx):
+def send_runs(results, experiment=None):
     """Logs runs results and parameters to neptune.
 
     Text channel `hyperparameter_search_score` is created and a list of tuples (name, value)
@@ -66,7 +71,7 @@ def send_runs(results, ctx):
     Args:
         results('scipy.optimize.OptimizeResult'): Results object that is typically an
             output of the function like `skopt.forest_minimize(...)`
-        ctx(`neptune.Context`): Neptune context.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
         Run skopt training.
@@ -78,18 +83,23 @@ def send_runs(results, ctx):
 
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>> ctx = neptune.Context()
-        >>> sk_monitor.send_best_parameters(results, ctx)
+        >>>
+        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>>
+        >>> sk_monitor.send_best_parameters(results)
 
     """
+
+    _exp = experiment if experiment else neptune
+
     for loss, params in zip(results.func_vals, results.x_iters):
-        ctx.channel_send('hyperparameter_search_score', y=loss)
+        _exp.send_metric('run_score', y=loss)
 
         named_params = _format_to_named_params(params, results)
-        ctx.channel_send('search_parameters', named_params)
+        _exp.send_text('run_parameters', str(named_params))
 
 
-def send_best_parameters(results, ctx):
+def send_best_parameters(results, experiment=None):
     """Logs best_parameters list to neptune.
 
     Text channel `best_parameters` is created and a list of tuples (name, value)
@@ -98,7 +108,7 @@ def send_best_parameters(results, ctx):
     Args:
         results('scipy.optimize.OptimizeResult'): Results object that is typically an
             output of the function like `skopt.forest_minimize(...)`
-        ctx(`neptune.Context`): Neptune context.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
         Run skopt training.
@@ -110,16 +120,19 @@ def send_best_parameters(results, ctx):
 
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>> ctx = neptune.Context()
-        >>> sk_monitor.send_best_parameters(results, ctx)
+        >>>
+        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>>
+        >>> sk_monitor.send_best_parameters(results)
 
     """
-    param_vals = results.x
-    named_params = _format_to_named_params(param_vals, results)
-    ctx.channel_send('best_parameters', named_params)
+    _exp = experiment if experiment else neptune
+
+    named_params = _format_to_named_params(results.x, results)
+    _exp.set_property('best_parameters', str(named_params))
 
 
-def send_plot_convergence(results, ctx):
+def send_plot_convergence(results, experiment=None, channel_name='convergence'):
     """Logs skopt plot_convergence figure to neptune.
 
     Image channel `convergence` is created and the output of the
@@ -129,7 +142,7 @@ def send_plot_convergence(results, ctx):
     Args:
         results('scipy.optimize.OptimizeResult'): Results object that is typically an
             output of the function like `skopt.forest_minimize(...)`
-        ctx(`neptune.Context`): Neptune context.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
         Run skopt training.
@@ -141,18 +154,24 @@ def send_plot_convergence(results, ctx):
 
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>> ctx = neptune.Context()
-        >>> sk_monitor.send_plot_convergence(results, ctx)
+        >>>
+        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>>
+        >>> sk_monitor.send_plot_convergence(results)
 
     """
-    convergence = fig2pil(axes2fig(sk_plots.plot_convergence(results)))
-    ctx.channel_send('convergence', neptune.Image(
-        name='convergence',
-        description="plot_convergence from skopt",
-        data=convergence))
+
+    _exp = experiment if experiment else neptune
+
+    fig, ax = plt.subplots(figsize=(16, 12))
+    sk_plots.plot_convergence(results, ax=ax)
+
+    with tempfile.NamedTemporaryFile(suffix='.png') as f:
+        fig.savefig(f.name)
+        _exp.send_image(channel_name, f.name)
 
 
-def send_plot_evaluations(results, ctx):
+def send_plot_evaluations(results, experiment=None, channel_name='evaluations'):
     """Logs skopt plot_evaluations figure to neptune.
 
     Image channel `evaluations` is created and the output of the
@@ -162,7 +181,7 @@ def send_plot_evaluations(results, ctx):
     Args:
         results('scipy.optimize.OptimizeResult'): Results object that is typically an
             output of the function like `skopt.forest_minimize(...)`
-        ctx(`neptune.Context`): Neptune context.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
         Run skopt training.
@@ -174,18 +193,23 @@ def send_plot_evaluations(results, ctx):
 
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>> ctx = neptune.Context()
-        >>> sk_monitor.send_plot_evaluations(results, ctx)
+        >>>
+        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>>
+        >>> sk_monitor.send_plot_evaluations(results)
 
     """
-    evaluations = fig2pil(axes2fig(sk_plots.plot_evaluations(results, bins=10)))
-    ctx.channel_send('evaluations', neptune.Image(
-        name='evaluations',
-        description="plot_evaluations from skopt",
-        data=evaluations))
+    _exp = experiment if experiment else neptune
+
+    fig = plt.figure(figsize=(16, 12))
+    fig = axes2fig(sk_plots.plot_evaluations(results, bins=10), fig=fig)
+
+    with tempfile.NamedTemporaryFile(suffix='.png') as f:
+        fig.savefig(f.name)
+        _exp.send_image(channel_name, f.name)
 
 
-def send_plot_objective(results, ctx):
+def send_plot_objective(results, experiment=None, channel_name='objective'):
     """Logs skopt plot_objective figure to neptune.
 
     Image channel `objective` is created and the output of the
@@ -195,35 +219,36 @@ def send_plot_objective(results, ctx):
     Args:
         results('scipy.optimize.OptimizeResult'): Results object that is typically an
             output of the function like `skopt.forest_minimize(...)`
-        ctx(`neptune.Context`): Neptune context.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
         Run skopt training.
 
         >>> results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
+        >>>                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
         Send skopt plot_objective figure to neptune.
 
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>> ctx = neptune.Context()
-        >>> sk_monitor.send_plot_objective(results, ctx)
+        >>>
+        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>>
+        >>> sk_monitor.send_plot_objective(results)
 
     """
+
+    _exp = experiment if experiment else neptune
+    fig = plt.figure(figsize=(16, 12))
+
     try:
-        objective = fig2pil(axes2fig(sk_plots.plot_objective(results)))
-        ctx.channel_send('objective', neptune.Image(
-            name='objective',
-            description="plot_objective from skopt",
-            data=objective))
+        fig = axes2fig(sk_plots.plot_objective(results), fig=fig)
+        with tempfile.NamedTemporaryFile(suffix='.png') as f:
+            fig.savefig(f.name)
+            _exp.send_image(channel_name, f.name)
     except Exception as e:
         print('Could not create ans objective chart due to error: {}'.format(e))
 
 
 def _format_to_named_params(params, result):
-    param_names = [dim.name for dim in result.space.dimensions]
-    named_params = []
-    for name, val in zip(param_names, params):
-        named_params.append((name, val))
-    return named_params
+    return ([(dimension.name, param) for dimension, param in zip(result.space, params)])
