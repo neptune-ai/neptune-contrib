@@ -153,7 +153,7 @@ def optuna2skopt(results):
     """
 
     results_ = results['params']
-    results_['target'] = -1.0 * results['value']
+    results_['target'] = results['value']
     return df2result(results_,
                      metric_col='target',
                      param_cols=[col for col in results_.columns if col != 'target'])
