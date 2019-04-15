@@ -24,7 +24,12 @@ autodoc_mock_imports = ['altair',
                         'telegram',
                         'pandas',
                         'neptune',
-                        'matplotlib']
+                        'matplotlib',
+                        'scipy',
+                        'seaborn',
+                        'skopt',
+                        'scikitplot',
+                        'scikitplot.metrics']
 
 # -- Project information -----------------------------------------------------
 
