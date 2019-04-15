@@ -92,8 +92,8 @@ def send_runs(results, experiment=None):
 
     _exp = experiment if experiment else neptune
 
-    for loss, params in zip(results.func_vals, results.x_iters):
-        _exp.send_metric('run_score', y=loss)
+    for i, (loss, params) in enumerate(zip(results.func_vals, results.x_iters)):
+        _exp.send_metric('run_score', x=i, y=loss)
 
         named_params = _format_to_named_params(params, results)
         _exp.send_text('run_parameters', str(named_params))

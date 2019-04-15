@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+import numpy as np
 import pandas as pd
 from scipy.optimize import OptimizeResult
 import skopt
@@ -64,7 +65,7 @@ def hyperopt2skopt(trials, space):
         results_.setdefault('x_iters', []).append(trial_params)
         results_.setdefault('func_vals', []).append(trial['result']['loss'])
     optimize_results = OptimizeResult()
-    optimize_results.x = list(trials.argmin.values())
+    optimize_results.x = [trials.argmin[name] for name in param_names]
     optimize_results.x_iters = results_['x_iters']
     optimize_results.fun = trials.best_trial['result']['loss']
     optimize_results.func_vals = results_['func_vals']
@@ -152,7 +153,7 @@ def optuna2skopt(results):
     """
 
     results_ = results['params']
-    results_['target'] = -1.0 * results['value']
+    results_['target'] = results['value']
     return df2result(results_,
                      metric_col='target',
                      param_cols=[col for col in results_.columns if col != 'target'])
@@ -231,6 +232,7 @@ def _convert_space_hop_skopt(space):
         elif method == 'uniform':
             dimensions.append(skopt.space.Real(low, high, name=name, prior='uniform'))
         elif method == 'loguniform':
+            low, high = np.exp(low), np.exp(high)
             dimensions.append(skopt.space.Real(low, high, name=name, prior='log-uniform'))
         else:
             raise NotImplementedError
