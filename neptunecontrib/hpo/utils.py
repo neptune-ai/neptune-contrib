@@ -232,7 +232,7 @@ def _convert_space_hop_skopt(space):
         elif method == 'uniform':
             dimensions.append(skopt.space.Real(low, high, name=name, prior='uniform'))
         elif method == 'loguniform':
-            low, high = np.exp(low), np.exp(high) 
+            low, high = np.exp(low), np.exp(high)
             dimensions.append(skopt.space.Real(low, high, name=name, prior='log-uniform'))
         else:
             raise NotImplementedError
