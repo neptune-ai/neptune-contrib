@@ -32,7 +32,7 @@ class NeptuneMonitor:
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
         >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
         >>>
         >>> monitor = sk_utils.NeptuneMonitor()
 
@@ -84,7 +84,7 @@ def send_runs(results, experiment=None):
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
         >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
         >>>
         >>> sk_monitor.send_best_parameters(results)
 
@@ -121,7 +121,7 @@ def send_best_parameters(results, experiment=None):
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
         >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
         >>>
         >>> sk_monitor.send_best_parameters(results)
 
@@ -155,7 +155,7 @@ def send_plot_convergence(results, experiment=None, channel_name='convergence'):
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
         >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
         >>>
         >>> sk_monitor.send_plot_convergence(results)
 
@@ -194,7 +194,7 @@ def send_plot_evaluations(results, experiment=None, channel_name='evaluations'):
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
         >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
         >>>
         >>> sk_monitor.send_plot_evaluations(results)
 
@@ -232,7 +232,7 @@ def send_plot_objective(results, experiment=None, channel_name='objective'):
         >>> import neptune
         >>> import neptunecontrib.monitoring.skopt as sk_utils
         >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
         >>>
         >>> sk_monitor.send_plot_objective(results)
 
