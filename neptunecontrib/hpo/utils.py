@@ -115,7 +115,6 @@ def df2result(df, metric_col, param_cols, param_types=None):
         param_types = [float for _ in param_cols]
 
     df = _prep_df(df, param_cols, param_types)
-    df = df.sort_values(metric_col, ascending=False)
     param_space = _convert_to_param_space(df, param_cols, param_types)
 
     results = OptimizeResult()
@@ -186,6 +185,7 @@ def bayes2skopt(results):
 
     results = [{'target': trial['target'], **trial['params']} for trial in results]
     results_df = pd.DataFrame(results)
+    results_df['target'] = -1.0 * results_df['target']
     return df2result(results_df,
                      metric_col='target',
                      param_cols=[col for col in results_df.columns if col != 'target'])
