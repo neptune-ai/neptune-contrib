@@ -191,6 +191,37 @@ def bayes2skopt(results):
                      param_cols=[col for col in results_df.columns if col != 'target'])
 
 
+def hpbandster2skopt(results):
+    """Converts hpbandster results to scipy OptimizeResult.
+
+    Helper function that converts the hpbandster results instance into scipy OptimizeResult
+    format.
+
+    Args:
+        results(tuple): tuple of params(pandas.DataFrame), loss(pandas.DataFrame).
+            It is the output of running study.get_pandas_dataframe().
+
+    Returns:
+        `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
+
+    Examples:
+        Run your optuna study.
+
+        >>> study = optuna.create_study()
+        >>> study.optimize(objective, n_trials=100)
+
+        Convert trials_dataframe object to the OptimizeResult object.
+
+        >>> import neptunecontrib.hpo.utils as hp_utils
+        >>> results = hp_utils.optuna2skopt(study.trials_dataframe())
+    """
+    params, loss = results
+    params.drop(columns='budget', index=1, inplace=True)
+    results_ = params.copy()
+    results_['target'] = loss['loss']
+    return df2result(results_, metric_col='target', param_cols=params.columns)
+
+
 def _prep_df(df, param_cols, param_types):
     for col, col_type in zip(param_cols, param_types):
         df[col] = df[col].astype(col_type)
