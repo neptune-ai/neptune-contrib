@@ -115,7 +115,6 @@ def df2result(df, metric_col, param_cols, param_types=None):
         param_types = [float for _ in param_cols]
 
     df = _prep_df(df, param_cols, param_types)
-    df = df.sort_values(metric_col, ascending=False)
     param_space = _convert_to_param_space(df, param_cols, param_types)
 
     results = OptimizeResult()
@@ -127,15 +126,14 @@ def df2result(df, metric_col, param_cols, param_types=None):
     return results
 
 
-def optuna2skopt(results):
-    """Converts optuna results to scipy OptimizeResult.
+def optuna2skopt(study):
+    """Converts optuna study to scipy OptimizeResult.
 
-    Helper function that converts the optuna Trials instance into scipy OptimizeResult
+    Helper function that converts the optuna Study instance into scipy OptimizeResult
     format.
 
     Args:
-        results(`pandas.DataFrame`): Dataframe containing scores and hyperparameters.
-            It is the output of running study.trials_dataframe().
+        study(`optuna.study.Study`): Study isntance containing scores and hyperparameters.
 
     Returns:
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
@@ -149,9 +147,9 @@ def optuna2skopt(results):
         Convert trials_dataframe object to the OptimizeResult object.
 
         >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.optuna2skopt(study.trials_dataframe())
+        >>> results = hp_utils.optuna2skopt(study)
     """
-
+    results = study.trials_dataframe()
     results_ = results['params']
     results_['target'] = results['value']
     return df2result(results_,
@@ -159,15 +157,14 @@ def optuna2skopt(results):
                      param_cols=[col for col in results_.columns if col != 'target'])
 
 
-def bayes2skopt(results):
-    """Converts BayesOptimization results to scipy OptimizeResult.
+def bayes2skopt(bayes_opt):
+    """Converts BayesOptimization instance to scipy OptimizeResult.
 
-    Helper function that converts the optuna Trials instance into scipy OptimizeResult
+    Helper function that converts the BayesOptimization instance into scipy OptimizeResult
     format.
 
     Args:
-        results(`pandas.DataFrame`): Dataframe containing scores and hyperparameters.
-            It is the output of running study.trials_dataframe().
+        bayes_opt(`bayes_opt.Bbyesian_optimization.BayesianOptimization`): BayesianOptimization instance.
 
     Returns:
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
@@ -180,15 +177,51 @@ def bayes2skopt(results):
 
         Convert bayes.space.res() object to the OptimizeResult object.
 
-        >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.bayes2skopt(bayes_optimization.space.res())
-    """
+    Note:
+        Since skopt is always minimizng and BayesianOptimization is maximizing, the objective function values are
+        converted into negatives for consistency.
 
+        >>> import neptunecontrib.hpo.utils as hp_utils
+        >>> results = hp_utils.bayes2skopt(bayes_optimization)
+    """
+    results = bayes_opt.space.res()
     results = [{'target': trial['target'], **trial['params']} for trial in results]
     results_df = pd.DataFrame(results)
+    results_df['target'] = -1.0 * results_df['target']
     return df2result(results_df,
                      metric_col='target',
                      param_cols=[col for col in results_df.columns if col != 'target'])
+
+
+def hpbandster2skopt(results):
+    """Converts hpbandster results to scipy OptimizeResult.
+
+    Helper function that converts the hpbandster Result instance into scipy OptimizeResult
+    format.
+
+    Args:
+        results(hpbandster.core.Result): Result instance containing parameters and loss values.
+
+    Returns:
+        `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
+
+    Examples:
+        Run your hpbandster study.
+
+        >>> optim = BOHB(configspace = worker.get_configspace())
+        >>> results = optim.run(n_iterations=100)
+
+        Convert hpbandster Result object into the OptimizeResult object.
+
+        >>> import neptunecontrib.hpo.utils as hp_utils
+        >>> results = hp_utils.hpbandster2skopt(results)
+    """
+    results = results.get_pandas_dataframe()
+    params, loss = results
+    params.drop(columns='budget', index=1, inplace=True)
+    results_ = params.copy()
+    results_['target'] = loss['loss']
+    return df2result(results_, metric_col='target', param_cols=params.columns)
 
 
 def _prep_df(df, param_cols, param_types):

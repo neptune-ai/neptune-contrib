@@ -39,9 +39,9 @@ copyright = '2019, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
-version = '0.4'
+version = '0.5'
 # The full version, including alpha/beta/rc tags
-release = '0.4.2'
+release = '0.5.0'
 
 # -- General configuration ---------------------------------------------------
 
