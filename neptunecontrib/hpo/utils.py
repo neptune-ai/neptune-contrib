@@ -120,8 +120,8 @@ def df2result(df, metric_col, param_cols, param_types=None):
     results = OptimizeResult()
     results.x_iters = df[param_cols].values
     results.func_vals = df[metric_col].to_list()
-    results.x = results.x_iters[0]
-    results.fun = results.func_vals[0]
+    results.x = results.x_iters[np.argmin(results.func_vals)]
+    results.fun = np.min(results.func_vals)
     results.space = param_space
     return results
 
