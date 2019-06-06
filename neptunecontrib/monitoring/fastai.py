@@ -88,7 +88,7 @@ class NeptuneMonitor(LearnerCallback):
         metric_names = ['valid_last_loss'] + kwargs['metrics']
         for metric_value, metric_name in zip(metric_values, metric_names):
             metric_name = getattr(metric_name, '__name__', metric_name)
-            self._exp.send_metric(self._prefix + metric_name, float(metric_value))
+            self._exp.send_metric(self._prefix + str(metric_name), float(metric_value))
 
     def on_batch_end(self, **kwargs):
         self._exp.send_metric('{}last_loss'.format(self._prefix), float(kwargs['last_loss']))
