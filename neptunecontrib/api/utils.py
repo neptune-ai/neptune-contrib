@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+import os
 import warnings
 
 import pandas as pd
@@ -194,6 +194,39 @@ def strip_prefices(columns, prefices):
                 col = col.replace(prefix, '')
         new_columns.append(col)
     return new_columns
+
+
+def get_filepaths(dirpath='.', extensions=None):
+    """Filters leaderboard columns to get the system column names.
+
+    Args:
+        dirpath(str): Folder from which all files with given extensions should be added to list.
+        extensions(list(str) or None): All extensions with which files should be added to the list.
+
+    Returns:
+        list: A list of filepaths with given extensions that are in the directory or subdirecotries.
+
+    Examples:
+        Initialize Neptune
+
+         >>> import neptune
+         >>> from neptunecontrib.versioning.data import log_data_version
+         >>> neptune.init('USER_NAME/PROJECT_NAME')
+
+         Create experiment and track all .py files from given directory and subdirs:
+
+         >>> with neptune.create_experiment(upload_source_files=get_filepaths(extensions=['.py'])):
+         >>>    neptune.send_metric('score', 0.97)
+
+    """
+    if not extensions:
+        extensions = ['.py', '.yaml', 'yml']
+    files = []
+    for r, d, f in os.walk(dirpath):
+        for file in f:
+            if any(file.endswith(ext) for ext in extensions):
+                files.append(os.path.join(r, file))
+    return files
 
 
 def _prep_time_column(progress_df):
