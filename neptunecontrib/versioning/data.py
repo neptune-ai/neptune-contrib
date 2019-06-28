@@ -21,10 +21,10 @@ import neptune
 
 
 def log_data_version(path, prefix='', experiment=None):
-    """Logs data version to Neptune
+    """Logs data version of file or folder to Neptune
 
     For a path it calculates the hash and logs it along with the path itself as a property to Neptune experiment.
-    Path to dataset, which can be a file or directory.
+    Path to dataset can be a file or directory.
 
     Args:
         path(str): path to the file or directory,
@@ -54,10 +54,11 @@ def log_data_version(path, prefix='', experiment=None):
 
 
 def log_s3_data_version(bucket_name, path, prefix='', experiment=None):
-    """Logs data version to Neptune
+    """Logs data version of s3 bucket to Neptune
 
-    For a path it calculates the hash and logs it along with the path itself as a property to Neptune experiment.
-    Path to dataset, which can be a file or directory.
+    For a bucket and path it calculates the hash and logs it along with the path itself as a property to
+    Neptune experiment.
+    Path is either the s3 bucket key to a file or the begining of a key (in case you use a "folder" structure).
 
     Args:
         bucket_name(str): name of the s3 bucket
@@ -70,7 +71,7 @@ def log_s3_data_version(bucket_name, path, prefix='', experiment=None):
         Initialize Neptune
 
          >>> import neptune
-         >>> from neptunecontrib.versioning.data import log_data_version
+         >>> from neptunecontrib.versioning.data import log_s3_data_version
          >>> neptune.init('USER_NAME/PROJECT_NAME')
 
          Log data version from bucket
@@ -78,7 +79,7 @@ def log_s3_data_version(bucket_name, path, prefix='', experiment=None):
          >>> BUCKET = 'my-bucket'
          >>> PATH = 'train_dir/'
          >>> with neptune.create_experiment():
-         >>>    log_data_version(BUCKET, PATH)
+         >>>    log_s3_data_version(BUCKET, PATH)
 
     """
 
