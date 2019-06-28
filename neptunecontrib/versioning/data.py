@@ -63,16 +63,14 @@ def _md5_hash_path(path):
 
 def _md5_hash_file(filepath):
     hash_md5 = hashlib.md5()
-    with open(filepath, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
+    hash_md5 = _update_hash_md5(hash_md5, filepath)
     return hash_md5.hexdigest()
 
 
 def _md5_hash_dir(dirpath):
     hash_md5 = hashlib.md5()
 
-    for root, dirs, files in os.walk(dirpath):
+    for root, _, files in os.walk(dirpath):
         for names in files:
             filepath = os.path.join(root, names)
 
@@ -80,8 +78,13 @@ def _md5_hash_dir(dirpath):
             hash_md5.update(hashlib.sha1(filepath[len(dirpath):].encode()).digest())
 
             if os.path.isfile(filepath):
-                with open(filepath, "rb") as f:
-                    for chunk in iter(lambda: f.read(4096), b""):
-                        hash_md5.update(chunk)
+                hash_md5 = _update_hash_md5(hash_md5, filepath)
 
     return hash_md5.hexdigest()
+
+
+def _update_hash_md5(hash_md5, filepath):
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5
