@@ -1,3 +1,4 @@
+boto3
 oauthlib
 PyJWT
 neptune-client
