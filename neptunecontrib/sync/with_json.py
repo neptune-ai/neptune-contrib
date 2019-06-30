@@ -64,9 +64,9 @@ Example:
 
     Now you can sync your file with neptune::
 
-        $ python neptunecontrib.sync.with_json 
+        $ python neptunecontrib.sync.with_json
             --neptune_api_token 'ey7123qwwskdnaqsojnd1ru0129e12e=='
-            --project_name neptune-ml/neptune-examples 
+            --project_name neptune-ml/neptune-examples
             --filepath experiment_data.json
 
 Note:

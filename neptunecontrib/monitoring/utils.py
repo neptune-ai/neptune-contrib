@@ -37,7 +37,7 @@ def axes2fig(axes, fig=None):
         Assuming you have a `scipy.optimize.OptimizeResult` object you want to plot::
 
             from skopt.plots import plot_evaluations
-            eval_plot = plot_evaluations(result, bins=20) 
+            eval_plot = plot_evaluations(result, bins=20)
             >>> type(eval_plot)
                 numpy.ndarray
 

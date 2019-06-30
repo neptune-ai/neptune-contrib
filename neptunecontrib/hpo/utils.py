@@ -107,8 +107,8 @@ def df2result(df, metric_col, param_cols, param_types=None):
 
             result = df2result(leaderboard,
                 metric_col='channel_ROC_AUC',
-                param_cols=['parameter_lgbm__max_depth', 
-                            'parameter_lgbm__num_leaves', 
+                param_cols=['parameter_lgbm__max_depth',
+                            'parameter_lgbm__num_leaves',
                             'parameter_lgbm__min_child_samples'])
 
     """
@@ -179,7 +179,7 @@ def bayes2skopt(bayes_opt):
             bayes_optimization.maximize(init_points=10, n_iter=100, xi=0.06)
 
         Convert bayes.space.res() object to the OptimizeResult object::
-        
+
             import neptunecontrib.hpo.utils as hp_utils
             results = hp_utils.bayes2skopt(bayes_optimization)
 

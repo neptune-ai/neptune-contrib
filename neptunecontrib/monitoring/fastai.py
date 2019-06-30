@@ -62,9 +62,9 @@ class NeptuneMonitor(LearnerCallback):
 
             import neptune
             from neptunecontrib.monitoring.fastai import NeptuneMonitor
-        
+
             neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        
+
             with neptune.create_experiment():
                 monitor = NeptuneMonitor()
                 learn = create_cnn(data, models.resnet18,

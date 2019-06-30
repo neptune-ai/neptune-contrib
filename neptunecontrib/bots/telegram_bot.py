@@ -43,8 +43,8 @@ Attributes:
 Example:
     Spin off your bot::
 
-        $ python neptunecontrib.bots.telegram 
-            --telegram_api_token 'a1249auscvas0vbia0fias0' 
+        $ python neptunecontrib.bots.telegram
+            --telegram_api_token 'a1249auscvas0vbia0fias0'
             --neptune_api_token 'asdjpsvdsg987das0f9sad0fjasdf='
 
     Go to your telegram and type.
