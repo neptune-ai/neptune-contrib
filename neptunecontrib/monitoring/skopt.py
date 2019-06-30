@@ -27,19 +27,19 @@ class NeptuneMonitor:
     """Logs hyperparameter optimization process to Neptune.
 
     Examples:
-        Initialize NeptuneMonitor.
+        Initialize NeptuneMonitor::
 
-        >>> import neptune
-        >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>>
-        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> monitor = sk_utils.NeptuneMonitor()
+            import neptune
+            import neptunecontrib.monitoring.skopt as sk_utils
+        
+            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
+        
+            monitor = sk_utils.NeptuneMonitor()
 
-        Run skopt training passing monitor as a a callback
+        Run skopt training passing monitor as a a callback::
 
-        >>> ...
-        >>> results = skopt.forest_minimize(objective, space, callback=[monitor],
+            ...
+            results = skopt.forest_minimize(objective, space, callback=[monitor],
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
     """
@@ -74,19 +74,20 @@ def send_runs(results, experiment=None):
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
-        Run skopt training.
+        Run skopt training::
 
-        >>> results = skopt.forest_minimize(objective, space,
+            ...
+            results = skopt.forest_minimize(objective, space,
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
-        Send best parameters to neptune.
+        Send best parameters to neptune::
 
-        >>> import neptune
-        >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>>
-        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> sk_monitor.send_best_parameters(results)
+            import neptune
+            import neptunecontrib.monitoring.skopt as sk_utils
+        
+            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
+        
+            sk_monitor.send_best_parameters(results)
 
     """
 
@@ -111,19 +112,20 @@ def send_best_parameters(results, experiment=None):
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
-        Run skopt training.
+        Run skopt training::
 
-        >>> results = skopt.forest_minimize(objective, space,
+            ...
+            results = skopt.forest_minimize(objective, space,
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
-        Send best parameters to neptune.
+        Send best parameters to neptune::
 
-        >>> import neptune
-        >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>>
-        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> sk_monitor.send_best_parameters(results)
+            import neptune
+            import neptunecontrib.monitoring.skopt as sk_utils
+        
+            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
+        
+            sk_monitor.send_best_parameters(results)
 
     """
     _exp = experiment if experiment else neptune
@@ -145,19 +147,20 @@ def send_plot_convergence(results, experiment=None, channel_name='convergence'):
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
-        Run skopt training.
+        Run skopt training::
 
-        >>> results = skopt.forest_minimize(objective, space,
+            ...
+            results = skopt.forest_minimize(objective, space,
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
-        Send skopt plot_convergence figure to neptune.
+        Send skopt plot_convergence figure to neptune::
 
-        >>> import neptune
-        >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>>
-        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> sk_monitor.send_plot_convergence(results)
+            import neptune
+            import neptunecontrib.monitoring.skopt as sk_utils
+        
+            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
+        
+            sk_monitor.send_plot_convergence(results)
 
     """
 
@@ -184,19 +187,20 @@ def send_plot_evaluations(results, experiment=None, channel_name='evaluations'):
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
-        Run skopt training.
+        Run skopt training::
 
-        >>> results = skopt.forest_minimize(objective, space,
+            ...
+            results = skopt.forest_minimize(objective, space,
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
-        Send skopt plot_evaluations figure to neptune.
+        Send skopt plot_evaluations figure to neptune::
 
-        >>> import neptune
-        >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>>
-        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> sk_monitor.send_plot_evaluations(results)
+            import neptune
+            import neptunecontrib.monitoring.skopt as sk_utils
+        
+            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
+        
+            sk_monitor.send_plot_evaluations(results)
 
     """
     _exp = experiment if experiment else neptune
@@ -222,19 +226,20 @@ def send_plot_objective(results, experiment=None, channel_name='objective'):
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
 
     Examples:
-        Run skopt training.
+        Run skopt training::
 
-        >>> results = skopt.forest_minimize(objective, space,
-        >>>                                 base_estimator='ET', n_calls=100, n_random_starts=10)
+            ...
+            results = skopt.forest_minimize(objective, space,
+                                            base_estimator='ET', n_calls=100, n_random_starts=10)
 
-        Send skopt plot_objective figure to neptune.
+        Send skopt plot_objective figure to neptune::
 
-        >>> import neptune
-        >>> import neptunecontrib.monitoring.skopt as sk_utils
-        >>>
-        >>> neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> sk_monitor.send_plot_objective(results)
+            import neptune
+            import neptunecontrib.monitoring.skopt as sk_utils
+        
+            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
+        
+            sk_monitor.send_plot_objective(results)
 
     """
 

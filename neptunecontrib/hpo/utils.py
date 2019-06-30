@@ -39,23 +39,23 @@ def hyperopt2skopt(trials, space):
 
 
     Examples:
-        Prepare the space of hyperparameters to search over.
+        Prepare the space of hyperparameters to search over::
 
-        >>> from hyperopt import hp, tpe, fmin, Trials
-        >>> space = OrderedDict(num_leaves=hp.choice('num_leaves', range(10, 60, 1)),
-                    max_depth=hp.choice('max_depth', range(2, 30, 1)),
-                    feature_fraction=hp.uniform('feature_fraction', 0.1, 0.9)
-                   )
+            from hyperopt import hp, tpe, fmin, Trials
+            space = OrderedDict(num_leaves=hp.choice('num_leaves', range(10, 60, 1)),
+                        max_depth=hp.choice('max_depth', range(2, 30, 1)),
+                        feature_fraction=hp.uniform('feature_fraction', 0.1, 0.9)
+                               )
 
-        Create an objective and run your hyperopt training
+        Create an objective and run your hyperopt training::
 
-        >>> trials = Trials()
-        >>> _ = fmin(objective, space, trials=trials, algo=tpe.suggest, max_evals=100)
+            trials = Trials()
+            _ = fmin(objective, space, trials=trials, algo=tpe.suggest, max_evals=100)
 
-        Convert trials object to the OptimizeResult object.
+        Convert trials object to the OptimizeResult object::
 
-        >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.hyperopt2skopt(trials, space)
+            import neptunecontrib.hpo.utils as hp_utils
+            results = hp_utils.hyperopt2skopt(trials, space)
     """
     param_names = list(space.keys())
     skopt_space = _convert_space_hop_skopt(space)
@@ -92,22 +92,24 @@ def df2result(df, metric_col, param_cols, param_types=None):
         information.
 
     Examples:
-        Instantiate a session.
+        Instantiate a session::
 
-        >>> from neptune.sessions import Session
-        >>> session = Session()
+            from neptune.sessions import Session
+            session = Session()
 
-        Fetch a project and a list of experiments.
+        Fetch a project and a list of experiments::
 
-        >>> project = session.get_projects('neptune-ml')['neptune-ml/Home-Credit-Default-Risk']
-        >>> leaderboard = project.get_leaderboard(state=['succeeded'], owner=['czakon'])
+            project = session.get_projects('neptune-ml')['neptune-ml/Home-Credit-Default-Risk']
+            leaderboard = project.get_leaderboard(state=['succeeded'], owner=['czakon'])
 
         Comvert the leaderboard dataframe to the `ResultOptimize` instance taking only the parameters and
-        metric that you care about.
+        metric that you care about::
 
-        >>> result = df2result(leaderboard,
-        metric_col='channel_ROC_AUC',
-        param_cols=['parameter_lgbm__max_depth', 'parameter_lgbm__num_leaves', 'parameter_lgbm__min_child_samples'])
+            result = df2result(leaderboard,
+                metric_col='channel_ROC_AUC',
+                param_cols=['parameter_lgbm__max_depth', 
+                            'parameter_lgbm__num_leaves', 
+                            'parameter_lgbm__min_child_samples'])
 
     """
 
@@ -139,15 +141,15 @@ def optuna2skopt(study):
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
 
     Examples:
-        Run your optuna study.
+        Run your optuna study::
 
-        >>> study = optuna.create_study()
-        >>> study.optimize(objective, n_trials=100)
+            study = optuna.create_study()
+            study.optimize(objective, n_trials=100)
 
-        Convert trials_dataframe object to the OptimizeResult object.
+        Convert trials_dataframe object to the OptimizeResult object::
 
-        >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.optuna2skopt(study)
+            import neptunecontrib.hpo.utils as hp_utils
+            results = hp_utils.optuna2skopt(study)
     """
     results = study.trials_dataframe()
     results_ = results['params']
@@ -170,19 +172,22 @@ def bayes2skopt(bayes_opt):
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
 
     Examples:
-        Run BayesOptimize maximization.
+        Run BayesOptimize maximization::
 
-        >>> bayes_optimization = BayesianOptimization(objective, space)
-        >>> bayes_optimization.maximize(init_points=10, n_iter=100, xi=0.06)
+            ...
+            bayes_optimization = BayesianOptimization(objective, space)
+            bayes_optimization.maximize(init_points=10, n_iter=100, xi=0.06)
 
-        Convert bayes.space.res() object to the OptimizeResult object.
+        Convert bayes.space.res() object to the OptimizeResult object::
+        
+            import neptunecontrib.hpo.utils as hp_utils
+            results = hp_utils.bayes2skopt(bayes_optimization)
 
     Note:
         Since skopt is always minimizng and BayesianOptimization is maximizing, the objective function values are
-        converted into negatives for consistency.
+        converted into negatives for consistency::
 
-        >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.bayes2skopt(bayes_optimization)
+
     """
     results = bayes_opt.space.res()
     results = [{'target': trial['target'], **trial['params']} for trial in results]
@@ -206,15 +211,15 @@ def hpbandster2skopt(results):
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
 
     Examples:
-        Run your hpbandster study.
+        Run your hpbandster study::
 
-        >>> optim = BOHB(configspace = worker.get_configspace())
-        >>> results = optim.run(n_iterations=100)
+            optim = BOHB(configspace = worker.get_configspace())
+            results = optim.run(n_iterations=100)
 
-        Convert hpbandster Result object into the OptimizeResult object.
+        Convert hpbandster Result object into the OptimizeResult object::
 
-        >>> import neptunecontrib.hpo.utils as hp_utils
-        >>> results = hp_utils.hpbandster2skopt(results)
+            import neptunecontrib.hpo.utils as hp_utils
+            results = hp_utils.hpbandster2skopt(results)
     """
     results = results.get_pandas_dataframe()
     params, loss = results

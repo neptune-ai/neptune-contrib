@@ -33,17 +33,17 @@ def log_data_version(path, prefix='', experiment=None):
            neptune experiment it can be passed here. By default it is logged to the current experiment.
 
     Examples:
-        Initialize Neptune
+        Initialize Neptune::
 
-         >>> import neptune
-         >>> from neptunecontrib.versioning.data import log_data_version
-         >>> neptune.init('USER_NAME/PROJECT_NAME')
+            import neptune
+            from neptunecontrib.versioning.data import log_data_version
+            neptune.init('USER_NAME/PROJECT_NAME')
 
-         Log data version from filepath
+        Log data version from filepath::
 
-         >>> FILEPATH = '/path/to/data/my_data.csv'
-         >>> with neptune.create_experiment():
-         >>>    log_data_version(FILEPATH)
+            FILEPATH = '/path/to/data/my_data.csv'
+            with neptune.create_experiment():
+                log_data_version(FILEPATH)
 
     """
 
@@ -63,23 +63,23 @@ def log_s3_data_version(bucket_name, path, prefix='', experiment=None):
     Args:
         bucket_name(str): name of the s3 bucket
         path(str): path to the file or directory on s3 bucket
-        prefix(str): Prefix that will be added before 'ata_version' and 'data_path'
+        prefix(str): Prefix that will be added before 'data_version' and 'data_path'
         experiment(neptune.experiemnts.Experiment or None): if the data should be logged to a particular
            neptune experiment it can be passed here. By default it is logged to the current experiment.
 
     Examples:
-        Initialize Neptune
+        Initialize Neptune::
 
-         >>> import neptune
-         >>> from neptunecontrib.versioning.data import log_s3_data_version
-         >>> neptune.init('USER_NAME/PROJECT_NAME')
+            import neptune
+            from neptunecontrib.versioning.data import log_s3_data_version
+            neptune.init('USER_NAME/PROJECT_NAME')
 
-         Log data version from bucket
+        Log data version from bucket::
 
-         >>> BUCKET = 'my-bucket'
-         >>> PATH = 'train_dir/'
-         >>> with neptune.create_experiment():
-         >>>    log_s3_data_version(BUCKET, PATH)
+            BUCKET = 'my-bucket'
+            PATH = 'train_dir/'
+            with neptune.create_experiment():
+                log_s3_data_version(BUCKET, PATH)
 
     """
 

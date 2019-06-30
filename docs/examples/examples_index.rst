@@ -1,5 +1,7 @@
 .. toctree::
+   Data versioning <data_versioning>
    Interactive experiment run comparison <interactive_compare_experiments>
+   Code snapshoting <code_snapshots>
    Hyper parameter comparison <explore_hyperparams_skopt>
    Log model diagnostics <log_model_diagnostics>
    Monitor lightGBM training <monitor_lgbm>

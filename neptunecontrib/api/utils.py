@@ -38,20 +38,20 @@ def concat_experiments_on_channel(experiments, channel_name):
         values concatenated from a list of experiments.
 
     Examples:
-        Instantiate a session.
+        Instantiate a session::
 
-        >>> from neptune.sessions import Session
-        >>> session = Session()
+            from neptune.sessions import Session
+            session = Session()
 
-        Fetch a project and a list of experiments.
+        Fetch a project and a list of experiments::
 
-        >>> project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
-        >>> experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
+            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
 
-        Construct a channel value dataframe:
+        Construct a channel value dataframe::
 
-        >>> from neptunecontrib.api.utils import concat_experiments_on_channel
-        >>> compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
+            from neptunecontrib.api.utils import concat_experiments_on_channel
+            compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
 
     Note:
         If an experiment in the list of experiments does not contain the channel with a specified channel_name
@@ -91,22 +91,22 @@ def extract_project_progress_info(leadearboard, metric_colname, time_colname='fi
         columns.
 
     Examples:
-        Instantiate a session.
+        Instantiate a session::
 
-        >>> from neptune.sessions import Session
-        >>> session = Session()
+            from neptune.sessions import Session
+            session = Session()
 
-        Fetch a project and the experiment view of that project.
+        Fetch a project and the experiment view of that project::
 
-        >>> project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
-        >>> leaderboard = project.get_leaderboard()
+            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            leaderboard = project.get_leaderboard()
 
-        Create a progress info dataframe.
+        Create a progress info dataframe::
 
-        >>> from neptunecontrib.api.utils import extract_project_progress_info
-        >>> progress_df = extract_project_progress_info(leadearboard,
-        >>>                                             metric_colname='channel_IOUT',
-        >>>                                             time_colname='finished')
+            from neptunecontrib.api.utils import extract_project_progress_info
+            progress_df = extract_project_progress_info(leadearboard,
+                                                        metric_colname='channel_IOUT',
+                                                        time_colname='finished')
     """
     system_columns = ['id', 'owner', 'running_time', 'tags']
     progress_columns = system_columns + [time_colname, metric_colname]
@@ -207,16 +207,16 @@ def get_filepaths(dirpath='.', extensions=None):
         list: A list of filepaths with given extensions that are in the directory or subdirecotries.
 
     Examples:
-        Initialize Neptune
+        Initialize Neptune::
 
-         >>> import neptune
-         >>> from neptunecontrib.versioning.data import log_data_version
-         >>> neptune.init('USER_NAME/PROJECT_NAME')
+             import neptune
+             from neptunecontrib.versioning.data import log_data_version
+             neptune.init('USER_NAME/PROJECT_NAME')
 
-         Create experiment and track all .py files from given directory and subdirs:
+        Create experiment and track all .py files from given directory and subdirs::
 
-         >>> with neptune.create_experiment(upload_source_files=get_filepaths(extensions=['.py'])):
-         >>>    neptune.send_metric('score', 0.97)
+             with neptune.create_experiment(upload_source_files=get_filepaths(extensions=['.py'])):
+                 neptune.send_metric('score', 0.97)
 
     """
     if not extensions:

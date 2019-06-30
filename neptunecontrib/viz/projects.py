@@ -56,35 +56,35 @@ def project_progress(progress_df,
         also run the `.to_json()` method on it to convert it to the Vega-Lite json format.
 
     Examples:
-        Instantiate a session.
+        Instantiate a session::
 
-        >>> from neptunelib.api.session import Session
-        >>> session = Session()
+            from neptunelib.api.session import Session
+            session = Session()
 
-        Fetch a project and the experiment view of that project.
+        Fetch a project and the experiment view of that project::
 
-        >>> project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
-        >>> leaderboard = project.get_leaderboard()
+            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            leaderboard = project.get_leaderboard()
 
-        Create a progress info dataframe.
+        Create a progress info dataframe::
 
-        >>> from neptunecontrib.api.utils import extract_project_progress_info
-        >>> progress_df = extract_project_progress_info(leadearboard,
-        >>>                                             metric_colname='channel_IOUT',
-        >>>                                             time_colname='finished')
+            from neptunecontrib.api.utils import extract_project_progress_info
+            progress_df = extract_project_progress_info(leadearboard,
+                                                        metric_colname='channel_IOUT',
+                                                        time_colname='finished')
 
-        Plot interactive chart in notebook.
+        Plot interactive chart in notebook::
 
-        >>> from neptunecontrib.viz.projects import project_progress
-        >>> project_progress(progress_df)
+            from neptunecontrib.viz.projects import project_progress
+            project_progress(progress_df)
 
     Note:
         Because Vega-Lite visualizations keep all the chart data in the HTML the visualizations can consume huge
         amounts of memory if not handled properly. That is why, by default the hard limit of 5000 rows is set to
-        the len of dataframe. That being said, you can disable it by adding the following line in the notebook or code.
+        the len of dataframe. That being said, you can disable it by adding the following line in the notebook or code::
 
-        >>> import altair as alt
-        >>> alt.data_transformers.enable('default', max_rows=None)
+            import altair as alt
+            alt.data_transformers.enable('default', max_rows=None)
 
     """
     top_height, bottom_height = heights
