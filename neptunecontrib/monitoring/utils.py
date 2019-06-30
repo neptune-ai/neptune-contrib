@@ -34,17 +34,17 @@ def axes2fig(axes, fig=None):
         'matplotlib.figure.Figure': Matplotlib figure with axes objects as subplots.
 
     Examples:
-        Assuming you have a `scipy.optimize.OptimizeResult` object you want to plot.
+        Assuming you have a `scipy.optimize.OptimizeResult` object you want to plot::
 
-        >>> from skopt.plots import plot_evaluations
-        >>> eval_plot = plot_evaluations(result, bins=20)
-        >>> type(eval_plot)
-        numpy.ndarray
+            from skopt.plots import plot_evaluations
+            eval_plot = plot_evaluations(result, bins=20)
+            >>> type(eval_plot)
+                numpy.ndarray
 
-        >>> from neptunecontrib.viz.utils import axes2fig
-        >>> fig = axes2fig(eval_plot)
-        >>> fig
-        matplotlib.figure.Figure
+            from neptunecontrib.viz.utils import axes2fig
+            fig = axes2fig(eval_plot)
+            >>> fig
+                matplotlib.figure.Figure
 
     """
     try:

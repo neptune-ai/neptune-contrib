@@ -31,45 +31,43 @@ Attributes:
 
 Example:
     Run the experiment and create experiment json in any language.
-    For example, lets say your `experiment_data.json` is
+    For example, lets say your `experiment_data.json` is::
 
-    ```
-    {
-    'name': 'example',
-    'description': 'json tracking experiment',
-    'params': {'lr': 0.1,
-               'batch_size': 128,
-               'dropount': 0.5
-               },
-    'properties': {'data_version': '1231ffwefef9',
-                   'data_path': '/mnt/path/to/data'
+        {
+        'name': 'example',
+        'description': 'json tracking experiment',
+        'params': {'lr': 0.1,
+                   'batch_size': 128,
+                   'dropount': 0.5
                    },
-    'tags': ['resnet', 'no_preprocessing'],
-    'upload_source_files': ['train.sh'],
-    'send_metric': {'log_loss': {'x': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                                 'y': [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
-                                 },
-                    'accuracy': {'x': [0, 4, 5, 8, 9],
-                                 'y': [0.23, 0.47, 0.62, 0.89, 0.92]
-                                 }
-                    },
-    'send_text': {'hash': {'x': [0, 4, 5, 8, 9],
-                           'y': ['123123', 'as32e132', '123sdads', '123asdasd', ' asd324132a']
-                           },
-                  },
-    'send_image': {'heatmaps': {'x': [0, 1, 2],
-                                'y': ['img1.png', 'img2.png', 'img3.png']
-                                },
-                   },
-    }
-    ```
+        'properties': {'data_version': '1231ffwefef9',
+                       'data_path': '/mnt/path/to/data'
+                       },
+        'tags': ['resnet', 'no_preprocessing'],
+        'upload_source_files': ['train.sh'],
+        'send_metric': {'log_loss': {'x': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                                     'y': [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+                                     },
+                        'accuracy': {'x': [0, 4, 5, 8, 9],
+                                     'y': [0.23, 0.47, 0.62, 0.89, 0.92]
+                                     }
+                        },
+        'send_text': {'hash': {'x': [0, 4, 5, 8, 9],
+                               'y': ['123123', 'as32e132', '123sdads', '123asdasd', ' asd324132a']
+                               },
+                      },
+        'send_image': {'heatmaps': {'x': [0, 1, 2],
+                                    'y': ['img1.png', 'img2.png', 'img3.png']
+                                    },
+                       },
+        }
 
-    Now you can sync your file with neptune.
+    Now you can sync your file with neptune::
 
-    $ python neptunecontrib.sync.with_json \
-      --neptune_api_token 'ey7123qwwskdnaqsojnd1ru0129e12e=='
-      --project_name neptune-ml/neptune-examples \
-      --filepath experiment_data.json
+        $ python neptunecontrib.sync.with_json
+            --neptune_api_token 'ey7123qwwskdnaqsojnd1ru0129e12e=='
+            --project_name neptune-ml/neptune-examples
+            --filepath experiment_data.json
 
 Note:
     If you keep your neptune api token in the NEPTUNE_API_TOKEN environment variable

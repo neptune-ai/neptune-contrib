@@ -35,19 +35,19 @@ def neptune_monitor(experiment=None, prefix=''):
           the `lgb.train` function.
 
     Examples:
-        Prepare dataset:
+        Prepare dataset::
 
-        >>> import lightgbm as lgb
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.datasets import load_wine
-        >>> data = load_wine()
-        >>> X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.1)
-        >>> lgb_train = lgb.Dataset(X_train, y_train)
-        >>> lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
+            import lightgbm as lgb
+            from sklearn.model_selection import train_test_split
+            from sklearn.datasets import load_wine
+            data = load_wine()
+            X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.1)
+            lgb_train = lgb.Dataset(X_train, y_train)
+            lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
-        Define model parameters:
+        Define model parameters::
 
-        >>> params = {'boosting_type': 'gbdt',
+            params = {'boosting_type': 'gbdt',
                       'objective': 'multiclass',
                       'num_class': 3,
                       'num_leaves': 31,
@@ -55,26 +55,26 @@ def neptune_monitor(experiment=None, prefix=''):
                       'feature_fraction': 0.9
                       }
 
-        Define your Neptune monitor:
+        Define your Neptune monitor::
 
-        >>> monitor = neptune_monitor()
+            monitor = neptune_monitor()
 
-        Run `lgb.train` passing `neptune_monitor()` to the `callbacks` parameter:
+        Run `lgb.train` passing `neptune_monitor()` to the `callbacks` parameter::
 
-        >>> gbm = lgb.train(params,
-        >>>                 lgb_train,
-        >>>                 num_boost_round=500,
-        >>>                 valid_sets=[lgb_train, lgb_eval],
-        >>>                 valid_names=['train','valid'],
-        >>>                 callbacks=[monitor],
-        >>>                )
+            gbm = lgb.train(params,
+                            lgb_train,
+                            num_boost_round=500,
+                            valid_sets=[lgb_train, lgb_eval],
+                            valid_names=['train','valid'],
+                            callbacks=[monitor],
+                           )
 
     Note:
         If you are running a k-fold validation it is a good idea to add the k-fold prefix
-        and pass it to the `neptune_monitor` function:
+        and pass it to the `neptune_monitor` function::
 
-        >>> prefix='fold{}_'.format(fold_id)
-        >>> monitor = neptune_monitor(prefix)
+            prefix='fold{}_'.format(fold_id)
+            monitor = neptune_monitor(prefix)
     """
 
     _exp = experiment if experiment else neptune

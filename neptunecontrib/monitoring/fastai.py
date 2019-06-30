@@ -45,32 +45,32 @@ class NeptuneMonitor(LearnerCallback):
             Defaul is ''.
 
     Examples:
-        Prepare data:
+        Prepare data::
 
-        >>> from fastai.vision import *
-        >>> mnist = untar_data(URLs.MNIST_TINY)
-        >>> tfms = get_transforms(do_flip=False)
-        >>> data = (ImageItemList.from_folder(mnist)
-        >>>               .split_by_folder()
-        >>>               .label_from_folder()
-        >>>               .transform(tfms, size=32)
-        >>>               .databunch()
-        >>>               .normalize(imagenet_stats))
+            from fastai.vision import *
+            mnist = untar_data(URLs.MNIST_TINY)
+            tfms = get_transforms(do_flip=False)
+            data = (ImageItemList.from_folder(mnist)
+                          .split_by_folder()
+                          .label_from_folder()
+                          .transform(tfms, size=32)
+                          .databunch()
+                          .normalize(imagenet_stats))
 
         Now, create Neptune experiment, instantiate the monitor and pass
-        it to callbacks.
+        it to callbacks::
 
-        >>> import neptune
-        >>> from neptunecontrib.monitoring.fastai import NeptuneMonitor
-        >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> with neptune.create_experiment():
-        >>>    monitor = NeptuneMonitor()
-        >>>    learn = create_cnn(data, models.resnet18,
-        >>>                       metrics=accuracy,
-        >>>                       callbacks=[neptune_monitor])
-        >>>    learn.fit_one_cycle(20, 1e-2)
+            import neptune
+            from neptunecontrib.monitoring.fastai import NeptuneMonitor
+
+            neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+
+            with neptune.create_experiment():
+                monitor = NeptuneMonitor()
+                learn = create_cnn(data, models.resnet18,
+                                   metrics=accuracy,
+                                   callbacks=[neptune_monitor])
+                learn.fit_one_cycle(20, 1e-2)
 
     Note:
         you need to have the fastai library installed on your computer to use this module.

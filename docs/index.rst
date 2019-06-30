@@ -37,6 +37,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    monitoring.skopt <user_guide/monitoring/skopt>
    monitoring.utils <user_guide/monitoring/utils>
    sync.with_json <user_guide/sync/with_json>
+   versioning.data <user_guide/versioning/data>
    viz.experiments <user_guide/viz/experiments>
    viz.projects <user_guide/viz/projects>
    

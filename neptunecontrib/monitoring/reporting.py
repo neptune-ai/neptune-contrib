@@ -43,29 +43,29 @@ def send_binary_classification_report(y_true, y_pred,
         channel_name(str): name of the neptune channel. Default is 'classification report'.
 
     Examples:
-        Train the model and make predictions on test.
+        Train the model and make predictions on test::
 
-        >>> from sklearn.datasets import make_classification
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.metrics import classification_report
-        >>>
-        >>> X, y = make_classification(n_samples=2000)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        >>>
-        >>> model = RandomForestClassifier()
-        >>> model.fit(X_train, y_train)
-        >>>
-        >>> y_test_pred = model.predict_proba(X_test)
+            from sklearn.datasets import make_classification
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.model_selection import train_test_split
+            from sklearn.metrics import classification_report
 
-        Log classification report to Neptune.
+            X, y = make_classification(n_samples=2000)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        >>> import neptune
-        >>> from neptunecontrib.monitoring.reporting import send_binary_classification_report
-        >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        >>> with neptune.create_experiment():
-        >>>    send_binary_classification_report(y_test, y_test_pred)
+            model = RandomForestClassifier()
+            model.fit(X_train, y_train)
+
+            y_test_pred = model.predict_proba(X_test)
+
+        Log classification report to Neptune::
+
+            import neptune
+            from neptunecontrib.monitoring.reporting import send_binary_classification_report
+
+            neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+            with neptune.create_experiment():
+                send_binary_classification_report(y_test, y_test_pred)
 
     """
 
@@ -91,30 +91,30 @@ def send_prediction_distribution(y_true, y_pred,
         channel_name(str): name of the neptune channel. Default is 'prediction distribution'.
 
     Examples:
-        Train the model and make predictions on test.
+        Train the model and make predictions on test::
 
-        >>> from sklearn.datasets import make_classification
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.metrics import classification_report
-        >>>
-        >>> X, y = make_classification(n_samples=2000)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        >>>
-        >>> model = RandomForestClassifier()
-        >>> model.fit(X_train, y_train)
-        >>>
-        >>> y_test_pred = model.predict_proba(X_test)
+            from sklearn.datasets import make_classification
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.model_selection import train_test_split
+            from sklearn.metrics import classification_report
 
-        Log prediction distribution to Neptune.
+            X, y = make_classification(n_samples=2000)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        >>> import neptune
-        >>> from neptunecontrib.monitoring.reporting import send_prediction_distribution
-        >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> with neptune.create_experiment():
-        >>>    send_prediction_distribution(ctx, y_test, y_test_pred[:, 1])
+            model = RandomForestClassifier()
+            model.fit(X_train, y_train)
+
+            y_test_pred = model.predict_proba(X_test)
+
+        Log prediction distribution to Neptune::
+
+            import neptune
+            from neptunecontrib.monitoring.reporting import send_prediction_distribution
+
+            neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+
+            with neptune.create_experiment():
+                send_prediction_distribution(ctx, y_test, y_test_pred[:, 1])
 
     """
 
@@ -143,30 +143,30 @@ def send_roc_auc_curve(y_true, y_pred,
         channel_name(str): name of the neptune channel. Default is 'ROC AUC curve'.
 
     Examples:
-        Train the model and make predictions on test.
+        Train the model and make predictions on test::
 
-        >>> from sklearn.datasets import make_classification
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.metrics import classification_report
-        >>>
-        >>> X, y = make_classification(n_samples=2000)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        >>>
-        >>> model = RandomForestClassifier()
-        >>> model.fit(X_train, y_train)
-        >>>
-        >>> y_test_pred = model.predict_proba(X_test)
+            from sklearn.datasets import make_classification
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.model_selection import train_test_split
+            from sklearn.metrics import classification_report
 
-        Log classification report to Neptune.
+            X, y = make_classification(n_samples=2000)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        >>> import neptune
-        >>> from neptunecontrib.monitoring.reporting import send_roc_auc_curve
-        >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> with neptune.create_experiment():
-        >>>    send_roc_auc_curve(ctx, y_test, y_test_pred)
+            model = RandomForestClassifier()
+            model.fit(X_train, y_train)
+
+            y_test_pred = model.predict_proba(X_test)
+
+        Log classification report to Neptune::
+
+            import neptune
+            from neptunecontrib.monitoring.reporting import send_roc_auc_curve
+
+            neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+
+            with neptune.create_experiment():
+                send_roc_auc_curve(ctx, y_test, y_test_pred)
 
     """
 
@@ -194,30 +194,30 @@ def send_confusion_matrix(y_true, y_pred,
         channel_name(str): name of the neptune channel. Default is 'ROC AUC curve'.
 
     Examples:
-        Train the model and make predictions on test.
+        Train the model and make predictions on test::
 
-        >>> from sklearn.datasets import make_classification
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.metrics import classification_report
-        >>>
-        >>> X, y = make_classification(n_samples=2000)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        >>>
-        >>> model = RandomForestClassifier()
-        >>> model.fit(X_train, y_train)
-        >>>
-        >>> y_test_pred = model.predict_proba(X_test)
+            from sklearn.datasets import make_classification
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.model_selection import train_test_split
+            from sklearn.metrics import classification_report
 
-        Log classification report to Neptune.
+            X, y = make_classification(n_samples=2000)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        >>> import neptune
-        >>> from neptunecontrib.monitoring.reporting import send_confusion_matrix
-        >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> with neptune.create_experiment():
-        >>>    send_confusion_matrix(ctx, y_test, y_test_pred[:, 1] > 0.5)
+            model = RandomForestClassifier()
+            model.fit(X_train, y_train)
+
+            y_test_pred = model.predict_proba(X_test)
+
+        Log classification report to Neptune::
+
+            import neptune
+            from neptunecontrib.monitoring.reporting import send_confusion_matrix
+
+            neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+
+            with neptune.create_experiment():
+                send_confusion_matrix(ctx, y_test, y_test_pred[:, 1] > 0.5)
 
     """
     fig, ax = plt.subplots(figsize=figsize)
@@ -246,30 +246,30 @@ def send_precision_recall(y_true, y_pred,
         channel_name(str): name of the neptune channel. Default is 'ROC AUC curve'.
 
     Examples:
-        Train the model and make predictions on test.
+        Train the model and make predictions on test::
 
-        >>> from sklearn.datasets import make_classification
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.metrics import classification_report
-        >>>
-        >>> X, y = make_classification(n_samples=2000)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        >>>
-        >>> model = RandomForestClassifier()
-        >>> model.fit(X_train, y_train)
-        >>>
-        >>> y_test_pred = model.predict_proba(X_test)
+            from sklearn.datasets import make_classification
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.model_selection import train_test_split
+            from sklearn.metrics import classification_report
 
-        Log classification report to Neptune.
+            X, y = make_classification(n_samples=2000)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        >>> import neptune
-        >>> from neptunecontrib.monitoring.reporting import send_precision_recall
-        >>>
-        >>> neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
-        >>>
-        >>> with neptune.create_experiment():
-        >>>    send_precision_recall(ctx, y_test, y_test_pred)
+            model = RandomForestClassifier()
+            model.fit(X_train, y_train)
+
+            y_test_pred = model.predict_proba(X_test)
+
+        Log classification report to Neptune::
+
+            import neptune
+            from neptunecontrib.monitoring.reporting import send_precision_recall
+
+            neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
+
+            with neptune.create_experiment():
+                send_precision_recall(ctx, y_test, y_test_pred)
 
     """
 
@@ -300,26 +300,26 @@ def plot_binary_classification_report(y_true, y_pred, threshold=0.5, figsize=(16
          (`matplotlib.figure`): Figure object with binary classification report.
 
     Examples:
-        Train the model and make predictions on test.
+        Train the model and make predictions on test::
 
-        >>> from sklearn.datasets import make_classification
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.metrics import classification_report
-        >>>
-        >>> X, y = make_classification(n_samples=2000)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        >>>
-        >>> model = RandomForestClassifier()
-        >>> model.fit(X_train, y_train)
-        >>>
-        >>> y_test_pred = model.predict_proba(X_test)
+            from sklearn.datasets import make_classification
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.model_selection import train_test_split
+            from sklearn.metrics import classification_report
 
-        Plot binary classification report.
+            X, y = make_classification(n_samples=2000)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        >>> from neptunecontrib.monitoring.reporting import plot_binary_classification_report
-        >>>
-        >>> plot_binary_classification_report(y_test, y_test_pred)
+            model = RandomForestClassifier()
+            model.fit(X_train, y_train)
+
+            y_test_pred = model.predict_proba(X_test)
+
+        Plot binary classification report::
+
+            from neptunecontrib.monitoring.reporting import plot_binary_classification_report
+
+            plot_binary_classification_report(y_test, y_test_pred)
 
     """
     fig, axs = plt.subplots(2, 2, figsize=figsize)
@@ -349,26 +349,26 @@ def plot_prediction_distribution(y_true, y_pred, ax=None, figsize=None):
             drawn.
 
     Examples:
-        Train the model and make predictions on test.
+        Train the model and make predictions on test::
 
-        >>> from sklearn.datasets import make_classification
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn.metrics import classification_report
-        >>>
-        >>> X, y = make_classification(n_samples=2000)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        >>>
-        >>> model = RandomForestClassifier()
-        >>> model.fit(X_train, y_train)
-        >>>
-        >>> y_test_pred = model.predict_proba(X_test)
+            from sklearn.datasets import make_classification
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.model_selection import train_test_split
+            from sklearn.metrics import classification_report
 
-        Plot prediction distribution.
+            X, y = make_classification(n_samples=2000)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        >>> from neptunecontrib.monitoring.reporting import plot_prediction_distribution
-        >>>
-        >>> plot_prediction_distribution(y_test, y_test_pred[:, 1])
+            model = RandomForestClassifier()
+            model.fit(X_train, y_train)
+
+            y_test_pred = model.predict_proba(X_test)
+
+        Plot prediction distribution::
+
+            from neptunecontrib.monitoring.reporting import plot_prediction_distribution
+
+            plot_prediction_distribution(y_test, y_test_pred[:, 1])
     """
 
     if ax is None:

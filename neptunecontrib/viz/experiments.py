@@ -48,33 +48,33 @@ def channel_curve_compare(experiment_df,
         also run the `.to_json()` method on it to convert it to the Vega-Lite json format.
 
     Examples:
-        Instantiate a session.
+        Instantiate a session::
 
-        >>> from neptunelib.api.session import Session
-        >>> session = Session()
+            from neptunelib.api.session import Session
+            session = Session()
 
-        Fetch a project and a list of experiments.
+        Fetch a project and a list of experiments::
 
-        >>> project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
-        >>> experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
+            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
 
-        Construct a channel value dataframe:
+        Construct a channel value dataframe::
 
-        >>> from neptunelib.api.utils import concat_experiments_on_channel
-        >>> compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
+            from neptunelib.api.utils import concat_experiments_on_channel
+            compare_df = concat_experiments_on_channel(experiments,'unet_0 epoch_val iout loss')
 
-        Plot interactive chart in notebook.
+        Plot interactive chart in notebook::
 
-        >>> from neptunelib.viz.experiments import channel_curve_compare
-        >>> channel_curve_compare(compare_df)
+            from neptunelib.viz.experiments import channel_curve_compare
+            channel_curve_compare(compare_df)
 
     Note:
         Because Vega-Lite visualizations keep all the chart data in the HTML the visualizations can consume huge
         amounts of memory if not handled properly. That is why, by default the hard limit of 5000 rows is set to
-        the len of dataframe. That being said, you can disable it by adding the following line in the notebook or code.
+        the len of dataframe. That being said, you can disable it by adding the following line in the notebook or code::
 
-        >>> import altair as alt
-        >>> alt.data_transformers.enable('default', max_rows=None)
+            import altair as alt
+            alt.data_transformers.enable('default', max_rows=None)
 
     """
 
