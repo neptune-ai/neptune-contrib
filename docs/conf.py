@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Imports mock -----------------------------------------------------]
 autodoc_mock_imports = ['altair', 
+                        'boto3',
                         'fastai', 
                         'fastai.callbacks', 
                         'telegram',
