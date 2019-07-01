@@ -79,10 +79,6 @@ def send_figure(fig, channel_name='figures', experiment=None):
             import neptune
             neptune.init('USER_NAME/PROJECT_NAME')
 
-            ...
-            results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
-
         Create random data:::
 
             import numpy as np
