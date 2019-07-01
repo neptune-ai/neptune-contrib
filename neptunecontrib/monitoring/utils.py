@@ -15,7 +15,9 @@
 #
 
 from itertools import product
+import tempfile
 
+import neptune
 import matplotlib.pyplot as plt
 
 
@@ -58,3 +60,48 @@ def axes2fig(axes, fig=None):
             fig = plt.figure(figsize=(6, 6))
         fig._axstack.add(fig._make_key(axes), axes)
     return fig
+
+
+def send_figure(fig, channel_name='figures', experiment=None):
+    """Logs matplotlib figure to Neptune.
+
+    Logs any figure from matplotlib to specified image channel.
+    By default it logs to 'figures' and you can log multiple images to the same channel.
+
+    Args:
+        channel_name(str): name of the neptune channel. Default is 'figures'.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        fig(`matplotlib.figure`): Matplotlib figure object
+
+    Examples:
+        Initialize Neptune::
+
+            import neptune
+            neptune.init('USER_NAME/PROJECT_NAME')
+
+            ...
+            results = skopt.forest_minimize(objective, space,
+                                base_estimator='ET', n_calls=100, n_random_starts=10)
+
+        Create random data:::
+
+            import numpy as np
+            table = np.random.random((10,10))
+
+        Plot and log to Neptune::
+
+            import matplotlib.pyplot as plt
+            import seaborn as sns
+            from neptunecontrib.monitoring.utils import send_figure
+
+            with neptune.create_experiment():
+                fig, ax = plt.subplots()
+                sns.heatmap(table,ax=ax)
+                send_figure(fig)
+
+    """
+    _exp = experiment if experiment else neptune
+
+    with tempfile.NamedTemporaryFile(suffix='.png') as f:
+        fig.savefig(f.name)
+        _exp.send_image(channel_name, f.name)
