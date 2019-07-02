@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Imports mock -----------------------------------------------------]
 autodoc_mock_imports = ['altair',
                         'boto3',
+                        'joblib',
                         'fastai',
                         'fastai.callbacks',
                         'telegram',
@@ -40,9 +41,9 @@ copyright = '2019, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
-version = '0.7'
+version = '0.8'
 # The full version, including alpha/beta/rc tags
-release = '0.7.1'
+release = '0.8.0'
 
 # -- General configuration ---------------------------------------------------
 

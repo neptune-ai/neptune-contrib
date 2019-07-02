@@ -2,6 +2,7 @@ boto3
 oauthlib
 PyJWT
 neptune-client
+joblib==0.13.2
 requests>=2.20.0
 requests-oauthlib>=1.0.0
 pandas

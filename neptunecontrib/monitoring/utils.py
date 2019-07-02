@@ -15,8 +15,10 @@
 #
 
 from itertools import product
+import os
 import tempfile
 
+import joblib
 import neptune
 import matplotlib.pyplot as plt
 
@@ -101,3 +103,41 @@ def send_figure(fig, channel_name='figures', experiment=None):
     with tempfile.NamedTemporaryFile(suffix='.png') as f:
         fig.savefig(f.name)
         _exp.send_image(channel_name, f.name)
+
+
+def pickle_and_send_artifact(obj, filename, experiment=None):
+    """Logs picklable object to Neptune.
+
+    Pickles and logs your object to Neptune under specified filename.
+
+    Args:
+        obj: Picklable object.
+        filename(str): filename under which object will be saved.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+
+    Examples:
+        Initialize Neptune::
+
+            import neptune
+            neptune.init('USER_NAME/PROJECT_NAME')
+
+        Create random data:::
+
+            import numpy as np
+            table = np.random.random((10,10))
+
+        Create RandomForest object and log to Neptune::
+
+            from sklearn.ensemble import RandomForestClassifier
+            from neptunecontrib.monitoring.utils import pickle_and_send_artifact
+
+            with neptune.create_experiment():
+                rf = RandomForestClassifier()
+                pickle_and_send_artifact(rf, 'rf')
+    """
+    _exp = experiment if experiment else neptune
+
+    with tempfile.TemporaryDirectory() as d:
+        filename = os.path.join(d, filename)
+        joblib.dump(obj, filename)
+        _exp.send_artifact(filename)
