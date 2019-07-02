@@ -121,11 +121,6 @@ def pickle_and_send_artifact(obj, filename, experiment=None):
             import neptune
             neptune.init('USER_NAME/PROJECT_NAME')
 
-        Create random data:::
-
-            import numpy as np
-            table = np.random.random((10,10))
-
         Create RandomForest object and log to Neptune::
 
             from sklearn.ensemble import RandomForestClassifier
