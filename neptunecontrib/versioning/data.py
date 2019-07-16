@@ -227,7 +227,8 @@ def _get_filepaths(dir_path):
 
 def _get_collated_image(filepaths, label=None, figsize=(16, 12), title_size=30):
     n = len(filepaths)
-    yn, xn = int(np.floor(np.sqrt(n))), int(np.ceil(np.sqrt(n)))
+    yn = int(np.floor(np.sqrt(n)))
+    xn = int(np.ceil(n / yn))
 
     fig, axs = plt.subplots(yn, xn, figsize=figsize)
     fig.suptitle(label, fontsize=title_size)
