@@ -11,20 +11,20 @@ and gives you option to do things like:
  
 Enjoy the following integrations:
  
-.. image:: ../_static/images/fastai_neptuneML.png
-   :target: ../_static/images/fastai_neptuneML.png
+.. image:: _static/images/fastai_neptuneML.png
+   :target: _static/images/fastai_neptuneML.png
    :alt: fastai neptune.ml integration
   
-.. image:: ../_static/images/LightGBM_neptuneML.png
-   :target: ../_static/images/LightGBM_neptuneML.png
+.. image:: _static/images/LightGBM_neptuneML.png
+   :target: _static/images/LightGBM_neptuneML.png
    :alt: lightGBM neptune.ml integration
  
-.. image:: ../_static/images/matplotlib_neptuneML.png
-   :target: ../_static/images/matplotlib_neptuneML.png
+.. image:: _static/images/matplotlib_neptuneML.png
+   :target: _static/images/matplotlib_neptuneML.png
    :alt: matplotlib neptune.ml integration
 
-.. image:: ../_static/images/Telegram_neptuneML.png
-   :target: ../_static/images/Telegram_neptuneML.png
+.. image:: _static/images/Telegram_neptuneML.png
+   :target: _static/images/Telegram_neptuneML.png
    :alt: Telegram neptune.ml integration
    
 And the best thing is you can extend it yourself or... tell us to do it for you :).
