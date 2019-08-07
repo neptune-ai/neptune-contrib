@@ -3,12 +3,30 @@ neptune-contrib: open-source contributions to Neptune.ml
 
 This library is a collection of helpers and extensions that make working
 with `Neptune website`_ more effective and better. It is build on top of neptune-client
-and neptune-lib and gives you option to do things like:
+and gives you option to do things like:
  * interactive visualizations of experiment runs or hyperparameters
  * running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
- * monitor training of the lightGBM models
+ * monitor training of the lightGBM or fastai models with a single callback
  * much more
  
+Enjoy the following integrations:
+ 
+.. image:: ../_static/images/fastai_neptuneML.png
+   :target: ../_static/images/fastai_neptuneML.png
+   :alt: fastai neptune.ml integration
+  
+.. image:: ../_static/images/LightGBM_neptuneML.png
+   :target: ../_static/images/LightGBM_neptuneML.png
+   :alt: lightGBM neptune.ml integration
+ 
+.. image:: ../_static/images/matplotlib_neptuneML.png
+   :target: ../_static/images/matplotlib_neptuneML.png
+   :alt: matplotlib neptune.ml integration
+
+.. image:: ../_static/images/Telegram_neptuneML.png
+   :target: ../_static/images/Telegram_neptuneML.png
+   :alt: Telegram neptune.ml integration
+   
 And the best thing is you can extend it yourself or... tell us to do it for you :).
 
 .. toctree::
