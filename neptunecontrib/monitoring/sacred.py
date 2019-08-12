@@ -47,8 +47,9 @@ class NeptuneObserver(RunObserver):
 
         Add Neptune observer::
 
-            from neptunecontrib.monitoring.sacred_integration import NeptuneObserver
-            ex.observers.append(NeptuneObserver(project_name='jakub-czakon/examples'))
+            from neptunecontrib.monitoring.sacred import NeptuneObserver
+            ex.observers.append(NeptuneObserver(api_token='YOUR_LONG_API_TOKEN',
+                                                project_name='USER_NAME/PROJECT_NAME'))
 
         Run experiment::
 
