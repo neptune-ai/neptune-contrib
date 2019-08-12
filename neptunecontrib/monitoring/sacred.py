@@ -1,9 +1,26 @@
+#
+# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 import collections
 
 import neptune
+from sacred.observers import RunObserver
+
 from neptunecontrib.api.utils import get_filepaths
 from neptunecontrib.versioning.data import log_data_version
-from sacred.observers import RunObserver
 
 
 class NeptuneObserver(RunObserver):
@@ -69,7 +86,7 @@ class NeptuneObserver(RunObserver):
 
         neptune.create_experiment(name=ex_info['name'],
                                   params=_flatten_dict(config),
-                                  upload_source_files=get_filepaths(),
+                                  upload_source_files=get_filepaths(extensions=self.source_extensions),
                                   properties={'mainfile': ex_info['mainfile'],
                                               'dependencies': str(ex_info['dependencies']),
                                               'sacred_id': str(_id),

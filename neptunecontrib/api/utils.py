@@ -197,7 +197,7 @@ def strip_prefices(columns, prefices):
 
 
 def get_filepaths(dirpath='.', extensions=None):
-    """Filters leaderboard columns to get the system column names.
+    """Creates a list of all the files with selected extensions.
 
     Args:
         dirpath(str): Folder from which all files with given extensions should be added to list.
