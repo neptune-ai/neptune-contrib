@@ -2,7 +2,7 @@ neptune-contrib: open-source contributions to Neptune.ml
 ===========================================
 
 This library is a collection of helpers and extensions that make working
-with `Neptune website`_ more effective and better. It is build on top of neptune-client
+with `Neptune app`_ more effective and better. It is build on top of neptune-client
 and gives you option to do things like:
  * interactive visualizations of experiment runs or hyperparameters
  * running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
@@ -14,6 +14,10 @@ Enjoy the following integrations:
 .. image:: _static/images/fastai_neptuneML.png
    :target: _static/images/fastai_neptuneML.png
    :alt: fastai neptune.ml integration
+   
+.. image:: _static/images/sacred_neptuneML.png
+   :target: _static/images/sacred_neptuneML.png
+   :alt: Sacred neptune.ml integration
   
 .. image:: _static/images/LightGBM_neptuneML.png
    :target: _static/images/LightGBM_neptuneML.png
@@ -86,7 +90,7 @@ Indices and tables
 .. _GitHub: https://github.com/neptune-ml/neptune-contrib
 .. _Git Issues: https://github.com/neptune-ml/neptune-contrib/issues
 .. _Git Feature Request: https://github.com/neptune-ml/neptune-contrib/issues
-.. _Neptune website: https://neptune.ml/
+.. _Neptune app: https://neptune.ml/
 .. _Neptune community forum: https://community.neptune.ml/
 .. _Github projects: https://github.com/neptune-ml/neptune-contrib/projects
 .. _Neptune community spectrum: https://spectrum.chat/neptune-community?tab=posts

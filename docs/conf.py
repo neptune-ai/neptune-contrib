@@ -28,6 +28,9 @@ autodoc_mock_imports = ['altair',
                         'pandas',
                         'neptune',
                         'matplotlib',
+                        'sacred',
+                        'sacred.dependencies',
+                        'sacred.observers',
                         'scipy',
                         'seaborn',
                         'skopt',
@@ -41,9 +44,9 @@ copyright = '2019, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
-version = '0.9'
+version = '0.10'
 # The full version, including alpha/beta/rc tags
-release = '0.9.2'
+release = '0.10.1'
 
 # -- General configuration ---------------------------------------------------
 

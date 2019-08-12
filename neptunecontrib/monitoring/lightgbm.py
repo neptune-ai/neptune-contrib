@@ -26,7 +26,7 @@ def neptune_monitor(experiment=None, prefix=''):
     `train_multiclass_logloss` and `valid_multiclass_logloss`.
 
     Args:
-        ctx(`neptune.Context`): Neptune context.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment.
         prefix(str): Prefix that should be added before the `metric_name`
             and `valid_name` before logging to the appropriate channel.
 
