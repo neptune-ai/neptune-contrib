@@ -14,6 +14,10 @@ Enjoy the following integrations:
 .. image:: _static/images/fastai_neptuneML.png
    :target: _static/images/fastai_neptuneML.png
    :alt: fastai neptune.ml integration
+   
+.. image:: _static/images/sacred_neptuneML.png
+   :target: _static/images/sacred_neptuneML.png
+   :alt: Sacred neptune.ml integration
   
 .. image:: _static/images/LightGBM_neptuneML.png
    :target: _static/images/LightGBM_neptuneML.png

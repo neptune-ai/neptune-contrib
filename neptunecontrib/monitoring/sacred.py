@@ -15,12 +15,11 @@
 #
 
 import collections
+import os
 
 import neptune
+from sacred.dependencies import get_digest
 from sacred.observers import RunObserver
-
-from neptunecontrib.api.utils import get_filepaths
-from neptunecontrib.versioning.data import log_data_version
 
 
 class NeptuneObserver(RunObserver):
@@ -73,20 +72,21 @@ class NeptuneObserver(RunObserver):
         Go to the app and see the experiment. For example, https://ui.neptune.ml/jakub-czakon/examples/e/EX-263
     """
 
-    def __init__(self, project_name, api_token=None, source_extensions=None):
+    def __init__(self, project_name, api_token=None, base_dir='.', source_extensions=None):
         neptune.init(project_qualified_name=project_name, api_token=api_token)
         self.resources = {}
+        self.base_dir = base_dir
         if source_extensions:
             self.source_extensions = source_extensions
         else:
             self.source_extensions = ['.py', '.R', '.cpp', '.yaml', '.yml']
 
-    def started_event(self, ex_info, command, host_info, start_time,
-                      config, meta_info, _id):
+    def started_event(self, ex_info, command, host_info, start_time, config, meta_info, _id):
 
         neptune.create_experiment(name=ex_info['name'],
                                   params=_flatten_dict(config),
-                                  upload_source_files=get_filepaths(extensions=self.source_extensions),
+                                  upload_source_files=_get_filepaths(dirpath=self.base_dir,
+                                                                     extensions=self.source_extensions),
                                   properties={'mainfile': ex_info['mainfile'],
                                               'dependencies': str(ex_info['dependencies']),
                                               'sacred_id': str(_id),
@@ -111,7 +111,10 @@ class NeptuneObserver(RunObserver):
         if filename not in self.resources:
             new_prefix = self._create_new_prefix()
             self.resources[filename] = new_prefix
-            log_data_version(filename, prefix=new_prefix)
+            md5 = get_digest(filename)
+
+            neptune.set_property('{}data_path'.format(new_prefix), filename)
+            neptune.set_property('{}data_version'.format(new_prefix), md5)
 
     def log_metrics(self, metrics_by_name, info):
         for metric_name, metric_ptr in metrics_by_name.items():
@@ -126,6 +129,15 @@ class NeptuneObserver(RunObserver):
         else:
             new_prefix = 'resource0'
         return new_prefix
+
+
+def _get_filepaths(dirpath, extensions):
+    files = []
+    for r, _, f in os.walk(dirpath):
+        for file in f:
+            if any(file.endswith(ext) for ext in extensions):
+                files.append(os.path.join(r, file))
+    return files
 
 
 def _flatten_dict(d, parent_key='', sep='_'):
