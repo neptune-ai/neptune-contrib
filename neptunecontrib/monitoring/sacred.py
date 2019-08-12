@@ -33,6 +33,7 @@ class NeptuneObserver(RunObserver):
         project_name(str): project name in Neptune app
         api_token(str): Neptune API token. If it is kept in the NEPTUNE_API_TOKEN environment
            variable leave None here.
+        base_dir(str): base directory from which you run your code.
         source_extensions(list(str)): list of extensions that Neptune should treat as source files
            extensions and send.
 
