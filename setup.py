@@ -10,7 +10,7 @@ def main():
         requirements = [r.strip() for r in f]
         setup(
             name='neptune-contrib',
-            version='0.9.2',
+            version='0.10.1',
             description='Neptune Python library contributions',
             author='neptune.ml',
             author_email='contact@neptune.ml',
