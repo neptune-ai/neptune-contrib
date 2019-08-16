@@ -17,9 +17,9 @@ import os
 import hashlib
 
 import boto3
+import matplotlib.pyplot as plt
 import neptune
 import numpy as np
-import matplotlib.pyplot as plt
 
 from neptunecontrib.monitoring.utils import send_figure
 
