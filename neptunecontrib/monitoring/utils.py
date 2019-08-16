@@ -19,8 +19,8 @@ import os
 import tempfile
 
 import joblib
-import neptune
 import matplotlib.pyplot as plt
+import neptune
 
 
 def axes2fig(axes, fig=None):
