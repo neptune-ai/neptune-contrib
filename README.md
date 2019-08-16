@@ -15,6 +15,15 @@ See [neptune-contrib documentation site](https://neptune-contrib.readthedocs.io)
 pip install neptune-contrib
 ```
 
+Install additional packages depending on which submodule you want to use. 
+For example:
+
+```bash
+pip install neptune-contrib[monitoring]
+```
+
+Installation options are: [bots], [hpo], [monitoring], [versioning], [viz] and [all].
+
 # Getting help
 If you get stuck, don't worry we are here to help.
 The best order of communication is:
