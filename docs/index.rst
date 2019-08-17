@@ -8,21 +8,21 @@ and gives you option to do things like:
  * running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
  * monitor training of the lightGBM or fastai models with a single callback
  * much more
- 
+
 Enjoy the following integrations:
- 
+
 .. image:: _static/images/fastai_neptuneML.png
    :target: _static/images/fastai_neptuneML.png
    :alt: fastai neptune.ml integration
-   
+
 .. image:: _static/images/sacred_neptuneML.png
    :target: _static/images/sacred_neptuneML.png
    :alt: Sacred neptune.ml integration
-  
+
 .. image:: _static/images/LightGBM_neptuneML.png
    :target: _static/images/LightGBM_neptuneML.png
    :alt: lightGBM neptune.ml integration
- 
+
 .. image:: _static/images/matplotlib_neptuneML.png
    :target: _static/images/matplotlib_neptuneML.png
    :alt: matplotlib neptune.ml integration
@@ -30,7 +30,7 @@ Enjoy the following integrations:
 .. image:: _static/images/Telegram_neptuneML.png
    :target: _static/images/Telegram_neptuneML.png
    :alt: Telegram neptune.ml integration
-   
+
 And the best thing is you can extend it yourself or... tell us to do it for you :).
 
 .. toctree::
@@ -55,14 +55,14 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    bots.telegram_bot <user_guide/bots/telegram_bot>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.fastai <user_guide/monitoring/fastai>
-   monitoring.reporting <user_guide/monitoring/reporting>
+   monitoring.metrics <user_guide/monitoring/metrics>
    monitoring.skopt <user_guide/monitoring/skopt>
    monitoring.utils <user_guide/monitoring/utils>
    sync.with_json <user_guide/sync/with_json>
    versioning.data <user_guide/versioning/data>
    viz.experiments <user_guide/viz/experiments>
    viz.projects <user_guide/viz/projects>
-   
+
 
 Bug Reports and Questions
 -----------------------

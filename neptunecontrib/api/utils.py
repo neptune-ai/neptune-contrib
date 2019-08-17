@@ -15,7 +15,9 @@
 #
 import os
 import warnings
+import tempfile
 
+import joblib
 import pandas as pd
 
 warnings.filterwarnings('ignore')
@@ -227,6 +229,41 @@ def get_filepaths(dirpath='.', extensions=None):
             if any(file.endswith(ext) for ext in extensions):
                 files.append(os.path.join(r, file))
     return files
+
+
+def get_pickled_artifact(experiment, filename):
+    """Downloads pickled artifact object from Neptune and returns a Python object.
+
+    Downloads the pickled object from artifacts of given experiment,
+     loads them and returns a Python object.
+
+    Args:
+        experiment(`neptune.experiments.Experiment`): Neptune experiment.
+        filename(str): filename under which object was saved in Neptune.
+
+    Examples:
+        Initialize Neptune::
+
+            import neptune
+
+            session = neptune.sessions.Session()
+            project = session.get_project('USER_NAME/PROJECT_NAME')
+
+        Choose Neptune experiment::
+
+            experiment = project.get_experiments(id=['PRO-101'])[0]
+
+        Get your pickled object from experiment articats::
+
+            from neptunecontrib.monitoring.utils import get_artifact
+
+            results = get_pickled_artifact(experiment, 'results.pkl')
+    """
+    with tempfile.TemporaryDirectory() as d:
+        experiment.download_artifact(filename, d)
+        full_path = os.path.join(d, filename)
+        artifact = joblib.load(full_path)
+    return artifact
 
 
 def _prep_time_column(progress_df):
