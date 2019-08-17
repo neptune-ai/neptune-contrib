@@ -5,7 +5,7 @@ def main():
     extras = {
         'bots': ['python-telegram-bot'],
         'hpo': ['scikit-optimize==0.5.2', 'scipy'],
-        'monitoring': ['scikit-optimize==0.5.2', 'sacred==0.7.5', 'scikit-plot==0.3.7', 'seaborn'],
+        'monitoring': ['scikit-optimize==0.5.2', 'sacred==0.7.5', 'scikit-plot==0.3.7', 'seaborn==0.8.1'],
         'versioning': ['boto3', 'numpy'],
         'viz': ['altair==2.3.0'],
     }

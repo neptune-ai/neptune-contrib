@@ -131,7 +131,7 @@ def log_confusion_matrix(y_true, y_pred_class, experiment=None, channel_name='me
 
     fig, ax = plt.subplots()
     _plot_confusion_matrix(y_true, y_pred_class, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=experiment)
+    send_figure(fig, channel_name=channel_name, experiment=_exp)
     plt.close()
 
 
@@ -758,8 +758,7 @@ def _class_metrics(y_true, y_pred_class):
               'negative_predictive_value': negative_predictive_value,
               'false_positive_rate': false_positive_rate,
               'false_negative_rate': false_negative_rate,
-              'false_discovery_rate': false_discovery_rate,
-              }
+              'false_discovery_rate': false_discovery_rate}
 
     return scores
 
