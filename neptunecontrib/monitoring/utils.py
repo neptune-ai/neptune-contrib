@@ -136,38 +136,3 @@ def pickle_and_send_artifact(obj, filename, experiment=None):
         filename = os.path.join(d, filename)
         joblib.dump(obj, filename)
         _exp.send_artifact(filename)
-
-
-def get_pickled_artifact(experiment, filename):
-    """Downloads pickled artifact object from Neptune and returns a Python object.
-
-    Downloads the pickled object from artifacts of given experiment,
-     loads them and returns a Python object.
-
-    Args:
-        experiment(`neptune.experiments.Experiment`): Neptune experiment.
-        filename(str): filename under which object was saved in Neptune.
-
-    Examples:
-        Initialize Neptune::
-
-            import neptune
-
-            session = neptune.sessions.Session()
-            project = session.get_project('USER_NAME/PROJECT_NAME')
-
-        Choose Neptune experiment::
-
-            experiment = project.get_experiments(id=['PRO-101'])[0]
-
-        Get your pickled object from experiment articats::
-
-            from neptunecontrib.monitoring.utils import get_artifact
-
-            results = get_pickled_artifact(experiment, 'results.pkl')
-    """
-    with tempfile.TemporaryDirectory() as d:
-        experiment.download_artifact(filename, d)
-        full_path = os.path.join(d, filename)
-        artifact = joblib.load(full_path)
-    return artifact
