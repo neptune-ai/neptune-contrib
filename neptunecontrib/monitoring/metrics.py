@@ -28,13 +28,16 @@ def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=
     """Creates metric chartsa and calculates classification metrics and logs them to Neptune.
 
     Class-based metrics that are logged: 'accuracy', 'precision', 'recall', 'f1_score', 'f2_score',
-       'matthews_corrcoef', 'cohen_kappa', 'true_positive_rate', 'true_negative_rate', 'positive_predictive_value',
-       'negative_predictive_value', 'false_positive_rate', 'false_negative_rate', 'false_discovery_rate'
+    'matthews_corrcoef', 'cohen_kappa', 'true_positive_rate', 'true_negative_rate', 'positive_predictive_value',
+    'negative_predictive_value', 'false_positive_rate', 'false_negative_rate', 'false_discovery_rate'
     For each class-based metric, a curve with metric/threshold is logged to 'metrics_by_threshold' channel.
+
     Losses that are logged: 'brier_loss', 'log_loss'
+
     Other metrics that are logged: 'roc_auc', 'ks_statistic', 'avg_precision'
+
     Curves that are logged: 'roc_auc', 'precision_recall_curve', 'ks_statistic_curve', 'cumulative_gain_curve',
-       'lift_curve',
+    'lift_curve',
 
     Args:
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.

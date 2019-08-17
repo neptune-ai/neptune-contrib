@@ -33,6 +33,8 @@ autodoc_mock_imports = ['altair',
                         'sacred.observers',
                         'scipy',
                         'seaborn',
+                        'sklearn',
+                        'sklearn.metrics',
                         'skopt',
                         'scikitplot',
                         'scikitplot.metrics']
@@ -46,7 +48,7 @@ author = 'Neptune Dev Team'
 # The short X.Y version
 version = '0.12'
 # The full version, including alpha/beta/rc tags
-release = '0.12.0'
+release = '0.12.1'
 
 # -- General configuration ---------------------------------------------------
 

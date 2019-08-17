@@ -1,5 +1,5 @@
 neptune-contrib: open-source contributions to Neptune.ml
-===========================================
+========================================================
 
 This library is a collection of helpers and extensions that make working
 with `Neptune app`_ more effective and better. It is build on top of neptune-client
@@ -65,7 +65,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
 
 
 Bug Reports and Questions
------------------------
+-------------------------
 
 neptune-contrib is MIT-licensed and the source code is available on `GitHub`_. If you
 find yourself in any trouble drop an isse on `Git Issues`_, fire a feature request on
@@ -73,7 +73,7 @@ find yourself in any trouble drop an isse on `Git Issues`_, fire a feature reque
 
 
 Contribute
------------------------
+----------
 
 We keep an updated list of open issues/feature ideas on github project page `Github projects`_.
 If you feel like taking a shot at one of those do go for it!
