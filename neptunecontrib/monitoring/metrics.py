@@ -24,7 +24,7 @@ import seaborn as sns
 import sklearn.metrics as sk_metrics
 
 
-def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=None):
+def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=None, prefix=''):
     """Creates metric chartsa and calculates classification metrics and logs them to Neptune.
 
     Class-based metrics that are logged: 'accuracy', 'precision', 'recall', 'f1_score', 'f2_score',
@@ -44,6 +44,7 @@ def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=
         y_pred (array-like, shape (n_samples, 2)): Predictions for classes 0 and 1 with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         threshold (float): Threshold that calculates a class for class-based metrics. Default is 0.5.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -77,21 +78,21 @@ def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=
 
     _exp = experiment if experiment else neptune
 
-    log_confusion_matrix(y_true, y_pred[:, 1] > threshold, experiment=_exp)
-    log_classification_report(y_true, y_pred[:, 1] > threshold, experiment=_exp)
-    log_class_metrics(y_true, y_pred[:, 1] > threshold, experiment=_exp)
-    log_class_metrics_by_threshold(y_true, y_pred[:, 1], experiment=_exp)
-    log_roc_auc(y_true, y_pred, experiment=_exp)
-    log_precision_recall_auc(y_true, y_pred, experiment=_exp)
-    log_brier_loss(y_true, y_pred[:, 1], experiment=_exp)
-    log_log_loss(y_true, y_pred, experiment=_exp)
-    log_ks_statistic(y_true, y_pred, experiment=_exp)
-    log_cumulative_gain(y_true, y_pred, experiment=_exp)
-    log_lift_curve(y_true, y_pred, experiment=_exp)
-    log_prediction_distribution(y_true, y_pred[:, 1], experiment=_exp)
+    log_confusion_matrix(y_true, y_pred[:, 1] > threshold, experiment=_exp, prefix=prefix)
+    log_classification_report(y_true, y_pred[:, 1] > threshold, experiment=_exp, prefix=prefix)
+    log_class_metrics(y_true, y_pred[:, 1] > threshold, experiment=_exp, prefix=prefix)
+    log_class_metrics_by_threshold(y_true, y_pred[:, 1], experiment=_exp, prefix=prefix)
+    log_roc_auc(y_true, y_pred, experiment=_exp, prefix=prefix)
+    log_precision_recall_auc(y_true, y_pred, experiment=_exp, prefix=prefix)
+    log_brier_loss(y_true, y_pred[:, 1], experiment=_exp, prefix=prefix)
+    log_log_loss(y_true, y_pred, experiment=_exp, prefix=prefix)
+    log_ks_statistic(y_true, y_pred, experiment=_exp, prefix=prefix)
+    log_cumulative_gain(y_true, y_pred, experiment=_exp, prefix=prefix)
+    log_lift_curve(y_true, y_pred, experiment=_exp, prefix=prefix)
+    log_prediction_distribution(y_true, y_pred[:, 1], experiment=_exp, prefix=prefix)
 
 
-def log_confusion_matrix(y_true, y_pred_class, experiment=None, channel_name='metric_charts'):
+def log_confusion_matrix(y_true, y_pred_class, experiment=None, channel_name='metric_charts', prefix=''):
     """Creates a confusion matrix figure and logs it in Neptune.
 
     Args:
@@ -99,6 +100,7 @@ def log_confusion_matrix(y_true, y_pred_class, experiment=None, channel_name='me
         y_pred_class (array-like, shape (n_samples)): Class predictions with values 0 or 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -134,11 +136,11 @@ def log_confusion_matrix(y_true, y_pred_class, experiment=None, channel_name='me
 
     fig, ax = plt.subplots()
     _plot_confusion_matrix(y_true, y_pred_class, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
-def log_classification_report(y_true, y_pred_class, experiment=None, channel_name='metric_charts'):
+def log_classification_report(y_true, y_pred_class, experiment=None, channel_name='metric_charts', prefix=''):
     """Creates a figure with classifiction report table and logs it in Neptune.
 
     Args:
@@ -146,6 +148,7 @@ def log_classification_report(y_true, y_pred_class, experiment=None, channel_nam
         y_pred_class (array-like, shape (n_samples)): Class predictions with values 0 or 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -180,11 +183,11 @@ def log_classification_report(y_true, y_pred_class, experiment=None, channel_nam
     _exp = experiment if experiment else neptune
 
     fig = _plot_classification_report(y_true, y_pred_class)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
-def log_class_metrics(y_true, y_pred_class, experiment=None):
+def log_class_metrics(y_true, y_pred_class, experiment=None, prefix=''):
     """Calculates and logs all class-based metrics to Neptune.
 
     Metrics that are logged: 'accuracy', 'precision', 'recall', 'f1_score', 'f2_score', 'matthews_corrcoef',
@@ -195,6 +198,7 @@ def log_class_metrics(y_true, y_pred_class, experiment=None):
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred_class (array-like, shape (n_samples)): Class predictions with values 0 or 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -230,10 +234,10 @@ def log_class_metrics(y_true, y_pred_class, experiment=None):
 
     scores = _class_metrics(y_true, y_pred_class)
     for metric_name, score in scores.items():
-        _exp.log_metric(metric_name, score)
+        _exp.log_metric(prefix + metric_name, score)
 
 
-def log_class_metrics_by_threshold(y_true, y_pred_pos, experiment=None):
+def log_class_metrics_by_threshold(y_true, y_pred_pos, experiment=None, channel_name='metrics_by_threshold', prefix=''):
     """Creates metric/threshold charts for each metric and logs them to Neptune.
 
     Metrics for which charsta re created and logged are: 'accuracy', 'precision', 'recall', 'f1_score', 'f2_score',
@@ -244,6 +248,8 @@ def log_class_metrics_by_threshold(y_true, y_pred_pos, experiment=None):
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred_pos (array-like, shape (n_samples)): Score predictions with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        channel_name(str): name of the neptune channel. Default is 'metrics_by_threshold'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -280,11 +286,11 @@ def log_class_metrics_by_threshold(y_true, y_pred_pos, experiment=None):
     figs = _plot_class_metrics_by_threshold(y_true, y_pred_pos)
 
     for fig in figs:
-        send_figure(fig, channel_name='metrics_by_threshold', experiment=_exp)
+        send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
         plt.close()
 
 
-def log_roc_auc(y_true, y_pred, experiment=None, channel_name='metric_charts'):
+def log_roc_auc(y_true, y_pred, experiment=None, channel_name='metric_charts', prefix=''):
     """Creates and logs ROC AUC curve and ROCAUC score to Neptune.
 
     Args:
@@ -292,6 +298,7 @@ def log_roc_auc(y_true, y_pred, experiment=None, channel_name='metric_charts'):
         y_pred (array-like, shape (n_samples, 2)): Predictions for classes 0 and 1 with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -326,15 +333,15 @@ def log_roc_auc(y_true, y_pred, experiment=None, channel_name='metric_charts'):
     _exp = experiment if experiment else neptune
 
     roc_auc = sk_metrics.roc_auc_score(y_true, y_pred[:, 1])
-    _exp.log_metric('roc_auc', roc_auc)
+    _exp.log_metric(prefix + 'roc_auc', roc_auc)
 
     fig, ax = plt.subplots()
     plt_metrics.plot_roc(y_true, y_pred, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
-def log_precision_recall_auc(y_true, y_pred, experiment=None, channel_name='metric_charts'):
+def log_precision_recall_auc(y_true, y_pred, experiment=None, channel_name='metric_charts', prefix=''):
     """Creates and logs Precision Recall curve and Average precision score to Neptune.
 
     Args:
@@ -342,6 +349,7 @@ def log_precision_recall_auc(y_true, y_pred, experiment=None, channel_name='metr
         y_pred (array-like, shape (n_samples, 2)): Predictions for classes 0 and 1 with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -376,21 +384,22 @@ def log_precision_recall_auc(y_true, y_pred, experiment=None, channel_name='metr
     _exp = experiment if experiment else neptune
 
     avg_precision = sk_metrics.average_precision_score(y_true, y_pred[:, 1])
-    _exp.log_metric('avg_precision', avg_precision)
+    _exp.log_metric(prefix + 'avg_precision', avg_precision)
 
     fig, ax = plt.subplots()
     plt_metrics.plot_precision_recall(y_true, y_pred, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
-def log_brier_loss(y_true, y_pred_pos, experiment=None):
+def log_brier_loss(y_true, y_pred_pos, experiment=None, prefix=''):
     """Calculates and logs brier loss to Neptune.
 
     Args:
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred_pos (array-like, shape (n_samples)): Score predictions with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -425,16 +434,17 @@ def log_brier_loss(y_true, y_pred_pos, experiment=None):
     _exp = experiment if experiment else neptune
 
     brier = sk_metrics.brier_score_loss(y_true, y_pred_pos)
-    _exp.log_metric('brier_loss', brier)
+    _exp.log_metric(prefix + 'brier_loss', brier)
 
 
-def log_log_loss(y_true, y_pred, experiment=None):
+def log_log_loss(y_true, y_pred, experiment=None, prefix=''):
     """Creates and logs Precision Recall curve and Average precision score to Neptune.
 
     Args:
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred (array-like, shape (n_samples, 2)): Predictions for classes 0 and 1 with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -469,10 +479,10 @@ def log_log_loss(y_true, y_pred, experiment=None):
     _exp = experiment if experiment else neptune
 
     log_loss = sk_metrics.log_loss(y_true, y_pred)
-    _exp.log_metric('log_loss', log_loss)
+    _exp.log_metric(prefix + 'log_loss', log_loss)
 
 
-def log_ks_statistic(y_true, y_pred, experiment=None, channel_name='metric_charts'):
+def log_ks_statistic(y_true, y_pred, experiment=None, channel_name='metric_charts', prefix=''):
     """Creates and logs KS statistics curve and KS statistics score to Neptune.
 
     Kolmogorov-Smirnov statistics chart can be calculated for true positive rates (TPR) and true negative rates (TNR)
@@ -484,6 +494,7 @@ def log_ks_statistic(y_true, y_pred, experiment=None, channel_name='metric_chart
         y_pred (array-like, shape (n_samples, 2)): Predictions for classes 0 and 1 with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -519,15 +530,15 @@ def log_ks_statistic(y_true, y_pred, experiment=None, channel_name='metric_chart
 
     res = binary_ks_curve(y_true, y_pred[:, 1])
     ks_stat = res[3]
-    _exp.log_metric('ks_statistic', ks_stat)
+    _exp.log_metric(prefix + 'ks_statistic', ks_stat)
 
     fig, ax = plt.subplots()
     plt_metrics.plot_ks_statistic(y_true, y_pred, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
-def log_cumulative_gain(y_true, y_pred, experiment=None, channel_name='metric_charts'):
+def log_cumulative_gain(y_true, y_pred, experiment=None, channel_name='metric_charts', prefix=''):
     """Creates cumulative gain chart and logs it to Neptune.
 
     Args:
@@ -535,6 +546,7 @@ def log_cumulative_gain(y_true, y_pred, experiment=None, channel_name='metric_ch
         y_pred (array-like, shape (n_samples, 2)): Predictions for classes 0 and 1 with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -570,11 +582,11 @@ def log_cumulative_gain(y_true, y_pred, experiment=None, channel_name='metric_ch
 
     fig, ax = plt.subplots()
     plt_metrics.plot_cumulative_gain(y_true, y_pred, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
-def log_lift_curve(y_true, y_pred, experiment=None, channel_name='metric_charts'):
+def log_lift_curve(y_true, y_pred, experiment=None, channel_name='metric_charts', prefix=''):
     """Creates cumulative gain chart and logs it to Neptune.
 
     Args:
@@ -582,6 +594,7 @@ def log_lift_curve(y_true, y_pred, experiment=None, channel_name='metric_charts'
         y_pred (array-like, shape (n_samples, 2)): Predictions for classes 0 and 1 with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -617,11 +630,11 @@ def log_lift_curve(y_true, y_pred, experiment=None, channel_name='metric_charts'
 
     fig, ax = plt.subplots()
     plt_metrics.plot_lift_curve(y_true, y_pred, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
-def log_prediction_distribution(y_true, y_pred_pos, experiment=None, channel_name='metric_charts'):
+def log_prediction_distribution(y_true, y_pred_pos, experiment=None, channel_name='metric_charts', prefix=''):
     """Generates prediction distribution plot from predictions and true labels.
 
     Args:
@@ -629,6 +642,7 @@ def log_prediction_distribution(y_true, y_pred_pos, experiment=None, channel_nam
         y_pred_pos (array-like, shape (n_samples)): Score predictions with values from 0 to 1.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         channel_name(str): name of the neptune channel. Default is 'metric_charts'.
+        prefix(str): Prefix that will be added before metric name when logged to Neptune.
 
     Examples:
         Train the model and make predictions on test::
@@ -658,7 +672,7 @@ def log_prediction_distribution(y_true, y_pred_pos, experiment=None, channel_nam
 
     fig, ax = plt.subplots()
     _plot_prediction_distribution(y_true, y_pred_pos, ax=ax)
-    send_figure(fig, channel_name=channel_name, experiment=_exp)
+    send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
     plt.close()
 
 
