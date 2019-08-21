@@ -32,7 +32,7 @@ def log_data_version(path, prefix='', experiment=None):
 
     Args:
         path(str): path to the file or directory,
-        prefix(str): Prefix that will be added before 'ata_version' and 'data_path'
+        prefix(str): Prefix that will be added before 'data_version' and 'data_path'
         experiment(neptune.experiemnts.Experiment or None): if the data should be logged to a particular
            neptune experiment it can be passed here. By default it is logged to the current experiment.
 
