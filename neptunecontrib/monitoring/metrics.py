@@ -794,7 +794,10 @@ def _class_metrics_by_threshold(y_true, y_pred_pos, thres_nr=100):
 
 
 def _get_best_thres(scores_by_thres, name):
-    best_res = scores_by_thres[scores_by_thres[name] == scores_by_thres[name].max()][['threshold', name]]
+    if name in ['false_positive_rate', 'false_negative_rate', 'false_discovery_rate']:
+        best_res = scores_by_thres[scores_by_thres[name] == scores_by_thres[name].min()][['threshold', name]]
+    else:
+        best_res = scores_by_thres[scores_by_thres[name] == scores_by_thres[name].max()][['threshold', name]]
     position = len(best_res) // 2
     result = best_res.iloc[position].to_dict()
     return result['threshold'], result[name]
