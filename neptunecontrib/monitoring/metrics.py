@@ -694,9 +694,13 @@ def expand_prediction(prediction):
 
 
 def _plot_confusion_matrix(y_true, y_pred_class, ax=None):
+    if not ax:
+        _, ax = plt.subplots()
     cmap = plt.get_cmap('Blues')
     cm = sk_metrics.confusion_matrix(y_true, y_pred_class)
     sns.heatmap(cm, cmap=cmap, annot=True, fmt='g', ax=ax)
+    ax.set_xlabel('predicted values')
+    ax.set_ylabel('actual values')
 
 
 def _plot_class_metrics_by_threshold(y_true, y_pred_positive):
@@ -714,6 +718,8 @@ def _plot_class_metrics_by_threshold(y_true, y_pred_positive):
             ax.text(x=best_thres + 0.01, y=0.98 * best_score,
                     s='thres={:.4f}\nscore={:.4f}'.format(best_thres, best_score),
                     color='red')
+            ax.set_xlabel('threshold')
+            ax.set_ylabel(name)
             figs.append(fig)
     return figs
 
