@@ -16,6 +16,7 @@
 import os
 import warnings
 import tempfile
+from unittest.mock import Mock
 
 import joblib
 import pandas as pd
@@ -264,6 +265,42 @@ def get_pickled_artifact(experiment, filename):
         full_path = os.path.join(d, filename)
         artifact = joblib.load(full_path)
     return artifact
+
+
+def shush(neptune):
+    """Makes neptune silent.
+
+    It makes it easy to switch between sending experiment to neptune and running
+    things without logging anything easy.
+    It creates a Mock object that doesn't do anything but let's you keep your
+    codebase the same.
+
+    Args:
+        neptune(`neptune`): neptune module.
+
+    Examples:
+        Add shush at the top of your script::
+
+            import neptune
+            from neptunecontrib.api.utils import shush
+
+            SILENT = True
+            if SILENT:
+               neptune = shush(neptune)
+
+        Run experiment normally::
+
+            neptune.init('USER_NAME/PROJECT_NAME')
+
+            with neptune.create_experiment():
+                neptune.set_property('data_path', 'path/to/data.csv')
+                neptune.log_metric('auc', 0.92)
+    """
+
+    neptune = Mock()
+    neptune.create_experiment().__enter__ = Mock(return_value=Mock())
+    neptune.create_experiment().__exit__ = Mock(return_value=False)
+    return neptune
 
 
 def _prep_time_column(progress_df):

@@ -20,7 +20,7 @@ def main():
 
     setup(
         name='neptune-contrib',
-        version='0.12.4',
+        version='0.13.0',
         description='Neptune Python library contributions',
         author='neptune.ml',
         author_email='contact@neptune.ml',
