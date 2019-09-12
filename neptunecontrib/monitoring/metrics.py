@@ -25,7 +25,7 @@ import sklearn.metrics as sk_metrics
 
 
 def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=None, prefix=''):
-    """Creates metric chartsa and calculates classification metrics and logs them to Neptune.
+    """Creates metric charts and calculates classification metrics and logs them to Neptune.
 
     Class-based metrics that are logged: 'accuracy', 'precision', 'recall', 'f1_score', 'f2_score',
     'matthews_corrcoef', 'cohen_kappa', 'true_positive_rate', 'true_negative_rate', 'positive_predictive_value',
