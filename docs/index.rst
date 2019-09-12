@@ -56,6 +56,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.fastai <user_guide/monitoring/fastai>
    monitoring.metrics <user_guide/monitoring/metrics>
+   monitoring.fairness <user_guide/monitoring/fairness>
    monitoring.skopt <user_guide/monitoring/skopt>
    monitoring.utils <user_guide/monitoring/utils>
    sync.with_json <user_guide/sync/with_json>

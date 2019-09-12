@@ -18,7 +18,8 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # -- Imports mock -----------------------------------------------------]
-autodoc_mock_imports = ['altair',
+autodoc_mock_imports = ['aif360',
+                        'altair',
                         'boto3',
                         'joblib',
                         'fastai',
@@ -46,9 +47,9 @@ copyright = '2019, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
-version = '0.12'
+version = '0.13'
 # The full version, including alpha/beta/rc tags
-release = '0.12.4'
+release = '0.13.1'
 
 # -- General configuration ---------------------------------------------------
 
