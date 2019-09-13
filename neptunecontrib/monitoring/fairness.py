@@ -80,7 +80,7 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive_attribut
 
     bias_info = {'favorable_label': favorable_label,
                  'unfavorable_label': unfavorable_label,
-                 'protected_columns': sensitive.columns.tolist()}
+                 'protected_columns': sensitive_attributes.columns.tolist()}
 
     privileged_info = _fmt_priveleged_info(privileged_groups, unprivileged_groups)
 
