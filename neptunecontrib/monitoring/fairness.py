@@ -24,7 +24,7 @@ import seaborn as sns
 from neptunecontrib.monitoring.utils import send_figure
 
 
-def log_fairness_classification_metrics(y_true, y_pred_class, sensitive,
+def log_fairness_classification_metrics(y_true, y_pred_class, sensitive_attributes,
                                         favorable_label, unfavorable_label,
                                         privileged_groups, unprivileged_groups,
                                         experiment=None, prefix=''):
@@ -47,7 +47,7 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive,
     Args:
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred_class (array-like, shape (n_samples)): Class predictions with values 0 or 1.
-        sensitive (pandas.DataFrame, shape (n_samples, k)): datafame containing only sensitive columns.
+        sensitive_attributes (pandas.DataFrame, shape (n_samples, k)): datafame containing only sensitive columns.
         favorable_label (str or int): label that is favorable, brings positive value to a person being classified.
         unfavorable_label (str or int): label that is unfavorable, brings positive value to a person being classified.
         privileged_groups (dict): dictionary with column names and list of values for those columns that
@@ -66,7 +66,7 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive,
 
             neptune.init()
             with neptune.create_experiment():
-                log_fairness_classification_metrics(y_test, y_test_pred_class, test['race'],
+                log_fairness_classification_metrics(y_test, y_test_pred_class, test[['race']],
                                                     favorable_label='granted_parole',
                                                     unfavorable_label='not_granted_parole',
                                                     privileged_groups={'race':['Caucasian']},
@@ -87,8 +87,8 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive,
     data = pd.DataFrame()
     data['ground_truth'] = y_true.values
     data['prediction'] = y_pred_class.values
-    for col in sensitive.columns:
-        data[col] = sensitive[col].values
+    for col in sensitive_attributes.columns:
+        data[col] = sensitive_attributes[col].values
 
     ground_truth_test = _make_dataset(data, 'ground_truth', **bias_info, **privileged_info)
     prediction_test = _make_dataset(data, 'prediction', **bias_info, **privileged_info)
