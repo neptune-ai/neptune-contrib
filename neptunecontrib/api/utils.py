@@ -61,7 +61,7 @@ def concat_experiments_on_channel(experiments, channel_name):
     """
     combined_df = []
     for experiment in experiments:
-        if channel_name in experiment.channels.keys():
+        if channel_name in experiment.get_channels().keys():
             channel_df = experiment.get_numeric_channels_values(channel_name)
             channel_df['id'] = experiment.id
             combined_df.append(channel_df)
