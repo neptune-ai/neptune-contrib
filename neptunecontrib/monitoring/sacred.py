@@ -32,9 +32,11 @@ class NeptuneObserver(RunObserver):
         project_name(str): project name in Neptune app
         api_token(str): Neptune API token. If it is kept in the NEPTUNE_API_TOKEN environment
            variable leave None here.
-        base_dir(str): base directory from which you run your code.
         source_extensions(list(str)): list of extensions that Neptune should treat as source files
-           extensions and send.
+           extensions and send. If None is passed, Python file from which experiment was created will be uploaded.
+           Pass empty list ([]) to upload no files. Unix style pathname pattern expansion is supported.
+           For example, you can pass '*.py' to upload all python source files from the current directory.
+           For recursion lookup use '**/*.py' (for Python 3.5 and later). For more information see glob library.
 
     Examples:
         Create sacred experiment::
@@ -70,7 +72,7 @@ class NeptuneObserver(RunObserver):
                 return clf.score(iris.data[90:],
                                  iris.target[90:])
 
-        Go to the app and see the experiment. For example, https://ui.neptune.ml/jakub-czakon/examples/e/EX-263
+        Go to the app and see the experiment. For example, https://ui.neptune.ml/jakub-czakon/examples/e/EX-341
     """
 
     def __init__(self, project_name, api_token=None, source_extensions=None):
