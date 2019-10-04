@@ -15,7 +15,6 @@
 #
 
 import collections
-import os
 
 import neptune
 from sacred.dependencies import get_digest
@@ -76,7 +75,9 @@ class NeptuneObserver(RunObserver):
 
     def __init__(self, project_name, api_token=None, source_extensions=None):
         neptune.init(project_qualified_name=project_name, api_token=api_token)
+
         self.resources = {}
+
         if source_extensions:
             self.source_extensions = source_extensions
         else:
@@ -93,8 +94,7 @@ class NeptuneObserver(RunObserver):
                                               **_str_dict_values(host_info),
                                               **_str_dict_values(_flatten_dict(meta_info)),
                                               **_str_dict_values(_flatten_dict(ex_info))},
-                                  git_info=neptune.utils.get_git_info(ex_info['base_dir'])
-                                  )
+                                  git_info=neptune.utils.get_git_info(ex_info['base_dir']))
 
     def completed_event(self, stop_time, result):
         if result:
@@ -112,26 +112,16 @@ class NeptuneObserver(RunObserver):
 
     def resource_event(self, filename):
         if filename not in self.resources:
-            new_prefix = self._create_new_prefix()
-            self.resources[filename] = new_prefix
             md5 = get_digest(filename)
+            self.resources[filename] = md5
 
-            neptune.set_property('{}data_path'.format(new_prefix), filename)
-            neptune.set_property('{}data_version'.format(new_prefix), md5)
+        neptune.set_property('resources', str(list(self.resources.keys())))
+        neptune.set_property(filename, self.resources[filename])
 
     def log_metrics(self, metrics_by_name, info):
         for metric_name, metric_ptr in metrics_by_name.items():
             for step, value in zip(metric_ptr["steps"], metric_ptr["values"]):
                 neptune.log_metric(metric_name, x=step, y=value)
-
-    def _create_new_prefix(self):
-        existing_prefixes = self.resources.values()
-        if existing_prefixes:
-            prefix_ids = [int(prefix.replace('resource', '')) for prefix in existing_prefixes]
-            new_prefix = 'resource{}'.format(max(prefix_ids) + 1)
-        else:
-            new_prefix = 'resource0'
-        return new_prefix
 
 
 def _flatten_dict(d, parent_key='', sep=' '):
