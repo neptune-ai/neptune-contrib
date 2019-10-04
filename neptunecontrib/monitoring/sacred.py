@@ -80,7 +80,7 @@ class NeptuneObserver(RunObserver):
         if source_extensions:
             self.source_extensions = source_extensions
         else:
-            self.source_extensions = ['**/*.py', '**/*.R', '**/*.cpp', '**/*.yaml', '**/*.yml']
+            self.source_extensions = ['**/*.py', '**/*.yaml', '**/*.yml']
 
     def started_event(self, ex_info, command, host_info, start_time, config, meta_info, _id):
 
