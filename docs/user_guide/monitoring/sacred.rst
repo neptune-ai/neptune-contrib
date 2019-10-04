@@ -1,4 +1,4 @@
-Metrics
+Sacred
 ===========
 
 .. automodule:: neptunecontrib.monitoring.sacred
