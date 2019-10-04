@@ -74,26 +74,27 @@ class NeptuneObserver(RunObserver):
         Go to the app and see the experiment. For example, https://ui.neptune.ml/jakub-czakon/examples/e/EX-263
     """
 
-    def __init__(self, project_name, api_token=None, base_dir='.', source_extensions=None):
+    def __init__(self, project_name, api_token=None, source_extensions=None):
         neptune.init(project_qualified_name=project_name, api_token=api_token)
         self.resources = {}
-        self.base_dir = base_dir
         if source_extensions:
             self.source_extensions = source_extensions
         else:
-            self.source_extensions = ['.py', '.R', '.cpp', '.yaml', '.yml']
+            self.source_extensions = ['**/*.py', '**/*.R', '**/*.cpp', '**/*.yaml', '**/*.yml']
 
     def started_event(self, ex_info, command, host_info, start_time, config, meta_info, _id):
 
         neptune.create_experiment(name=ex_info['name'],
                                   params=_flatten_dict(config),
-                                  upload_source_files=_get_filepaths(dirpath=self.base_dir,
-                                                                     extensions=self.source_extensions),
+                                  upload_source_files=self.source_extensions,
                                   properties={'mainfile': ex_info['mainfile'],
                                               'dependencies': str(ex_info['dependencies']),
                                               'sacred_id': str(_id),
                                               **_str_dict_values(host_info),
-                                              **_str_dict_values(_flatten_dict(meta_info))})
+                                              **_str_dict_values(_flatten_dict(meta_info)),
+                                              **_str_dict_values(_flatten_dict(ex_info))},
+                                  git_info=neptune.utils.get_git_info(ex_info['base_dir'])
+                                  )
 
     def completed_event(self, stop_time, result):
         if result:
@@ -133,16 +134,7 @@ class NeptuneObserver(RunObserver):
         return new_prefix
 
 
-def _get_filepaths(dirpath, extensions):
-    files = []
-    for r, _, f in os.walk(dirpath):
-        for file in f:
-            if any(file.endswith(ext) for ext in extensions):
-                files.append(os.path.join(r, file))
-    return files
-
-
-def _flatten_dict(d, parent_key='', sep='_'):
+def _flatten_dict(d, parent_key='', sep=' '):
     items = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
