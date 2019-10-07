@@ -221,6 +221,14 @@ def get_filepaths(dirpath='.', extensions=None):
                  neptune.send_metric('score', 0.97)
 
     """
+
+    msg = """get_filepaths() is deprecated.
+    Starting from neptune-client==4.9 you can pass ['**/*.py*', '**/*.yaml*', '**/*.yml*']
+    to upload_source_files argument to upload all files with given extensions recursively.
+    Read more https://docs.neptune.ml/neptune-client/docs/project.html
+    """
+    warnings.warn(msg, DeprecationWarning)
+
     if not extensions:
         extensions = ['.py', '.yaml', 'yml']
     files = []
