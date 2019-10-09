@@ -48,14 +48,15 @@ class NeptuneMonitor(LearnerCallback):
         Prepare data::
 
             from fastai.vision import *
-            mnist = untar_data(URLs.MNIST_TINY)
-            tfms = get_transforms(do_flip=False)
-            data = (ImageItemList.from_folder(mnist)
-                          .split_by_folder()
-                          .label_from_folder()
-                          .transform(tfms, size=32)
-                          .databunch()
-                          .normalize(imagenet_stats))
+            path = untar_data(URLs.MNIST_TINY)
+
+            data = ImageDataBunch.from_folder(path, ds_tfms=(rand_pad(2, 28), []), bs=64)
+            data.normalize(imagenet_stats)
+
+            learn = cnn_learner(data, models.resnet18, metrics=accuracy)
+
+            learn.lr_find()
+            learn.recorder.plot()
 
         Now, create Neptune experiment, instantiate the monitor and pass
         it to callbacks::
