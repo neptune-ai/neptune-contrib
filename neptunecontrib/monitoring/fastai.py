@@ -19,13 +19,13 @@ import sys
 import neptune
 
 if sys.version_info[0] == 3 and sys.version_info[1] >= 6:
-    from fastai.callbacks import LearnerCallback
+    from fastai.basic_train import LearnerCallback
 else:
     class LearnerCallback:
         pass
 
 
-    LearnerCallback.__module__ = 'fastai.callbacks'
+    LearnerCallback.__module__ = 'fastai.basic_train'
 
 
 class NeptuneMonitor(LearnerCallback):

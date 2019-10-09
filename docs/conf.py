@@ -23,7 +23,7 @@ autodoc_mock_imports = ['aif360',
                         'boto3',
                         'joblib',
                         'fastai',
-                        'fastai.callbacks',
+                        'fastai.basic_train',
                         'telegram',
                         'numpy',
                         'pandas',
@@ -49,7 +49,7 @@ author = 'Neptune Dev Team'
 # The short X.Y version
 version = '0.13'
 # The full version, including alpha/beta/rc tags
-release = '0.13.5'
+release = '0.13.6'
 
 # -- General configuration ---------------------------------------------------
 
