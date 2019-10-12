@@ -94,4 +94,4 @@ class NeptuneMonitor(LearnerCallback):
     def on_batch_end(self, last_loss, iteration, train, **kwars):
         if iteration == 0 or not train:  
             return
-        self._exp.send_metric("loss", last_loss)
+        self._exp.send_metric('{}last_loss'.format(self._prefix), last_loss)	
