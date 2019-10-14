@@ -90,8 +90,8 @@ class NeptuneMonitor(LearnerCallback):
         for metric_value, metric_name in zip(metric_values, metric_names):
             metric_name = getattr(metric_name, '__name__', metric_name)
             self._exp.send_metric(self._prefix + str(metric_name), float(metric_value))
-            
+
     def on_batch_end(self, last_loss, iteration, train, **kwars):
-        if iteration == 0 or not train:  
+        if iteration == 0 or not train:
             return
-        self._exp.send_metric('{}last_loss'.format(self._prefix), last_loss)	
+        self._exp.send_metric('{}last_loss'.format(self._prefix), last_loss)
