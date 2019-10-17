@@ -2,6 +2,9 @@ from setuptools import find_packages, setup
 
 
 def main():
+    with open('README.md') as readme_file:
+        readme = readme_file.read()
+
     extras = {
         'bots': ['python-telegram-bot'],
         'hpo': ['scikit-optimize==0.5.2', 'scipy'],
@@ -20,12 +23,13 @@ def main():
 
     setup(
         name='neptune-contrib',
-        version='0.13.7',
-        description='Neptune Python library contributions',
+        version='0.13.8',
+        description='Neptune.ml contributions library',
         author='neptune.ml',
+        support='contact@neptune.ml',
         author_email='contact@neptune.ml',
         url="https://github.com/neptune-ml/neptune-contrib",
-        long_description='Neptune Python library contributions',
+        long_description=readme,
         license='MIT License',
         install_requires=base_libs,
         extras_require=extras,
