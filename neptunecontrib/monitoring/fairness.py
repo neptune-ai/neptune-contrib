@@ -24,7 +24,7 @@ import seaborn as sns
 from neptunecontrib.monitoring.utils import send_figure
 
 
-def log_fairness_classification_metrics(y_true, y_pred_class, sensitive_attributes,
+def log_fairness_classification_metrics(y_true, y_pred_class, y_pred_score, sensitive_attributes,
                                         favorable_label, unfavorable_label,
                                         privileged_groups, unprivileged_groups,
                                         experiment=None, prefix=''):
@@ -47,6 +47,7 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive_attribut
     Args:
         y_true (array-like, shape (n_samples)): Ground truth (correct) target values.
         y_pred_class (array-like, shape (n_samples)): Class predictions with values 0 or 1.
+        y_pred_score (array-like, shape (n_samples)): Class predictions with values from 0 to 1. Default None.
         sensitive_attributes (pandas.DataFrame, shape (n_samples, k)): datafame containing only sensitive columns.
         favorable_label (str or int): label that is favorable, brings positive value to a person being classified.
         unfavorable_label (str or int): label that is unfavorable, brings positive value to a person being classified.
@@ -66,7 +67,7 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive_attribut
 
             neptune.init()
             with neptune.create_experiment():
-                log_fairness_classification_metrics(y_test, y_test_pred_class, test[['race']],
+                log_fairness_classification_metrics(y_true, y_pred_class, y_pred_score, test[['race']],
                                                     favorable_label='granted_parole',
                                                     unfavorable_label='not_granted_parole',
                                                     privileged_groups={'race':['Caucasian']},
@@ -84,14 +85,8 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive_attribut
 
     privileged_info = _fmt_priveleged_info(privileged_groups, unprivileged_groups)
 
-    data = pd.DataFrame()
-    data['ground_truth'] = y_true.values
-    data['prediction'] = y_pred_class.values
-    for col in sensitive_attributes.columns:
-        data[col] = sensitive_attributes[col].values
-
-    ground_truth_test = _make_dataset(data, 'ground_truth', **bias_info, **privileged_info)
-    prediction_test = _make_dataset(data, 'prediction', **bias_info, **privileged_info)
+    ground_truth_test = _make_dataset(sensitive_attributes, y_true, **bias_info, **privileged_info)
+    prediction_test = _make_dataset(sensitive_attributes, y_pred_class, y_pred_score, **bias_info, **privileged_info)
 
     clf_metric = ClassificationMetric(ground_truth_test, prediction_test, **privileged_info)
 
@@ -113,13 +108,20 @@ def log_fairness_classification_metrics(y_true, y_pred_class, sensitive_attribut
         plt.close()
 
 
-def _make_dataset(data, outcome, protected_columns,
-                  privileged_groups, unprivileged_groups,
-                  favorable_label, unfavorable_label):
-    df = data.copy()
-    df['outcome'] = data[outcome].values
+def _make_dataset(features, labels, scores=None, protected_columns=None,
+                  privileged_groups=None, unprivileged_groups=None,
+                  favorable_label=None, unfavorable_label=None):
+    df = features.copy()
+    df['outcome'] = labels
 
-    dataset = BinaryLabelDataset(df=df, label_names=['outcome'], protected_attribute_names=protected_columns,
+    if scores is not None:
+        scores_names = 'scores'
+        df[scores_names] = scores
+    else:
+        scores_names = []
+
+    dataset = BinaryLabelDataset(df=df, label_names=['outcome'], scores_names=scores_names,
+                                 protected_attribute_names=protected_columns,
                                  favorable_label=favorable_label, unfavorable_label=unfavorable_label,
                                  unprivileged_protected_attributes=unprivileged_groups)
     return dataset
