@@ -36,6 +36,7 @@ def NeptuneMonitor(experiment=None):
             monitor = opt_utils.NeptuneMonitor()
 
         Run Optuna training passing monitor as callback::
+
             ...
             study = optuna.create_study(direction='maximize')
             study.optimize(objective, n_trials=100, callbacks=[monitor])
@@ -74,6 +75,7 @@ def log_study(study, experiment=None):
             monitor = opt_utils.NeptuneMonitor()
 
         Run Optuna training passing monitor as callback::
+
             ...
             study = optuna.create_study(direction='maximize')
             study.optimize(objective, n_trials=100, callbacks=[monitor])
