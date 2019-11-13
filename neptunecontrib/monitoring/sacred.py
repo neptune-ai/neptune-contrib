@@ -100,8 +100,18 @@ class NeptuneObserver(RunObserver):
 
     def completed_event(self, stop_time, result):
         if result:
-            neptune.log_metric('result', result)
+            if isinstance(result, tuple): # logging multiple results
+                for i, r in enumerate(result):
+                    if isinstance(r, float):
+                        neptune.log_metric(f'result_{i}', r)
+                    else: # Ignore non float results # TODO: Find a way of logging objects (log_artifact maybe??)
+                        continue
+
+            elif isinstance(result, float): # logging single result
+                neptune.log_metric('result', result)
+
         neptune.stop()
+
 
     def interrupted_event(self, interrupt_time, status):
         neptune.stop()
