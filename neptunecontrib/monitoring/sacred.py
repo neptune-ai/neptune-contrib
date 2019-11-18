@@ -15,8 +15,10 @@
 #
 
 import collections
+import warnings
 
 import neptune
+from neptunecontrib.monitoring.utils import pickle_and_send_artifact
 from sacred.dependencies import get_digest
 from sacred.observers import RunObserver
 
@@ -100,7 +102,19 @@ class NeptuneObserver(RunObserver):
 
     def completed_event(self, stop_time, result):
         if result:
-            neptune.log_metric('result', result)
+            if not isinstance(result, tuple):
+                result = (
+                    result,)  # transform single result to tuple so that both single & multiple results use same code
+
+            for i, r in enumerate(result):
+                if isinstance(r, float) or isinstance(r, int):
+                    neptune.log_metric("result_{}".format(i), float(r))
+                elif isinstance(r, object):
+                    pickle_and_send_artifact(r, "result_{}.pkl".format(i))
+                else:
+                    warnings.warn(
+                        "logging results does not support type '{}' results. Ignoring this result".format(type(r)))
+
         neptune.stop()
 
     def interrupted_event(self, interrupt_time, status):
