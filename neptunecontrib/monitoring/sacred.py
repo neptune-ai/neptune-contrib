@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ from sacred.observers import RunObserver
 class NeptuneObserver(RunObserver):
     """Logs sacred experiment data to Neptune.
 
-    Sacred observer that logs experiment metadata to neptune.ml app.
+    Sacred observer that logs experiment metadata to neptune.
     The experiment data can be accessed and shared via web UI or experiment API.
-    Check Neptune docs for more information https://docs.neptune.ml.
+    Check Neptune docs for more information https://docs.neptune.ai.
 
     Args:
         project_name(str): project name in Neptune app
@@ -74,7 +74,7 @@ class NeptuneObserver(RunObserver):
                 return clf.score(iris.data[90:],
                                  iris.target[90:])
 
-        Go to the app and see the experiment. For example, https://ui.neptune.ml/jakub-czakon/examples/e/EX-341
+        Go to the app and see the experiment. For example, https://ui.neptune.ai/jakub-czakon/examples/e/EX-341
     """
 
     def __init__(self, project_name, api_token=None, source_extensions=None):

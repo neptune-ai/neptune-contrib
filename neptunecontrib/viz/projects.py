@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ def project_progress(progress_df,
 
         Fetch a project and the experiment view of that project::
 
-            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            project = session.get_projects('neptune-ai')['neptune-ai/Salt-Detection']
             leaderboard = project.get_leaderboard()
 
         Create a progress info dataframe::

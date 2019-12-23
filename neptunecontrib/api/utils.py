@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ def concat_experiments_on_channel(experiments, channel_name):
 
         Fetch a project and a list of experiments::
 
-            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            project = session.get_projects('neptune-ai')['neptune-ai/Salt-Detection']
             experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
 
         Construct a channel value dataframe::
@@ -100,7 +100,7 @@ def extract_project_progress_info(leadearboard, metric_colname, time_colname='fi
 
         Fetch a project and the experiment view of that project::
 
-            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            project = session.get_projects('neptune-ai')['neptune-ai/Salt-Detection']
             leaderboard = project.get_leaderboard()
 
         Create a progress info dataframe::
@@ -225,7 +225,7 @@ def get_filepaths(dirpath='.', extensions=None):
     msg = """get_filepaths() is deprecated.
     Starting from neptune-client==4.9 you can pass ['**/*.py*', '**/*.yaml*', '**/*.yml*']
     to upload_source_files argument to upload all files with given extensions recursively.
-    Read more https://docs.neptune.ml/neptune-client/docs/project.html
+    Read more https://docs.neptune.ai/neptune-client/docs/project.html
     """
     warnings.warn(msg, DeprecationWarning)
 

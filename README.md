@@ -1,5 +1,5 @@
 # neptune-contrib
-[![Build Status](https://travis-ci.org/neptune-ml/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ml/neptune-contrib)
+[![Build Status](https://travis-ci.org/neptune-ai/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ai/neptune-contrib)
 
 # Documentation
 See [neptune-contrib documentation site](https://neptune-contrib.readthedocs.io)
@@ -29,7 +29,7 @@ If you get stuck, don't worry we are here to help.
 The best order of communication is:
 
  * [neptune-contrib readthedocs](https://neptune-contrib.readthedocs.io)
- * [neptune community forum](https://community.neptune.ml/)
+ * [neptune community forum](https://community.neptune.ai/)
  * [neptune community Spectrum](https://spectrum.chat/neptune-community?tab=posts)
  * Github issues
  
@@ -37,7 +37,7 @@ The best order of communication is:
 If you see something that you don't like you are more than welcome to contribute!
 There are many options:
   
-  * Participate in discussions on [neptune community forum](https://community.neptune.ml/) or [neptune community Spectrum](https://spectrum.chat/neptune-community?tab=posts)
+  * Participate in discussions on [neptune community forum](https://community.neptune.ai/) or [neptune community Spectrum](https://spectrum.chat/neptune-community?tab=posts)
   * Submit a feature request or a bug here, on Github
   * Submit a pull request that deals with an open feature-request or bug
   * Spread a word about neptune-contrib in your community

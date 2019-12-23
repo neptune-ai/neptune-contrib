@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ def df2result(df, metric_col, param_cols, param_types=None):
 
         Fetch a project and a list of experiments::
 
-            project = session.get_projects('neptune-ml')['neptune-ml/Home-Credit-Default-Risk']
+            project = session.get_projects('neptune-ai')['neptune-ai/Home-Credit-Default-Risk']
             leaderboard = project.get_leaderboard(state=['succeeded'], owner=['czakon'])
 
         Comvert the leaderboard dataframe to the `ResultOptimize` instance taking only the parameters and

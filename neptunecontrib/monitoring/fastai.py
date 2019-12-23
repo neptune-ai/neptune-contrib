@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class NeptuneMonitor(LearnerCallback):
     and logs them to appropriate Neptune channels.
 
     See the example experiment here
-    https://app.neptune.ml/neptune-ml/neptune-examples/e/NEP-493/charts.
+    https://ui.neptune.ai/neptune-ai/neptune-examples/e/NEP-493/charts.
 
 
     Args:

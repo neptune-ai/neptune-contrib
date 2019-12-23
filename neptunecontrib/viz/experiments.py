@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ def channel_curve_compare(experiment_df,
 
         Fetch a project and a list of experiments::
 
-            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            project = session.get_projects('neptune-ai')['neptune-ai/Salt-Detection']
             experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
 
         Construct a channel value dataframe::

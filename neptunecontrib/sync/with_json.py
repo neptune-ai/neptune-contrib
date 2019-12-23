@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ Attributes:
     filepath(str): filepath to the `.json` file that contains experiment data. It can have
         ['tags', 'channels', 'properties', 'parameters', 'name'] sections.
         You can pass it either as --filepath or -f.
-    project_name(str): Full name of the project. E.g. "neptune-ml/neptune-examples",
+    project_name(str): Full name of the project. E.g. "neptune-ai/neptune-examples",
         You can pass it either as --project_name or -p.
     neptune_api_token(str): Neptune api token. If you have NEPTUNE_API_TOKEN environment
         variable set to your API token you can skip this parameter.
@@ -66,7 +66,7 @@ Example:
 
         $ python neptunecontrib.sync.with_json
             --neptune_api_token 'ey7123qwwskdnaqsojnd1ru0129e12e=='
-            --project_name neptune-ml/neptune-examples
+            --project_name neptune-ai/neptune-examples
             --filepath experiment_data.json
 
 Note:
