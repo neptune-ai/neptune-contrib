@@ -35,7 +35,7 @@ class NeptuneMonitor(LearnerCallback):
     and logs them to appropriate Neptune channels.
 
     See the example experiment here
-    https://app.neptune.ml/neptune-ml/neptune-examples/e/NEP-493/charts.
+    https://ui.neptune.ai/neptune-ai/neptune-examples/e/NEP-493/charts.
 
 
     Args:

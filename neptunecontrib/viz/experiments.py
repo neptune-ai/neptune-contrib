@@ -55,7 +55,7 @@ def channel_curve_compare(experiment_df,
 
         Fetch a project and a list of experiments::
 
-            project = session.get_projects('neptune-ml')['neptune-ml/Salt-Detection']
+            project = session.get_projects('neptune-ai')['neptune-ai/Salt-Detection']
             experiments = project.get_experiments(state=['aborted'], owner=['neyo'], min_running_time=100000)
 
         Construct a channel value dataframe::

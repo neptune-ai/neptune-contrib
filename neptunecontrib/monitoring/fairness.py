@@ -74,7 +74,7 @@ def log_fairness_classification_metrics(y_true, y_pred_class, y_pred_score, sens
                                                     privileged_groups={'race':['African-American','Hispanic]},
                                                     )
 
-        Check out this experiment https://ui.neptune.ml/jakub-czakon/model-fairness/e/MOD-92/logs.
+        Check out this experiment https://ui.neptune.ai/jakub-czakon/model-fairness/e/MOD-92/logs.
 
     """
     _exp = experiment if experiment else neptune

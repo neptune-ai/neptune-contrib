@@ -1,4 +1,4 @@
-neptune-contrib: open-source contributions to Neptune.ml
+neptune-contrib: open-source contributions to Neptune.ai
 ========================================================
 
 This library is a collection of helpers and extensions that make working
@@ -13,23 +13,23 @@ Enjoy the following integrations:
 
 .. image:: _static/images/fastai_neptuneML.png
    :target: _static/images/fastai_neptuneML.png
-   :alt: fastai neptune.ml integration
+   :alt: fastai neptune.ai integration
 
 .. image:: _static/images/sacred_neptuneML.png
    :target: _static/images/sacred_neptuneML.png
-   :alt: Sacred neptune.ml integration
+   :alt: Sacred neptune.ai integration
 
 .. image:: _static/images/LightGBM_neptuneML.png
    :target: _static/images/LightGBM_neptuneML.png
-   :alt: lightGBM neptune.ml integration
+   :alt: lightGBM neptune.ai integration
 
 .. image:: _static/images/matplotlib_neptuneML.png
    :target: _static/images/matplotlib_neptuneML.png
-   :alt: matplotlib neptune.ml integration
+   :alt: matplotlib neptune.ai integration
 
 .. image:: _static/images/Telegram_neptuneML.png
    :target: _static/images/Telegram_neptuneML.png
-   :alt: Telegram neptune.ml integration
+   :alt: Telegram neptune.ai integration
 
 And the best thing is you can extend it yourself or... tell us to do it for you :).
 
@@ -93,7 +93,7 @@ Indices and tables
 .. _GitHub: https://github.com/neptune-ml/neptune-contrib
 .. _Git Issues: https://github.com/neptune-ml/neptune-contrib/issues
 .. _Git Feature Request: https://github.com/neptune-ml/neptune-contrib/issues
-.. _Neptune app: https://neptune.ml/
-.. _Neptune community forum: https://community.neptune.ml/
+.. _Neptune app: https://neptune.ai/
+.. _Neptune community forum: https://community.neptune.ai/
 .. _Github projects: https://github.com/neptune-ml/neptune-contrib/projects
 .. _Neptune community spectrum: https://spectrum.chat/neptune-community?tab=posts

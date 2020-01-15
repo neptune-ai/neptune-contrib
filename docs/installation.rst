@@ -15,6 +15,6 @@ For example:
 
 Installation options are: [bots], [hpo], [monitoring], [versioning], [viz] and [all].
 
-To get all the functionality register account for free on `neptune.ml website`_.
+To get all the functionality register account for free on `neptune.ai website`_.
 
-.. _neptune.ml website: https://neptune.ml/
+.. _neptune.ai website: https://neptune.ai/

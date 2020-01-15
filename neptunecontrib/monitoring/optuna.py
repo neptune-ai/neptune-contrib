@@ -41,7 +41,7 @@ def NeptuneMonitor(experiment=None):
             study = optuna.create_study(direction='maximize')
             study.optimize(objective, n_trials=100, callbacks=[monitor])
 
-        You can explore an example experiment in Neptune https://ui.neptune.ml/jakub-czakon/blog-hpo/e/BLOG-404/charts
+        You can explore an example experiment in Neptune https://ui.neptune.ai/jakub-czakon/blog-hpo/e/BLOG-404/charts
     """
 
     _exp = experiment if experiment else neptune
@@ -81,7 +81,7 @@ def log_study(study, experiment=None):
             study.optimize(objective, n_trials=100, callbacks=[monitor])
             opt_utils.log_study(study)
 
-        You can explore an example experiment in Neptune https://ui.neptune.ml/jakub-czakon/blog-hpo/e/BLOG-404/charts
+        You can explore an example experiment in Neptune https://ui.neptune.ai/jakub-czakon/blog-hpo/e/BLOG-404/charts
      """
     _exp = experiment if experiment else neptune
 

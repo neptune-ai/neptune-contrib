@@ -71,7 +71,7 @@ def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=
             with neptune.create_experiment():
                 log_binary_classification_metrics(y_test, y_test_pred, threshold=0.5)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
@@ -127,7 +127,7 @@ def log_confusion_matrix(y_true, y_pred_class, experiment=None, channel_name='me
             with neptune.create_experiment():
                 log_confusion_matrix(y_test, y_test_pred[:,1]>0.5)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred_class.shape) == 1, 'y_pred_class needs to be 1D class prediction with values 0, 1'
@@ -175,7 +175,7 @@ def log_classification_report(y_true, y_pred_class, experiment=None, channel_nam
             with neptune.create_experiment():
                 log_classification_report(y_test, y_test_pred[:,1]>0.5)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred_class.shape) == 1, 'y_pred_class needs to be 1D class prediction with values 0, 1'
@@ -225,7 +225,7 @@ def log_class_metrics(y_true, y_pred_class, experiment=None, prefix=''):
             with neptune.create_experiment():
                 log_class_metrics(y_test, y_test_pred[:,1]>0.5)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred_class.shape) == 1, 'y_pred_class needs to be 1D class prediction with values 0, 1'
@@ -276,7 +276,7 @@ def log_class_metrics_by_threshold(y_true, y_pred_pos, experiment=None, channel_
             with neptune.create_experiment():
                 log_class_metrics_by_threshold(y_test, y_test_pred[:,1])
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred_pos.shape) == 1, 'y_pred_pos needs to be 1D prediction for positive class'
@@ -325,7 +325,7 @@ def log_roc_auc(y_true, y_pred, experiment=None, channel_name='metric_charts', p
             with neptune.create_experiment():
                 log_roc_auc(y_test, y_test_pred)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
@@ -376,7 +376,7 @@ def log_precision_recall_auc(y_true, y_pred, experiment=None, channel_name='metr
             with neptune.create_experiment():
                 log_precision_recall_auc(y_test, y_test_pred)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
@@ -426,7 +426,7 @@ def log_brier_loss(y_true, y_pred_pos, experiment=None, prefix=''):
             with neptune.create_experiment():
                 log_brier_loss(y_test, y_test_pred[:,1])
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred_pos.shape) == 1, 'y_pred_pos needs to be 1D prediction for positive class'
@@ -471,7 +471,7 @@ def log_log_loss(y_true, y_pred, experiment=None, prefix=''):
             with neptune.create_experiment():
                 log_log_loss(y_test, y_test_pred)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
@@ -521,7 +521,7 @@ def log_ks_statistic(y_true, y_pred, experiment=None, channel_name='metric_chart
             with neptune.create_experiment():
                 log_ks_statistic(y_test, y_test_pred)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
@@ -573,7 +573,7 @@ def log_cumulative_gain(y_true, y_pred, experiment=None, channel_name='metric_ch
             with neptune.create_experiment():
                 log_cumulative_gain(y_test, y_test_pred)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
@@ -621,7 +621,7 @@ def log_lift_curve(y_true, y_pred, experiment=None, channel_name='metric_charts'
             with neptune.create_experiment():
                 log_lift_curve(y_test, y_test_pred)
 
-        Check out this experiment https://ui.neptune.ml/o/neptune-ml/org/binary-classification-metrics/e/BIN-101/logs.
+        Check out this experiment https://ui.neptune.ai/o/neptune-ai/org/binary-classification-metrics/e/BIN-101/logs.
 
     """
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'

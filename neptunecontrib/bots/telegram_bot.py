@@ -49,7 +49,7 @@ Example:
 
     Go to your telegram and type.
 
-    `/project list neptune-ml`
+    `/project list neptune-ai`
 
     Use help to see what is implemented.
 
@@ -135,7 +135,7 @@ class TelegramBot:
             msg = ['message should have a format:',
                    '/project list NAMESPACE',
                    'for example:',
-                   '/project list neptune-ml']
+                   '/project list neptune-ai']
             msg = '\n'.join(msg)
         else:
             namespace = args[1]
@@ -148,7 +148,7 @@ class TelegramBot:
             msg = ['message should have a format:',
                    '/project select NAMESPACE/PROJECT_NAME',
                    'for example:',
-                   '/project select neptune-ml/neptune-examples']
+                   '/project select neptune-ai/neptune-examples']
             msg = '\n'.join(msg)
         else:
             self.project_name = args[1]
@@ -246,7 +246,7 @@ class TelegramBot:
             short_id = args[1]
             namespace, project = self.project_name.split('/')
 
-            msg = 'https://app.neptune.ml/o/{}/org/{}/e/{}/details'.format(namespace, project, short_id)
+            msg = 'https://ui.neptune.ai/o/{}/org/{}/e/{}/details'.format(namespace, project, short_id)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiment_plot(self, bot, update, args):
@@ -291,7 +291,7 @@ class TelegramBot:
                "Do so by running:\n"
                "/project select NAMESPACE/PROJECT_NAME",
                "For example:",
-               "/project select neptune-ml/neptune-examples"]
+               "/project select neptune-ai/neptune-examples"]
         msg = '\n'.join(msg)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 

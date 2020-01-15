@@ -99,7 +99,7 @@ def log_image_dir_snapshots(image_dir, channel_name='image_dir_snapshots', exper
     For a given directory with images it logs a sample of images as figure to Neptune.
     If the `image_dir` specified contains multiple folders it will sample per folder and create
     multiple figures naming each figure with the folder name.
-    See snapshots per class here https://ui.neptune.ml/jakub-czakon/examples/e/EX-95/channels.
+    See snapshots per class here https://ui.neptune.ai/jakub-czakon/examples/e/EX-95/channels.
 
     Args:
         image_dir(str): path to directory with images.
