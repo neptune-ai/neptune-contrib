@@ -44,13 +44,13 @@ autodoc_mock_imports = ['aif360',
 # -- Project information -----------------------------------------------------
 
 project = 'neptune-contrib'
-copyright = '2019, Neptune Dev Team'
+copyright = '2020, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
 version = '0.15'
 # The full version, including alpha/beta/rc tags
-release = '0.15.1'
+release = '0.15.2'
 
 # -- General configuration ---------------------------------------------------
 
