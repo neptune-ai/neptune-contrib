@@ -90,10 +90,10 @@ Indices and tables
 * :ref:`modindex`
 
 
-.. _GitHub: https://github.com/neptune-ai/neptune-contrib
-.. _Git Issues: https://github.com/neptune-ai/neptune-contrib/issues
-.. _Git Feature Request: https://github.com/neptune-ai/neptune-contrib/issues
+.. _GitHub: https://github.com/neptune-ml/neptune-contrib
+.. _Git Issues: https://github.com/neptune-ml/neptune-contrib/issues
+.. _Git Feature Request: https://github.com/neptune-ml/neptune-contrib/issues
 .. _Neptune app: https://neptune.ai/
 .. _Neptune community forum: https://community.neptune.ai/
-.. _Github projects: https://github.com/neptune-ai/neptune-contrib/projects
+.. _Github projects: https://github.com/neptune-ml/neptune-contrib/projects
 .. _Neptune community spectrum: https://spectrum.chat/neptune-community?tab=posts
