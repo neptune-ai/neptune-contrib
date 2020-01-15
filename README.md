@@ -1,5 +1,5 @@
 # neptune-contrib
-[![Build Status](https://travis-ci.org/neptune-ai/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ai/neptune-contrib)
+[![Build Status](https://travis-ci.org/neptune-ml/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ml/neptune-contrib)
 
 # Documentation
 See [neptune-contrib documentation site](https://neptune-contrib.readthedocs.io)
