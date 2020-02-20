@@ -28,10 +28,10 @@ def make_parallel_coordinates_plot(columns=None,
                                    min_running_time=None):
     """Visualize experiments on the parallel coordinates plot.
 
-    Make interactive parallel coordinates plot to analyse multiple experiments
-    | This function, when executed in Notebook cell,
-      displays interactive parallel coordinates plot with all selected experiments.
-    | Another option is to save visualization to the standalone html file - see examples below.
+    Make interactive parallel coordinates plot to analyse multiple experiments.
+    This function, when executed in Notebook cell,
+    displays interactive parallel coordinates plot with all selected experiments.
+    Another option is to save visualization to the standalone html file - see examples below.
 
     You can also inspect the lineage of experiments.
     `See example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_
@@ -75,9 +75,10 @@ def make_parallel_coordinates_plot(columns=None,
             make_parallel_coordinates_plot(html_file_path='visualizations.html', tag='segmentation')
 
             # make visualization for all experiments created by john and use selected columns
-            make_parallel_coordinates_plot(columns=['channel_epoch_acc', 'channel_epoch_loss',
-                                                    'parameter_lr', 'parameter_dense', 'parameter_dropout'],
-                                           owner='john')
+            make_parallel_coordinates_plot(
+                columns=['channel_epoch_acc', 'channel_epoch_loss',
+                         'parameter_lr', 'parameter_dense', 'parameter_dropout'],
+                owner='john')
     """
     if neptune.project is None:
         msg = """You do not have project, from which to fetch data.
