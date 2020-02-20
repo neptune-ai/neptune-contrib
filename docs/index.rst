@@ -4,10 +4,11 @@ neptune-contrib: open-source contributions to Neptune.ai
 This library is a collection of helpers and extensions that make working
 with `Neptune app`_ more effective and better. It is build on top of neptune-client
 and gives you option to do things like:
- * interactive visualizations of experiment runs or hyperparameters
- * running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
- * monitor training of the lightGBM or fastai models with a single callback
- * much more
+
+* interactive visualizations of experiment runs or hyperparameters
+* running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
+* monitor training of the lightGBM or fastai models with a single callback
+* much more
 
 Enjoy the following integrations:
 
@@ -65,6 +66,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    versioning.data <user_guide/versioning/data>
    viz.experiments <user_guide/viz/experiments>
    viz.projects <user_guide/viz/projects>
+   viz.parallel_coordinates_plot <user_guide/viz/parallel_coordinates_plot>
 
 
 Bug Reports and Questions
