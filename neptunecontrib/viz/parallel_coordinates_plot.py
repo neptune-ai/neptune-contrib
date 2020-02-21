@@ -109,7 +109,7 @@ def make_parallel_coordinates_plot(columns=None,
         assert all(column in df.columns.to_list() for column in columns), \
             'Check "columns" parameter, for columns that are not in this project.'
     else:
-        raise TypeError(f'{columns} must be None, string or list of string')
+        raise TypeError('{} must be None, string or list of string'.format(columns))
 
     # sort experiments by neptune id
     df = df[columns]
@@ -127,7 +127,7 @@ def make_parallel_coordinates_plot(columns=None,
     # save to html if requested
     if html_file_path is not None:
         assert isinstance(html_file_path, str),\
-            f'"html_file_path" should be string, but {type(html_file_path)} is given'
+            '"html_file_path" should be string, but {} is given'.format(type(html_file_path))
         if os.path.dirname(html_file_path):
             os.makedirs(os.path.dirname(html_file_path), exist_ok=True)
         hiplot_vis.to_html(html_file_path)
