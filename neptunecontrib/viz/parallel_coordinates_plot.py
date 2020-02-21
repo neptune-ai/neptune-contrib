@@ -34,10 +34,12 @@ def make_parallel_coordinates_plot(columns=None,
     Another option is to save visualization to the standalone html file - see examples below.
     You can also inspect the lineage of experiments.
 
-    **See** `example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_ **for full use case.**
+    **See** `example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_
+    **for full use case.**
 
     This visualization it built using `HiPlot <https://facebookresearch.github.io/hiplot/index.html>`_.
-    It is a library published by the Facebook AI group. Learn more about the `parallel coordinates plot <https://en.wikipedia.org/wiki/Parallel_coordinates>`_.
+    It is a library published by the Facebook AI group.
+    Learn more about the `parallel coordinates plot <https://en.wikipedia.org/wiki/Parallel_coordinates>`_.
 
     Note:
         Make sure you have your project set: `neptune.init('USERNAME/example-project')`
@@ -99,7 +101,7 @@ def make_parallel_coordinates_plot(columns=None,
             if 'parameter_' in col_name:
                 columns.append(col_name)
     elif isinstance(columns, str):
-        assert columns in df.columns.to_list(), f'There is no "{columns}" in the project columns.'
+        assert columns in df.columns.to_list(), 'There is no "{}" in the project columns.'.format(columns)
         columns = ['id', columns]
     elif isinstance(columns, list):
         if 'id' not in columns:
