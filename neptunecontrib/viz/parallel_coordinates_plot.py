@@ -21,7 +21,7 @@ import neptune
 
 def make_parallel_coordinates_plot(columns=None,
                                    html_file_path=None,
-                                   id=None,
+                                   experiment_id=None,
                                    state=None,
                                    owner=None,
                                    tag=None,
@@ -50,7 +50,7 @@ def make_parallel_coordinates_plot(columns=None,
             | If `None`, then experiment id like `SAN-12`, experiment `owner` and all parameters are used as columns.
         html_file_path (:obj:`str`, optional, default is ``None``):
             | Saves visualization as a standalone html file. No external dependencies needed.
-        id (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
+        experiment_id (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
             | An experiment id like ``'SAN-1'`` or list of ids like ``['SAN-1', 'SAN-2']``.
             | Matching any element of the list is sufficient to pass criterion.
         state (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
@@ -92,7 +92,7 @@ def make_parallel_coordinates_plot(columns=None,
                  See docs: https://docs.neptune.ai/neptune-client/docs/neptune.html#neptune.init"""
         raise ValueError(msg)
 
-    df = neptune.project.get_leaderboard(id=id, state=state, owner=owner, tag=tag, min_running_time=min_running_time)
+    df = neptune.project.get_leaderboard(id=experiment_id, state=state, owner=owner, tag=tag, min_running_time=min_running_time)
     assert df.shape[0] != 0, 'No experiments to show. Try other filters.'
 
     if columns is None:
