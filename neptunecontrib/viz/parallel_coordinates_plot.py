@@ -32,14 +32,15 @@ def make_parallel_coordinates_plot(columns=None,
     This function, when executed in Notebook cell,
     displays interactive parallel coordinates plot with all selected experiments.
     Another option is to save visualization to the standalone html file - see examples below.
-
     You can also inspect the lineage of experiments.
-    `See example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_
 
-    This visualization is build using HiPlot - library published by the Facebook AI group.
-    Link to HiPlot docs: https://facebookresearch.github.io/hiplot/index.html
+    **See** `example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_ **for full use case.**
 
-    Learn more about parallel coordinates plot here: https://en.wikipedia.org/wiki/Parallel_coordinates
+    This visualization it built using `HiPlot <https://facebookresearch.github.io/hiplot/index.html>`_.
+    It is a library published by the Facebook AI group. Learn more about the `parallel coordinates plot <https://en.wikipedia.org/wiki/Parallel_coordinates>`_.
+
+    Note:
+        Make sure you have your project set: `neptune.init('USERNAME/example-project')`
 
     Args:
         columns (:obj:`list` of :obj:`str`, optional, default is ``None``):
@@ -68,13 +69,16 @@ def make_parallel_coordinates_plot(columns=None,
 
         .. code:: python3
 
-            # make visualization for all experiments in project
+            # Make sure you have your project set:
+            neptune.init('USERNAME/example-project')
+
+            # (example 1) make visualization for all experiments in project
             make_parallel_coordinates_plot()
 
-            # make visualization for experiment with tag 'segmentation' and save to html file.
+            # (example 2) make visualization for experiment with tag 'segmentation' and save to html file.
             make_parallel_coordinates_plot(html_file_path='visualizations.html', tag='segmentation')
 
-            # make visualization for all experiments created by john and use selected columns
+            # (example 3) make visualization for all experiments created by john and use selected columns
             make_parallel_coordinates_plot(
                 columns=['channel_epoch_acc', 'channel_epoch_loss',
                          'parameter_lr', 'parameter_dense', 'parameter_dropout'],
@@ -111,7 +115,6 @@ def make_parallel_coordinates_plot(columns=None,
     _exp_ids_series = df['neptune_id'].apply(lambda x: int(x.split('-')[-1]))
     df.insert(loc=0, column='exp_number', value=_exp_ids_series)
     df = df.sort_values(by='exp_number', ascending=True)
-    df = df.astype({'neptune_id': 'string'})
 
     # prepare HiPlot visualization
     input_to_hiplot = df.T.to_dict().values()
@@ -123,7 +126,7 @@ def make_parallel_coordinates_plot(columns=None,
     if html_file_path is not None:
         assert isinstance(html_file_path, str),\
             f'"html_file_path" should be string, but {type(html_file_path)} is given'
-        if len(os.path.dirname(html_file_path)) > 0:
+        if os.path.dirname(html_file_path):
             os.makedirs(os.path.dirname(html_file_path), exist_ok=True)
         hiplot_vis.to_html(html_file_path)
     hiplot_vis.display()
