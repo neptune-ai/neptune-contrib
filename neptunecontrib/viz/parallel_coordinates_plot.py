@@ -30,23 +30,22 @@ def make_parallel_coordinates_plot(html_file_path=None,
                                    min_running_time=None):
     """Visualize experiments on the parallel coordinates plot.
 
-    Make interactive parallel coordinates plot to analyse multiple experiments.
-    This function, when executed in Notebook cell,
-    displays interactive parallel coordinates plot in the cell's output.
+    This function, when executed in Notebook, displays interactive parallel coordinates plot in the cell's output.
     Another option is to save visualization to the standalone html file.
     You can also inspect the lineage of experiments.
 
     **See** `example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_
     **for full use case.**
 
-    Use ``metrics``, ``params`` and ``properties`` arguments to select what data you want to see as axes.
-
-    Use ``experiment_id``, ``state``, ``owner``, ``tag``, ``min_running_time`` arguments to filter experiments
-    included in a plot. Only experiments matching all the criteria will be returned.
-
     This visualization it built using `HiPlot <https://facebookresearch.github.io/hiplot/index.html>`_.
     It is a library published by the Facebook AI group.
     Learn more about the `parallel coordinates plot <https://en.wikipedia.org/wiki/Parallel_coordinates>`_.
+
+    Tip:
+        Use ``metrics``, ``params`` and ``properties`` arguments to select what data you want to see as axes.
+
+        Use ``experiment_id``, ``state``, ``owner``, ``tag``, ``min_running_time`` arguments to filter experiments
+        included in a plot. Only experiments matching all the criteria will be returned.
 
     Note:
         Make sure you have your project set: `neptune.init('USERNAME/example-project')`
