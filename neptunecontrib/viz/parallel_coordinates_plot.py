@@ -19,8 +19,10 @@ import hiplot as hip
 import neptune
 
 
-def make_parallel_coordinates_plot(columns=None,
-                                   html_file_path=None,
+def make_parallel_coordinates_plot(html_file_path=None,
+                                   metrics=None,
+                                   params=None,
+                                   properties=None,
                                    experiment_id=None,
                                    state=None,
                                    owner=None,
@@ -30,12 +32,17 @@ def make_parallel_coordinates_plot(columns=None,
 
     Make interactive parallel coordinates plot to analyse multiple experiments.
     This function, when executed in Notebook cell,
-    displays interactive parallel coordinates plot with all selected experiments.
-    Another option is to save visualization to the standalone html file - see examples below.
+    displays interactive parallel coordinates plot in the cell's output.
+    Another option is to save visualization to the standalone html file.
     You can also inspect the lineage of experiments.
 
     **See** `example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_
     **for full use case.**
+
+    Use ``metrics``, ``params`` and ``properties`` arguments to select what data you want to see as axes.
+
+    Use ``experiment_id``, ``state``, ``owner``, ``tag``, ``min_running_time`` arguments to filter experiments
+    included in a plot. Only experiments matching all the criteria will be returned.
 
     This visualization it built using `HiPlot <https://facebookresearch.github.io/hiplot/index.html>`_.
     It is a library published by the Facebook AI group.
@@ -45,11 +52,20 @@ def make_parallel_coordinates_plot(columns=None,
         Make sure you have your project set: `neptune.init('USERNAME/example-project')`
 
     Args:
-        columns (:obj:`list` of :obj:`str`, optional, default is ``None``):
-            | Columns to display on the plot.
-            | If `None`, then experiment id like `SAN-12`, experiment `owner` and all parameters are used as columns.
         html_file_path (:obj:`str`, optional, default is ``None``):
             | Saves visualization as a standalone html file. No external dependencies needed.
+        metrics (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
+            | Metrics to display on the plot (as axes).
+            | If `None`, then display all metrics.
+            | If empty list `[]`, then exclude all metrics.
+        params (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
+            | Parameters to display on the plot (as axes).
+            | If `None`, then display all parameters.
+            | If empty list `[]`, then exclude all parameters.
+        properties (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
+            | Properties to display on the plot (as axes).
+            | If `None`, then display all properties.
+            | If empty list `[]`, then exclude all properties.
         experiment_id (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
             | An experiment id like ``'SAN-1'`` or list of ids like ``['SAN-1', 'SAN-2']``.
             | Matching any element of the list is sufficient to pass criterion.
