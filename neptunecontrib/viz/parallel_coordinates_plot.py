@@ -92,7 +92,11 @@ def make_parallel_coordinates_plot(columns=None,
                  See docs: https://docs.neptune.ai/neptune-client/docs/neptune.html#neptune.init"""
         raise ValueError(msg)
 
-    df = neptune.project.get_leaderboard(id=experiment_id, state=state, owner=owner, tag=tag, min_running_time=min_running_time)
+    df = neptune.project.get_leaderboard(id=experiment_id,
+                                         state=state,
+                                         owner=owner,
+                                         tag=tag,
+                                         min_running_time=min_running_time)
     assert df.shape[0] != 0, 'No experiments to show. Try other filters.'
 
     if columns is None:
@@ -111,20 +115,20 @@ def make_parallel_coordinates_plot(columns=None,
     else:
         raise TypeError('{} must be None, string or list of string'.format(columns))
 
-    # sort experiments by neptune id
+    # Sort experiments by neptune id
     df = df[columns]
     df = df.rename(columns={'id': 'neptune_id'})
     _exp_ids_series = df['neptune_id'].apply(lambda x: int(x.split('-')[-1]))
     df.insert(loc=0, column='exp_number', value=_exp_ids_series)
     df = df.sort_values(by='exp_number', ascending=True)
 
-    # prepare HiPlot visualization
+    # Prepare HiPlot visualization
     input_to_hiplot = df.T.to_dict().values()
     hiplot_vis = hip.Experiment().from_iterable(input_to_hiplot)
     for j, datapoint in enumerate(hiplot_vis.datapoints[1:], 1):
         datapoint.from_uid = hiplot_vis.datapoints[j-1].uid
 
-    # save to html if requested
+    # Save to html if requested
     if html_file_path is not None:
         assert isinstance(html_file_path, str),\
             '"html_file_path" should be string, but {} is given'.format(type(html_file_path))
