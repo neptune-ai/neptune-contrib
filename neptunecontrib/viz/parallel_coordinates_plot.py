@@ -111,7 +111,7 @@ def make_parallel_coordinates_plot(columns=None,
         if 'id' not in columns:
             columns.append('id')
         assert all(column in df.columns.to_list() for column in columns), \
-            'Check "columns" parameter, for columns that are not in this project.'
+            '"columns" parameter contains columns that are not in selected experiments.'
     else:
         raise TypeError('{} must be None, string or list of string'.format(columns))
 
