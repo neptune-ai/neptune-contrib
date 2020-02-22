@@ -126,20 +126,21 @@ def make_parallel_coordinates_plot(html_file_path=None,
                                          min_running_time=min_running_time)
     assert df.shape[0] != 0, 'No experiments to show. Try other filters.'
 
+    # Cast columns to int or str
     for column in df.columns.to_list():
         if column.startswith('channel_'):
             try:
                 df = df.astype({column: float})
-                _all_metrics.append(column.replace('channel_', ''))
+                _all_metrics.append((column, column.replace('channel_', '')))
             except ValueError:
                 df = df.astype({column: str})
-                _all_text_logs.append(column.replace('channel_', ''))
+                _all_text_logs.append((column, column.replace('channel_', '')))
         elif column.startswith('parameter_'):
             df = df.astype({column: str})
-            _all_params.append(column.replace('parameter_', ''))
+            _all_params.append((column, column.replace('parameter_', '')))
         elif column.startswith('property_'):
             df = df.astype({column: str})
-            _all_properties.append(column.replace('property_', ''))
+            _all_properties.append((column, column.replace('property_', '')))
 
     # Validate each type of input
     metrics = _validate_input(metrics, _all_metrics, 'metric')
@@ -150,10 +151,18 @@ def make_parallel_coordinates_plot(html_file_path=None,
     # Check for name conflicts
     _all_columns = metrics + text_logs + params + properties
     for column in [k for k, v in Counter(_all_columns).items() if v > 1]:
-        metrics = ['metric__' + column if j == column else j for j in metrics]
-        text_logs = ['text_log__' + column if j == column else j for j in text_logs]
-        params = ['param__' + column if j == column else j for j in params]
-        properties = ['property__' + column if j == column else j for j in properties]
+        if column in metrics:
+            metrics = ['metric__' + column if j == column else j for j in metrics]
+            _all_metrics = [(j[0], 'metric__' + column) if j[1] == column else j for j in _all_metrics]
+        if column in text_logs:
+            text_logs = ['text_log__' + column if j == column else j for j in text_logs]
+            _all_text_logs = [(j[0], 'text_log__' + column) if j[1] == column else j for j in _all_text_logs]
+        if column in params:
+            params = ['param__' + column if j == column else j for j in params]
+            _all_params = [(j[0], 'param__' + column) if j[1] == column else j for j in _all_params]
+        if column in properties:
+            properties = ['property__' + column if j == column else j for j in properties]
+            _all_properties = [(j[0], 'property__' + column) if j[1] == column else j for j in _all_properties]
 
     # Rename columns in dataframe and sort experiments by neptune id
 
@@ -181,6 +190,7 @@ def make_parallel_coordinates_plot(html_file_path=None,
 
 
 def _validate_input(selected_columns, all_columns, type_name):
+    all_columns = [j[1] for j in all_columns]
     if selected_columns is True:
         selected_columns = all_columns
     elif selected_columns is False:
