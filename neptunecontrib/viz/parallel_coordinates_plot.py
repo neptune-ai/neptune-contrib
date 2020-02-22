@@ -17,13 +17,14 @@ import os
 
 import hiplot as hip
 import neptune
+from collections import Counter
 
 
 def make_parallel_coordinates_plot(html_file_path=None,
-                                   metrics=tuple(),
-                                   text_logs=tuple(),
-                                   params=None,
-                                   properties=tuple(),
+                                   metrics=False,
+                                   text_logs=False,
+                                   params=True,
+                                   properties=False,
                                    experiment_id=None,
                                    state=None,
                                    owner=None,
@@ -106,6 +107,12 @@ def make_parallel_coordinates_plot(html_file_path=None,
                          'parameter_lr', 'parameter_dense', 'parameter_dropout'],
                 owner='john')
     """
+    _all_metrics = []
+    _all_text_logs = []
+    _all_params = []
+    _all_properties = []
+    _all_columns = []
+
     if neptune.project is None:
         msg = """You do not have project, from which to fetch data.
                  Use neptune.init() to set project, for example: neptune.init('USERNAME/example-project').
@@ -119,23 +126,38 @@ def make_parallel_coordinates_plot(html_file_path=None,
                                          min_running_time=min_running_time)
     assert df.shape[0] != 0, 'No experiments to show. Try other filters.'
 
-    if columns is None:
-        columns = ['id', 'owner']
-        for col_name in df.columns.to_list():
-            if 'parameter_' in col_name:
-                columns.append(col_name)
-    elif isinstance(columns, str):
-        assert columns in df.columns.to_list(), 'There is no "{}" in the project columns.'.format(columns)
-        columns = ['id', columns]
-    elif isinstance(columns, list):
-        if 'id' not in columns:
-            columns.append('id')
-        assert all(column in df.columns.to_list() for column in columns), \
-            '"columns" parameter contains columns that are not in selected experiments.'
-    else:
-        raise TypeError('{} must be None, string or list of string'.format(columns))
+    for column in df.columns.to_list():
+        if column.startswith('channel_'):
+            try:
+                df = df.astype({column: float})
+                _all_metrics.append(column.replace('channel_', ''))
+            except ValueError:
+                df = df.astype({column: str})
+                _all_text_logs.append(column.replace('channel_', ''))
+        elif column.startswith('parameter_'):
+            df = df.astype({column: str})
+            _all_params.append(column.replace('parameter_', ''))
+        elif column.startswith('property_'):
+            df = df.astype({column: str})
+            _all_properties.append(column.replace('property_', ''))
 
-    # Sort experiments by neptune id
+    # Validate each type of input
+    metrics = _validate_input(metrics, _all_metrics, 'metric')
+    text_logs = _validate_input(text_logs, _all_text_logs, 'text log')
+    params = _validate_input(params, _all_params, 'parameter')
+    properties = _validate_input(properties, _all_properties, 'property')
+
+    # Check for name conflicts
+    _all_columns = metrics + text_logs + params + properties
+    for column in [k for k, v in Counter(_all_columns).items() if v > 1]:
+        metrics = ['metric__' + column if j == column else j for j in metrics]
+        text_logs = ['text_log__' + column if j == column else j for j in text_logs]
+        params = ['param__' + column if j == column else j for j in params]
+        properties = ['property__' + column if j == column else j for j in properties]
+
+    # Rename columns in dataframe and sort experiments by neptune id
+
+
     df = df[columns]
     df = df.rename(columns={'id': 'neptune_id'})
     _exp_ids_series = df['neptune_id'].apply(lambda x: int(x.split('-')[-1]))
@@ -156,3 +178,24 @@ def make_parallel_coordinates_plot(html_file_path=None,
             os.makedirs(os.path.dirname(html_file_path), exist_ok=True)
         hiplot_vis.to_html(html_file_path)
     hiplot_vis.display()
+
+
+def _validate_input(selected_columns, all_columns, type_name):
+    if selected_columns is True:
+        selected_columns = all_columns
+    elif selected_columns is False:
+        selected_columns = []
+    elif isinstance(selected_columns, str):
+        assert selected_columns in all_columns, \
+            'There is no {} with a name "{}" in the project columns.'.format(type_name, selected_columns)
+        selected_columns = [selected_columns, ]
+    elif isinstance(selected_columns, list):
+        for j in selected_columns:
+            assert j in all_columns, 'There is no "{}" in the project columns.'.format(j)
+    else:
+        raise TypeError('{} must be None, string or list of strings'.format(selected_columns))
+    return selected_columns
+
+
+# ToDo add ['id', 'owner']
+# ToDo update docstring for bool
