@@ -111,7 +111,6 @@ def make_parallel_coordinates_plot(html_file_path=None,
     _all_text_logs = []
     _all_params = []
     _all_properties = []
-    _all_columns = []
 
     if neptune.project is None:
         msg = """You do not have project, from which to fetch data.
@@ -166,9 +165,8 @@ def make_parallel_coordinates_plot(html_file_path=None,
 
     # Rename columns in dataframe and sort experiments by neptune id
 
-
-    df = df[columns]
-    df = df.rename(columns={'id': 'neptune_id'})
+    df = df[new_col_names.keys()]
+    df = df.rename(columns=new_col_names)
     _exp_ids_series = df['neptune_id'].apply(lambda x: int(x.split('-')[-1]))
     df.insert(loc=0, column='exp_number', value=_exp_ids_series)
     df = df.sort_values(by='exp_number', ascending=True)
@@ -205,7 +203,3 @@ def _validate_input(selected_columns, all_columns, type_name):
     else:
         raise TypeError('{} must be None, string or list of strings'.format(selected_columns))
     return selected_columns
-
-
-# ToDo add ['id', 'owner']
-# ToDo update docstring for bool
