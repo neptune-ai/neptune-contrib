@@ -20,9 +20,10 @@ import neptune
 
 
 def make_parallel_coordinates_plot(html_file_path=None,
-                                   metrics=None,
+                                   metrics=tuple(),
+                                   text_logs=tuple(),
                                    params=None,
-                                   properties=None,
+                                   properties=tuple(),
                                    experiment_id=None,
                                    state=None,
                                    owner=None,
@@ -53,15 +54,19 @@ def make_parallel_coordinates_plot(html_file_path=None,
     Args:
         html_file_path (:obj:`str`, optional, default is ``None``):
             | Saves visualization as a standalone html file. No external dependencies needed.
-        metrics (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
+        metrics (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``[]``):
             | Metrics to display on the plot (as axes).
             | If `None`, then display all metrics.
             | If empty list `[]`, then exclude all metrics.
+        text_logs (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``[]``):
+            | Text logs to display on the plot (as axes).
+            | If `None`, then display all text logs.
+            | If empty list `[]`, then exclude all text logs.
         params (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
             | Parameters to display on the plot (as axes).
             | If `None`, then display all parameters.
             | If empty list `[]`, then exclude all parameters.
-        properties (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
+        properties (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``[]``):
             | Properties to display on the plot (as axes).
             | If `None`, then display all properties.
             | If empty list `[]`, then exclude all properties.
@@ -141,11 +146,11 @@ def make_parallel_coordinates_plot(html_file_path=None,
     input_to_hiplot = df.T.to_dict().values()
     hiplot_vis = hip.Experiment().from_iterable(input_to_hiplot)
     for j, datapoint in enumerate(hiplot_vis.datapoints[1:], 1):
-        datapoint.from_uid = hiplot_vis.datapoints[j-1].uid
+        datapoint.from_uid = hiplot_vis.datapoints[j - 1].uid
 
     # Save to html if requested
     if html_file_path is not None:
-        assert isinstance(html_file_path, str),\
+        assert isinstance(html_file_path, str), \
             '"html_file_path" should be string, but {} is given'.format(type(html_file_path))
         if os.path.dirname(html_file_path):
             os.makedirs(os.path.dirname(html_file_path), exist_ok=True)
