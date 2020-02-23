@@ -135,10 +135,16 @@ def make_parallel_coordinates_plot(html_file_path=None,
                 df = df.astype({column: str})
                 _all_text_logs.append((column, column.replace('channel_', '')))
         elif column.startswith('parameter_'):
-            df = df.astype({column: str})
+            try:
+                df = df.astype({column: float})
+            except ValueError:
+                df = df.astype({column: str})
             _all_params.append((column, column.replace('parameter_', '')))
         elif column.startswith('property_'):
-            df = df.astype({column: str})
+            try:
+                df = df.astype({column: float})
+            except ValueError:
+                df = df.astype({column: str})
             _all_properties.append((column, column.replace('property_', '')))
 
     # Validate each type of input
