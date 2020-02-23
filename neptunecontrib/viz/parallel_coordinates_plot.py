@@ -162,7 +162,19 @@ def make_parallel_coordinates_plot(html_file_path=None,
             properties = ['property__' + column if j == column else j for j in properties]
             _all_properties = [(j[0], 'property__' + column) if j[1] == column else j for j in _all_properties]
 
-    # Rename columns in dataframe and sort experiments by neptune id
+    # Rename columns in DataFrame and sort experiments by neptune id
+    new_col_names = {'id': 'neptune_id',
+                     'owner': 'owner'}
+
+    metrics = [(j[0], j[1]) for j in _all_metrics if j[1] in metrics]
+    text_logs = [(j[0], j[1]) for j in _all_text_logs if j[1] in text_logs]
+    params = [(j[0], j[1]) for j in _all_params if j[1] in params]
+    properties = [(j[0], j[1]) for j in _all_properties if j[1] in properties]
+
+    new_col_names.update(metrics)
+    new_col_names.update(text_logs)
+    new_col_names.update(params)
+    new_col_names.update(properties)
 
     df = df[new_col_names.keys()]
     df = df.rename(columns=new_col_names)
