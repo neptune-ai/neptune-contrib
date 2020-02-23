@@ -95,17 +95,17 @@ def make_parallel_coordinates_plot(html_file_path=None,
             # Make sure you have your project set:
             neptune.init('USERNAME/example-project')
 
-            # (example 1) make visualization for all experiments in project
+            # (example 1) visualization for all experiments in project
             make_parallel_coordinates_plot()
 
-            # (example 2) make visualization for experiment with tag 'segmentation' and save to html file.
-            make_parallel_coordinates_plot(html_file_path='visualizations.html', tag='segmentation')
+            # (example 2) visualization for experiment with tag 'optuna' and saving to html file.
+            make_parallel_coordinates_plot(html_file_path='visualizations.html', tag='optuna')
 
-            # (example 3) make visualization for all experiments created by john and use selected columns
-            make_parallel_coordinates_plot(
-                columns=['channel_epoch_acc', 'channel_epoch_loss',
-                         'parameter_lr', 'parameter_dense', 'parameter_dropout'],
-                owner='john')
+            # (example 3) visualization with all params, two metrics for experiment with tag 'optuna'
+            make_parallel_coordinates_plot(tag='optuna', metrics=['epoch_accuracy', 'eval_accuracy'])
+
+            # (example 4) visualization with all params and two metrics. All experiments created by john.
+            make_parallel_coordinates_plot(metrics=['epoch_accuracy', 'eval_accuracy'], owner='john')
     """
     _all_metrics = []
     _all_text_logs = []
