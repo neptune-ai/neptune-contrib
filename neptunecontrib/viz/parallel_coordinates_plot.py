@@ -55,22 +55,22 @@ def make_parallel_coordinates_plot(html_file_path=None,
     Args:
         html_file_path (:obj:`str`, optional, default is ``None``):
             | Saves visualization as a standalone html file. No external dependencies needed.
-        metrics (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``[]``):
+        metrics (:obj:`bool` or :obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``False``):
             | Metrics to display on the plot (as axes).
-            | If `None`, then display all metrics.
-            | If empty list `[]`, then exclude all metrics.
-        text_logs (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``[]``):
+            | If `True`, then display all metrics.
+            | If `False`, then exclude all metrics.
+        text_logs (:obj:`bool` or :obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``False``):
             | Text logs to display on the plot (as axes).
-            | If `None`, then display all text logs.
-            | If empty list `[]`, then exclude all text logs.
-        params (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
+            | If `True`, then display all text logs.
+            | If `False`, then exclude all text logs.
+        params (:obj:`bool` or :obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``True``):
             | Parameters to display on the plot (as axes).
-            | If `None`, then display all parameters.
-            | If empty list `[]`, then exclude all parameters.
-        properties (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``[]``):
+            | If `True`, then display all parameters.
+            | If `False`, then exclude all parameters.
+        properties (:obj:`bool` or :obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``False``):
             | Properties to display on the plot (as axes).
-            | If `None`, then display all properties.
-            | If empty list `[]`, then exclude all properties.
+            | If `True`, then display all properties.
+            | If `False`, then exclude all properties.
         experiment_id (:obj:`str` or :obj:`list` of :obj:`str`, optional, default is ``None``):
             | An experiment id like ``'SAN-1'`` or list of ids like ``['SAN-1', 'SAN-2']``.
             | Matching any element of the list is sufficient to pass criterion.
@@ -148,8 +148,7 @@ def make_parallel_coordinates_plot(html_file_path=None,
     properties = _validate_input(properties, _all_properties, 'property')
 
     # Check for name conflicts
-    _all_columns = metrics + text_logs + params + properties
-    for column in [k for k, v in Counter(_all_columns).items() if v > 1]:
+    for column in [k for k, v in Counter(metrics + text_logs + params + properties).items() if v > 1]:
         if column in metrics:
             metrics = ['metric__' + column if j == column else j for j in metrics]
             _all_metrics = [(j[0], 'metric__' + column) if j[1] == column else j for j in _all_metrics]
