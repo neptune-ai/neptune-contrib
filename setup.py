@@ -19,7 +19,7 @@ def main():
         all_deps += extras[group_name]
     extras['all'] = all_deps
 
-    base_libs = ['attrdict==2.0.0', 'neptune-client', 'joblib==0.13', 'pandas', 'matplotlib', 'Pillow==5.4.1']
+    base_libs = ['attrdict==2.0.0', 'neptune-client', 'joblib==0.13', 'pandas', 'matplotlib', 'Pillow>=5.4.1']
 
     setup(
         name='neptune-contrib',
