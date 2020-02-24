@@ -50,7 +50,7 @@ def make_parallel_coordinates_plot(html_file_path=None,
         included in a plot. Only experiments matching all the criteria will be returned.
 
     Note:
-        Make sure you have your project set: `neptune.init('USERNAME/example-project')`
+        Make sure you have your project set: ``neptune.init('USERNAME/example-project')``
 
     Args:
         html_file_path (:obj:`str`, optional, default is ``None``):
