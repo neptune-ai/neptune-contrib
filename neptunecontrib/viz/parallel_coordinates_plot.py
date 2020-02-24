@@ -192,9 +192,10 @@ def make_parallel_coordinates_plot(html_file_path=None,
     df = df[new_col_names.keys()]
     df = df.rename(columns=new_col_names)
     _exp_ids_series = df['neptune_id'].apply(lambda x: int(x.split('-')[-1]))
-    df.insert(loc=0, column='exp_number', value=_exp_ids_series)
-    df = df.sort_values(by='exp_number', ascending=True)
-    df = df.astype({'exp_number': int})
+    df.insert(loc=0, column='neptune_exp_id', value=_exp_ids_series)
+    df = df.sort_values(by='neptune_exp_id', ascending=True)
+    df = df.astype({'neptune_exp_id': int})
+    df = df.drop(columns='neptune_id')
 
     # Prepare HiPlot visualization
     input_to_hiplot = df.T.to_dict().values()
