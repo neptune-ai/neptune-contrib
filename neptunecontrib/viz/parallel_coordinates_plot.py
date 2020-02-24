@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 import os
+from collections import Counter
 
 import hiplot as hip
 import neptune
-from collections import Counter
 
 
 def make_parallel_coordinates_plot(html_file_path=None,
@@ -87,6 +87,13 @@ def make_parallel_coordinates_plot(html_file_path=None,
             | Only experiments that have all specified tags will match this criterion.
         min_running_time (:obj:`int`, optional, default is ``None``):
             Minimum running time of an experiment in seconds, like ``2000``.
+
+    Returns:
+
+        :obj:`ExperimentDisplayed`, object that can be used to get a ``list`` of ``Datapoint`` objects,
+        like this: ``ExperimentDisplayed.get_selected()``. This is only implemented for Jupyter notebook. Check
+        `HiPlot docs
+        <https://facebookresearch.github.io/hiplot/py_reference.html?highlight=display#hiplot.Experiment.display>`_.
 
     Examples:
 
@@ -187,6 +194,7 @@ def make_parallel_coordinates_plot(html_file_path=None,
     _exp_ids_series = df['neptune_id'].apply(lambda x: int(x.split('-')[-1]))
     df.insert(loc=0, column='exp_number', value=_exp_ids_series)
     df = df.sort_values(by='exp_number', ascending=True)
+    df = df.astype({'exp_number': int})
 
     # Prepare HiPlot visualization
     input_to_hiplot = df.T.to_dict().values()
@@ -201,7 +209,7 @@ def make_parallel_coordinates_plot(html_file_path=None,
         if os.path.dirname(html_file_path):
             os.makedirs(os.path.dirname(html_file_path), exist_ok=True)
         hiplot_vis.to_html(html_file_path)
-    hiplot_vis.display()
+    return hiplot_vis.display()
 
 
 def _validate_input(selected_columns, all_columns, type_name):
