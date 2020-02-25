@@ -195,10 +195,7 @@ def make_parallel_coordinates_plot(html_file_path=None,
     df.insert(loc=0, column='neptune_exp_number', value=_exp_ids_series)
     df = df.astype({'neptune_exp_number': int})
     df = df.sort_values(by='neptune_exp_number', ascending=True)
-
-    # Handle limit of 80 categorical values
-    if df.shape[0] <= 80:
-        df = df.drop(columns='neptune_exp_number')
+    df = df.drop(columns='neptune_exp_number')
 
     # Prepare HiPlot visualization
     input_to_hiplot = df.T.to_dict().values()
@@ -213,6 +210,9 @@ def make_parallel_coordinates_plot(html_file_path=None,
         if os.path.dirname(html_file_path):
             os.makedirs(os.path.dirname(html_file_path), exist_ok=True)
         hiplot_vis.to_html(html_file_path)
+    hiplot_vis.display_data(hip.Displays.PARALLEL_PLOT).update({'categoricalMaximumValues': df.shape[0],
+                                                                'hide': ['uid', 'from_uid'],
+                                                                'order': ['neptune_id']})
     return hiplot_vis.display()
 
 
