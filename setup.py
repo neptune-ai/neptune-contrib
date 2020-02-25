@@ -11,7 +11,7 @@ def main():
         'monitoring': ['scikit-optimize==0.5.2', 'sacred==0.7.5', 'scikit-learn==0.21.3',
                        'scikit-plot==0.3.7', 'seaborn==0.8.1', 'aif360==0.2.1'],
         'versioning': ['boto3', 'numpy'],
-        'viz': ['altair==2.3.0', 'hiplot'],
+        'viz': ['altair==2.3.0', 'hiplot>=0.1.5'],
     }
 
     all_deps = []
