@@ -196,6 +196,10 @@ def make_parallel_coordinates_plot(html_file_path=None,
     df = df.astype({'neptune_exp_number': int})
     df = df.sort_values(by='neptune_exp_number', ascending=True)
 
+    # Handle limit of 80 categorical values
+    if df.shape[0] <= 80:
+        df = df.drop(columns='neptune_exp_number')
+
     # Prepare HiPlot visualization
     input_to_hiplot = df.T.to_dict().values()
     hiplot_vis = hip.Experiment().from_iterable(input_to_hiplot)
