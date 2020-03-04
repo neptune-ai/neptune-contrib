@@ -37,7 +37,12 @@ def make_parallel_coordinates_plot(html_file_path=None,
     You can also inspect the lineage of experiments.
 
     **See** `example <https://neptune-contrib.readthedocs.io/examples/hiplot_visualizations.html>`_
-    **for full use case.**
+    **for the full use case.**
+
+    Axes are ordered as follows: first axis is neptune ``experiment id``,
+    second is experiment ``owner``,
+    then ``params`` and ``properties`` in alphabetical order.
+    Finally, ``metrics`` on the right side (alphabetical order as well).
 
     This visualization it built using `HiPlot <https://facebookresearch.github.io/hiplot/index.html>`_.
     It is a library published by the Facebook AI group.
@@ -197,6 +202,18 @@ def make_parallel_coordinates_plot(html_file_path=None,
     df = df.sort_values(by='neptune_exp_number', ascending=True)
     df = df.drop(columns='neptune_exp_number')
 
+    # Prepare order of axes, where 'neptune_id' is first, metrics to the right.
+    all_axes = df.columns.to_list()
+    if metrics:
+        metric_names = [j[1] for j in metrics]
+        metric_names.sort()
+        for metric in metric_names:
+            all_axes.remove(metric)
+        all_axes.sort()
+        all_axes.sort(reverse=True, key='owner'.__eq__)
+        all_axes.sort(reverse=True, key='neptune_id'.__eq__)
+        all_axes = all_axes + metric_names
+
     # Prepare HiPlot visualization
     input_to_hiplot = df.T.to_dict().values()
     hiplot_vis = hip.Experiment().from_iterable(input_to_hiplot)
@@ -212,7 +229,7 @@ def make_parallel_coordinates_plot(html_file_path=None,
         hiplot_vis.to_html(html_file_path)
     hiplot_vis.display_data(hip.Displays.PARALLEL_PLOT).update({'categoricalMaximumValues': df.shape[0],
                                                                 'hide': ['uid', 'from_uid'],
-                                                                'order': ['neptune_id']})
+                                                                'order': all_axes})
     return hiplot_vis.display()
 
 
