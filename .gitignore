@@ -3,7 +3,7 @@
 
 # dist
 VERSION
-neptune_lib.egg-info/
+neptune_contrib.egg-info/
 dist/
 
 # tests
@@ -21,5 +21,5 @@ tests/.pytest_cache
 docs/_build
 docs/_templates
 
-# nbooks
+# notebooks
 *.ipynb_checkpoints
