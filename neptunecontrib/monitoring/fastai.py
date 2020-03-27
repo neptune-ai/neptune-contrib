@@ -67,17 +67,16 @@ class NeptuneMonitor(LearnerCallback):
             neptune.init(qualified_project_name='USER_NAME/PROJECT_NAME')
 
             with neptune.create_experiment():
-                monitor = NeptuneMonitor()
                 learn = create_cnn(data, models.resnet18,
                                    metrics=accuracy,
-                                   callbacks=[neptune_monitor])
+                                   callbacks_fns=[NeptuneMonitor])
                 learn.fit_one_cycle(20, 1e-2)
 
     Note:
         you need to have the fastai library installed on your computer to use this module.
     """
 
-    def __init__(self, experiment=None, learn=None, prefix=''):
+    def __init__(self, learn=None, experiment=None, prefix=''):
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
         if learn is not None:
@@ -88,6 +87,9 @@ class NeptuneMonitor(LearnerCallback):
         metric_values = kwargs['last_metrics']
         metric_names = ['valid_last_loss'] + kwargs['metrics']
         for metric_value, metric_name in zip(metric_values, metric_names):
+            if metric_value is None:
+                continue
+
             metric_name = getattr(metric_name, '__name__', metric_name)
             self._exp.send_metric(self._prefix + str(metric_name), float(metric_value))
 
