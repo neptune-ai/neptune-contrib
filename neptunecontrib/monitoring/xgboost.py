@@ -20,11 +20,21 @@ import neptune
 import xgboost as xgb
 
 
-def neptune_monitor(log_model=True,
-                    log_importance=True,
-                    log_tree=None,
-                    **kwargs):
+def neptune_callback(log_model=True,
+                     log_importance=True,
+                     log_tree=None,
+                     **kwargs):
     """XGBoost-monitor for Neptune experiments.
+
+    This is XGBoost callback that automatically logs training and evaluation metrics, feature importances
+    and trained Booster to Neptune.
+
+
+    Note:
+        Make sure you created an experiment before you start XGBoost training.
+        Using ``neptune.create_experiment()``\n
+        See documentation:
+        https://docs.neptune.ai/neptune-client/docs/project.html#neptune.projects.Project.create_experiment
 
     Args:
         log_model (:obj:`bool`, optional, default is ``False``):
@@ -34,10 +44,26 @@ def neptune_monitor(log_model=True,
         log_tree (:obj:`int` or :obj:`list` of :obj:`int`, optional, default is ``None``):
             | Log specified trees to Neptune as images at the end of training.
 
-
     Returns:
+        :obj:`callback`, function that you can pass directly to the XGBoost callbacks list.
+
+    Examples:
+
+        .. code:: python3
+
+            # Make sure you have your project set:
+            neptune.init('USERNAME/example-project')
 
     """
+    try:
+        neptune.get_experiment()
+    except neptune.exceptions.NoExperimentContext:
+        msg = 'No currently running Neptune experiment. \n'\
+              'To start logging to Neptune create experiment by using: `neptune.create_experiment()`. \n'\
+              'More info in the documentation: '\
+              '<https://docs.neptune.ai/neptune-client/docs/project.html#neptune.projects.Project.create_experiment>.'
+        raise neptune.exceptions.NeptuneException(msg)
+
     assert isinstance(log_model, bool),\
         'log_model must be bool, got {} instead. Check log_model parameter.'.format(type(log_model))
     assert isinstance(log_importance, bool),\
@@ -53,7 +79,7 @@ def neptune_monitor(log_model=True,
 
         # End of training
         # Log booster
-        if env.iteration == env.end_iteration and log_model:
+        if env.iteration + 1 == env.end_iteration and log_model:
             with tempfile.TemporaryDirectory(dir='.') as d:
                 path = os.path.join(d, 'bst.model')
                 env.model.save_model(path)
