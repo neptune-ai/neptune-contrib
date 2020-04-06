@@ -26,15 +26,12 @@ def neptune_callback(log_model=True,
                      **kwargs):
     """XGBoost-monitor for Neptune experiments.
 
-    This is XGBoost callback that automatically logs training and evaluation metrics, feature importances
-    and trained Booster to Neptune.
-
+    This is XGBoost callback that automatically logs training and evaluation metrics, feature importance chart,
+    visualized trees and trained Booster to Neptune.
 
     Note:
-        Make sure you created an experiment before you start XGBoost training.
-        Using ``neptune.create_experiment()``\n
-        See documentation:
-        https://docs.neptune.ai/neptune-client/docs/project.html#neptune.projects.Project.create_experiment
+        Make sure you created an experiment before you start XGBoost training using `neptune.create_experiment()
+        <https://docs.neptune.ai/neptune-client/docs/project.html#neptune.projects.Project.create_experiment>`_.
 
     Args:
         log_model (:obj:`bool`, optional, default is ``False``):
@@ -45,15 +42,17 @@ def neptune_callback(log_model=True,
             | Log specified trees to Neptune as images at the end of training.
 
     Returns:
-        :obj:`callback`, function that you can pass directly to the XGBoost callbacks list.
+        :obj:`callback`, function that you can pass directly to the XGBoost callbacks list, for example to the
+        `xgboost.cv() <https://xgboost.readthedocs.io/en/latest/python/python_api.html?highlight=plot_tree#xgboost.cv>`_
+        or `XGBClassifier.fit() <https://xgboost.readthedocs.io/en/latest/python/python_api.html?highlight=plot_tree
+        #xgboost.XGBClassifier.fit>`_.
+
 
     Examples:
-
         .. code:: python3
 
             # Make sure you have your project set:
             neptune.init('USERNAME/example-project')
-
     """
     try:
         neptune.get_experiment()
@@ -102,9 +101,9 @@ def neptune_callback(log_model=True,
                                       image_name=file_name)
     return callback
 
-
-# ToDo tree figure size
 # ToDo docstrings
 # ToDo larges example data
 # ToDo document kwargs
 # ToDO make sure graphviz or neptune errors will not crash exp
+# ToDo Check with CV
+# ToDo Check with sklean API
