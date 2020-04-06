@@ -30,8 +30,9 @@ def neptune_callback(log_model=True,
     visualized trees and trained Booster to Neptune.
 
     Note:
-        Make sure you created an experiment before you start XGBoost training using `neptune.create_experiment()
-        <https://docs.neptune.ai/neptune-client/docs/project.html#neptune.projects.Project.create_experiment>`_.
+        Make sure you created an experiment before you start XGBoost training using ``neptune.create_experiment()``
+        (`check our docs <https://docs.neptune.ai/neptune-client/docs/project.html
+        #neptune.projects.Project.create_experiment>`_).
 
     Args:
         log_model (:obj:`bool`, optional, default is ``False``):
@@ -43,9 +44,11 @@ def neptune_callback(log_model=True,
 
     Returns:
         :obj:`callback`, function that you can pass directly to the XGBoost callbacks list, for example to the
-        `xgboost.cv() <https://xgboost.readthedocs.io/en/latest/python/python_api.html?highlight=plot_tree#xgboost.cv>`_
-        or `XGBClassifier.fit() <https://xgboost.readthedocs.io/en/latest/python/python_api.html?highlight=plot_tree
-        #xgboost.XGBClassifier.fit>`_.
+        ``xgboost.cv()``
+        (`see docs <https://xgboost.readthedocs.io/en/latest/python/python_api.html?highlight=plot_tree#xgboost.cv>`_)
+        or ``XGBClassifier.fit()``
+        (`check docs <https://xgboost.readthedocs.io/en/latest/python/python_api.html?highlight=plot_tree
+        #xgboost.XGBClassifier.fit>`_).
 
 
     Examples:
