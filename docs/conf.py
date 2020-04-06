@@ -40,7 +40,8 @@ autodoc_mock_imports = ['aif360',
                         'skopt',
                         'optuna',
                         'scikitplot',
-                        'scikitplot.metrics']
+                        'scikitplot.metrics',
+                        'xgboost']
 
 # -- Project information -----------------------------------------------------
 
