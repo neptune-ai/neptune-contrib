@@ -40,10 +40,11 @@ def neptune_callback(log_model=True,
     Args:
         log_model (:obj:`bool`, optional, default is ``True``):
             | Log booster to Neptune after last boosting iteration.
-            | If xgb.cv, log booster for all folds
+            | If you run xgb.cv, log booster for all folds.
         log_importance (:obj:`bool`, optional, default is ``True``):
             | Log feature importance to Neptune as image after last boosting iteration.
             | Specify number of features using ``max_num_features`` parameter below.
+            | If you run xgb.cv, log feature importance for each folds' booster.
         max_num_features (:obj:`int`, optional, default is ``None``):
             | Plot top ``max_num_features`` features on the importance plot.
             | If ``None``, plot all features.
@@ -113,21 +114,28 @@ def neptune_callback(log_model=True,
 
     def callback(env):
         # Log metrics after iteration
-        for k, v in env.evaluation_result_list:
-            neptune.log_metric(k, v)
+        for item in env.evaluation_result_list:
+            if len(item) == 2:  # train case
+                neptune.log_metric(item[0], item[1])
+            if len(item) == 3:  # cv case
+                neptune.log_metric('{}-mean'.format(item[0]), item[1])
+                neptune.log_metric('{}-std'.format(item[0]), item[2])
 
         # Log booster, end of training
         if env.iteration + 1 == env.end_iteration and log_model:
             if env.cvfolds:  # cv case
                 for i, cvpack in enumerate(env.cvfolds):
-                    _log_model('cv-fold-{}-bst.model'.format(i), cvpack.bst)
+                    _log_model(cvpack.bst, 'cv-fold-{}-bst.model'.format(i))
             else:  # train case
-                _log_model('bst.model', env.model)
+                _log_model(env.model, 'bst.model')
 
-        # Log feature importance
+        # Log feature importance, end of training
         if env.iteration + 1 == env.end_iteration and log_importance:
-            importance = xgb.plot_importance(env.model, max_num_features=max_num_features, **kwargs)
-            neptune.log_image('feature_importance', importance.figure)
+            if env.cvfolds:  # cv case
+                for i, cvpack in enumerate(env.cvfolds):
+                    _log_importance(cvpack.bst, max_num_features, title='cv-fold-{}'.format(i), **kwargs)
+            else:  # train case
+                _log_importance(env.model, max_num_features, **kwargs)
 
         # Log trees
         if env.iteration + 1 == env.end_iteration and log_tree:
@@ -142,12 +150,16 @@ def neptune_callback(log_model=True,
     return callback
 
 # ToDo docstrings
-# ToDo Check with CV
 # ToDo Check with sklean API
 
 
-def _log_model(name, booster):
+def _log_model(booster, name):
     with tempfile.TemporaryDirectory(dir='.') as d:
         path = os.path.join(d, name)
         booster.save_model(path)
         neptune.log_artifact(path)
+
+
+def _log_importance(booster, max_num_features, **kwargs):
+    importance = xgb.plot_importance(booster, max_num_features=max_num_features, **kwargs)
+    neptune.log_image('feature_importance', importance.figure)
