@@ -52,6 +52,7 @@ def neptune_callback(log_model=True,
             | Log specified trees to Neptune as images after last boosting iteration.
             | If you run xgb.cv, log specified trees for each folds' booster.
             | Default is to log first tree.
+            | If ``None``, do not log any tree.
         kwargs:
             Parametrize XGBoost functions used in this callback:
             `xgboost.plot_importance <https://xgboost.readthedocs.io/en/latest/python/python_api.html
@@ -74,7 +75,7 @@ def neptune_callback(log_model=True,
     Examples:
         .. code:: python3
 
-            # Basic usage in the train function
+            # Basic usage in train function
             xgb.train(param, dtrain, num_round, watchlist,
                       callbacks=[neptune_callback()])
 
@@ -82,13 +83,26 @@ def neptune_callback(log_model=True,
             xgb.train(param, dtrain, num_round, watchlist,
                       callbacks=[neptune_callback(log_model=False)])
 
-            # Use callback in train function, log five trees
-            xgb.train(param, dtrain, num_round, watchlist,
-                      callbacks=[neptune_callback(log_tree=[0,1,2,3,4])])
-
             # Use callback in train function, log top 5 features' importance chart
             xgb.train(param, dtrain, num_round, watchlist,
                       callbacks=[neptune_callback(max_num_features=5)])
+
+            # Use callback in cv function, log 5 trees per each folds' booster
+            xgb.cv(param, dtrain, num_boost_round=num_round, nfold=7,
+                   callbacks=neptune_callback(log_tree=[0,1,2,3,4]))
+
+            # Use callback in cv function, log only metrics
+            xgb.cv(param, dtrain, num_boost_round=num_round, nfold=7,
+                   callbacks=[neptune_callback(log_model=False,
+                                               log_importance=False,
+                                               max_num_features=None,
+                                               log_tree=None)])
+
+            # Use callback in cv function, log top 5 features per each folds' booster
+            xgb.cv(param, dtrain, num_boost_round=num_round, nfold=7,
+                   callbacks=[neptune_callback(log_model=False,
+                                               max_num_features=3,
+                                               log_tree=None)])
     """
     try:
         neptune.get_experiment()
