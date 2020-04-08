@@ -161,9 +161,6 @@ def neptune_callback(log_model=True,
                 _log_trees(env.model, log_tree, 'trees', **kwargs)
     return callback
 
-# ToDo docstrings
-# ToDo Check with sklean API
-
 
 def _log_model(booster, name):
     with tempfile.TemporaryDirectory(dir='.') as d:
@@ -186,3 +183,6 @@ def _log_trees(booster, tree_list, img_name, **kwargs):
             neptune.log_image(img_name,
                               os.path.join(d, '{}.png'.format(file_name)),
                               image_name=file_name)
+
+# ToDo sklearn API - tests and examples
+# ToDo Dask API - tests and examples
