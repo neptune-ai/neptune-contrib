@@ -73,36 +73,68 @@ def neptune_callback(log_model=True,
         Neptune logs these artifacts only after last iteration, which you may not reach because of early stop.
 
     Examples:
+        ``xgb.train`` examples
+
         .. code:: python3
 
-            # Basic usage in train function
+            # basic usage
             xgb.train(param, dtrain, num_round, watchlist,
                       callbacks=[neptune_callback()])
 
-            # Use callback in train function, do not log model
+            # do not log model
             xgb.train(param, dtrain, num_round, watchlist,
                       callbacks=[neptune_callback(log_model=False)])
 
-            # Use callback in train function, log top 5 features' importance chart
+            # log top 5 features' importance chart
             xgb.train(param, dtrain, num_round, watchlist,
                       callbacks=[neptune_callback(max_num_features=5)])
 
-            # Use callback in cv function, log 5 trees per each folds' booster
+        ``xgb.cv`` examples
+
+        .. code:: python3
+
+            # log 5 trees per each folds' booster
             xgb.cv(param, dtrain, num_boost_round=num_round, nfold=7,
                    callbacks=neptune_callback(log_tree=[0,1,2,3,4]))
 
-            # Use callback in cv function, log only metrics
+            # log only metrics
             xgb.cv(param, dtrain, num_boost_round=num_round, nfold=7,
                    callbacks=[neptune_callback(log_model=False,
                                                log_importance=False,
                                                max_num_features=None,
                                                log_tree=None)])
 
-            # Use callback in cv function, log top 5 features per each folds' booster
+            # log top 5 features per each folds' booster
             xgb.cv(param, dtrain, num_boost_round=num_round, nfold=7,
                    callbacks=[neptune_callback(log_model=False,
                                                max_num_features=3,
                                                log_tree=None)])
+
+        ``sklearn`` API examples
+
+        .. code:: python3
+
+            # basic usage with early stopping
+            xgb.XGBRegressor().fit(X_train, y_train,
+                                   early_stopping_rounds=10,
+                                   eval_metric=['mae', 'rmse', 'rmsle'],
+                                   eval_set=[(X_test, y_test)],
+                                   callbacks=[neptune_callback()])
+
+            # do not log model
+            clf = xgb.XGBRegressor()
+            clf.fit(X_train, y_train,
+                    eval_metric=['mae', 'rmse', 'rmsle'],
+                    eval_set=[(X_test, y_test)],
+                    callbacks=[neptune_callback(log_model=False)])
+            y_pred = clf.predict(X_test)
+
+            # log 8 trees
+            reg = xgb.XGBRegressor(**params)
+            reg.fit(X_train, y_train,
+                    eval_metric=['mae', 'rmse', 'rmsle'],
+                    eval_set=[(X_test, y_test)],
+                    callbacks=[neptune_callback(log_tree=[0,1,2,3,4,5,6,7])])
     """
     try:
         neptune.get_experiment()
@@ -184,5 +216,4 @@ def _log_trees(booster, tree_list, img_name, **kwargs):
                               os.path.join(d, '{}.png'.format(file_name)),
                               image_name=file_name)
 
-# ToDo sklearn API - tests and examples
 # ToDo Dask API - tests and examples
