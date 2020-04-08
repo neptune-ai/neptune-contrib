@@ -50,6 +50,7 @@ def neptune_callback(log_model=True,
             | If ``None``, plot all features.
         log_tree (:obj:`list` of :obj:`int`, optional, default is ``[1,]``):
             | Log specified trees to Neptune as images after last boosting iteration.
+            | If you run xgb.cv, log specified trees for each folds' booster.
             | Default is to log first tree.
         kwargs:
             Parametrize XGBoost functions used in this callback:
@@ -137,16 +138,13 @@ def neptune_callback(log_model=True,
             else:  # train case
                 _log_importance(env.model, max_num_features, **kwargs)
 
-        # Log trees
+        # Log trees, end of training
         if env.iteration + 1 == env.end_iteration and log_tree:
-            with tempfile.TemporaryDirectory(dir='.') as d:
-                for i in log_tree:
-                    file_name = 'tree_{}'.format(i)
-                    tree = xgb.to_graphviz(booster=env.model, num_trees=i, **kwargs)
-                    tree.render(filename=file_name, directory=d, view=False, format='png')
-                    neptune.log_image('trees',
-                                      os.path.join(d, '{}.png'.format(file_name)),
-                                      image_name=file_name)
+            if env.cvfolds:
+                for j, cvpack in enumerate(env.cvfolds):
+                    _log_trees(cvpack.bst, log_tree, 'trees-cv-fold-{}'.format(j), **kwargs)
+            else:
+                _log_trees(env.model, log_tree, 'trees', **kwargs)
     return callback
 
 # ToDo docstrings
@@ -163,3 +161,14 @@ def _log_model(booster, name):
 def _log_importance(booster, max_num_features, **kwargs):
     importance = xgb.plot_importance(booster, max_num_features=max_num_features, **kwargs)
     neptune.log_image('feature_importance', importance.figure)
+
+
+def _log_trees(booster, tree_list, img_name, **kwargs):
+    with tempfile.TemporaryDirectory(dir='.') as d:
+        for i in tree_list:
+            file_name = 'tree_{}'.format(i)
+            tree = xgb.to_graphviz(booster=booster, num_trees=i, **kwargs)
+            tree.render(filename=file_name, directory=d, view=False, format='png')
+            neptune.log_image(img_name,
+                              os.path.join(d, '{}.png'.format(file_name)),
+                              image_name=file_name)
