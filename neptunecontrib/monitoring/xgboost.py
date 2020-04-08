@@ -40,6 +40,7 @@ def neptune_callback(log_model=True,
     Args:
         log_model (:obj:`bool`, optional, default is ``True``):
             | Log booster to Neptune after last boosting iteration.
+            | If xgb.cv, log booster for all folds
         log_importance (:obj:`bool`, optional, default is ``True``):
             | Log feature importance to Neptune as image after last boosting iteration.
             | Specify number of features using ``max_num_features`` parameter below.
@@ -115,13 +116,13 @@ def neptune_callback(log_model=True,
         for k, v in env.evaluation_result_list:
             neptune.log_metric(k, v)
 
-        # End of training
-        # Log booster
+        # Log booster, end of training
         if env.iteration + 1 == env.end_iteration and log_model:
-            with tempfile.TemporaryDirectory(dir='.') as d:
-                path = os.path.join(d, 'bst.model')
-                env.model.save_model(path)
-                neptune.log_artifact(path)
+            if env.cvfolds:  # cv case
+                for i, cvpack in enumerate(env.cvfolds):
+                    _log_model('cv-fold-{}-bst.model'.format(i), cvpack.bst)
+            else:  # train case
+                _log_model('bst.model', env.model)
 
         # Log feature importance
         if env.iteration + 1 == env.end_iteration and log_importance:
@@ -143,3 +144,10 @@ def neptune_callback(log_model=True,
 # ToDo docstrings
 # ToDo Check with CV
 # ToDo Check with sklean API
+
+
+def _log_model(name, booster):
+    with tempfile.TemporaryDirectory(dir='.') as d:
+        path = os.path.join(d, name)
+        booster.save_model(path)
+        neptune.log_artifact(path)
