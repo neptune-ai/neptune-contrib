@@ -215,5 +215,3 @@ def _log_trees(booster, tree_list, img_name, **kwargs):
             neptune.log_image(img_name,
                               os.path.join(d, '{}.png'.format(file_name)),
                               image_name=file_name)
-
-# ToDo Dask API - tests and examples
