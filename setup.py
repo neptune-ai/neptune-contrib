@@ -23,7 +23,7 @@ def main():
 
     setup(
         name='neptune-contrib',
-        version='0.16.3',
+        version='0.18.0',
         description='Neptune.ai contributions library',
         author='neptune.ai',
         support='contact@neptune.ai',
