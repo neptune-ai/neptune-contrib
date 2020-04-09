@@ -25,7 +25,7 @@ def neptune_callback(log_model=True,
                      max_num_features=None,
                      log_tree=(0,),
                      **kwargs):
-    """XGBoost-monitor for Neptune experiments.
+    """XGBoost callback for Neptune experiments.
 
     This is XGBoost callback that automatically logs training and evaluation metrics, feature importance chart,
     visualized trees and trained Booster to Neptune.
