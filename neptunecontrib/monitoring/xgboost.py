@@ -34,6 +34,8 @@ def neptune_callback(log_model=True,
     (`check our docs <https://docs.neptune.ai/neptune-client/docs/project.html
     #neptune.projects.Project.create_experiment>`_).
 
+    Integration works with ``xgboost>=0.82``.
+
     Note:
         Check Neptune documentation for the `full example <https://docs.neptune.ai/integrations/xgboost.html>`_.
 
