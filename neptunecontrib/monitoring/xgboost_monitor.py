@@ -30,14 +30,17 @@ def neptune_callback(log_model=True,
     This is XGBoost callback that automatically logs training and evaluation metrics, feature importance chart,
     visualized trees and trained Booster to Neptune.
 
+    Check Neptune documentation for the `full example <https://docs.neptune.ai/integrations/xgboost.html>`_.
+
     Make sure you created an experiment before you start XGBoost training using ``neptune.create_experiment()``
     (`check our docs <https://docs.neptune.ai/neptune-client/docs/project.html
     #neptune.projects.Project.create_experiment>`_).
 
     Integration works with ``xgboost>=0.82``.
 
-    Note:
-        Check Neptune documentation for the `full example <https://docs.neptune.ai/integrations/xgboost.html>`_.
+    Tip:
+        Use this `Google Colab <https://colab.research.google.com/github/neptune-ai/neptune-colab-examples
+        /blob/master/xgboost-integration.ipynb>`_ to try it without further ado.
 
     Args:
         log_model (:obj:`bool`, optional, default is ``True``):
