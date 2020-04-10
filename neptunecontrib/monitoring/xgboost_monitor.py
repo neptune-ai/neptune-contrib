@@ -24,6 +24,7 @@ def neptune_callback(log_model=True,
                      log_importance=True,
                      max_num_features=None,
                      log_tree=(0,),
+                     experiment=None,
                      **kwargs):
     """XGBoost callback for Neptune experiments.
 
@@ -58,6 +59,11 @@ def neptune_callback(log_model=True,
             | If you run xgb.cv, log specified trees for each folds' booster.
             | Default is to log first tree.
             | If ``None``, do not log any tree.
+        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
+            | For advanced users only. Pass Neptune
+              `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
+              object if you want to control to which experiment data is logged.
+            | If ``None``, log to currently active, and most recent experiment.
         kwargs:
             Parametrize XGBoost functions used in this callback:
             `xgboost.plot_importance <https://xgboost.readthedocs.io/en/latest/python/python_api.html
@@ -141,14 +147,19 @@ def neptune_callback(log_model=True,
                     eval_set=[(X_test, y_test)],
                     callbacks=[neptune_callback(log_tree=[0,1,2,3,4,5,6,7])])
     """
-    try:
-        neptune.get_experiment()
-    except neptune.exceptions.NoExperimentContext:
-        msg = 'No currently running Neptune experiment. \n'\
-              'To start logging to Neptune create experiment by using: `neptune.create_experiment()`. \n'\
-              'More info in the documentation: '\
-              '<https://docs.neptune.ai/neptune-client/docs/project.html#neptune.projects.Project.create_experiment>.'
-        raise neptune.exceptions.NeptuneException(msg)
+    if experiment:
+        _exp = experiment
+    else:
+        try:
+            neptune.get_experiment()
+            _exp = neptune
+        except neptune.exceptions.NoExperimentContext:
+            msg = 'No currently running Neptune experiment. \n'\
+                  'To start logging to Neptune create experiment by using: `neptune.create_experiment()`. \n'\
+                  'More info in the documentation: '\
+                  '<https://docs.neptune.ai/neptune-client/docs/project.html' \
+                  '#neptune.projects.Project.create_experiment>.'
+            raise neptune.exceptions.NeptuneException(msg)
 
     assert isinstance(log_model, bool),\
         'log_model must be bool, got {} instead. Check log_model parameter.'.format(type(log_model))
@@ -168,55 +179,55 @@ def neptune_callback(log_model=True,
         # Log metrics after iteration
         for item in env.evaluation_result_list:
             if len(item) == 2:  # train case
-                neptune.log_metric(item[0], item[1])
+                _exp.log_metric(item[0], item[1])
             if len(item) == 3:  # cv case
-                neptune.log_metric('{}-mean'.format(item[0]), item[1])
-                neptune.log_metric('{}-std'.format(item[0]), item[2])
+                _exp.log_metric('{}-mean'.format(item[0]), item[1])
+                _exp.log_metric('{}-std'.format(item[0]), item[2])
 
         # Log booster, end of training
         if env.iteration + 1 == env.end_iteration and log_model:
             if env.cvfolds:  # cv case
                 for i, cvpack in enumerate(env.cvfolds):
-                    _log_model(cvpack.bst, 'cv-fold-{}-bst.model'.format(i))
+                    _log_model(cvpack.bst, 'cv-fold-{}-bst.model'.format(i), _exp)
             else:  # train case
-                _log_model(env.model, 'bst.model')
+                _log_model(env.model, 'bst.model', _exp)
 
         # Log feature importance, end of training
         if env.iteration + 1 == env.end_iteration and log_importance:
             if env.cvfolds:  # cv case
                 for i, cvpack in enumerate(env.cvfolds):
-                    _log_importance(cvpack.bst, max_num_features, title='cv-fold-{}'.format(i), **kwargs)
+                    _log_importance(cvpack.bst, max_num_features, _exp, title='cv-fold-{}'.format(i), **kwargs)
             else:  # train case
-                _log_importance(env.model, max_num_features, **kwargs)
+                _log_importance(env.model, max_num_features, _exp, **kwargs)
 
         # Log trees, end of training
         if env.iteration + 1 == env.end_iteration and log_tree:
             if env.cvfolds:
                 for j, cvpack in enumerate(env.cvfolds):
-                    _log_trees(cvpack.bst, log_tree, 'trees-cv-fold-{}'.format(j), **kwargs)
+                    _log_trees(cvpack.bst, log_tree, 'trees-cv-fold-{}'.format(j), _exp, **kwargs)
             else:
-                _log_trees(env.model, log_tree, 'trees', **kwargs)
+                _log_trees(env.model, log_tree, 'trees', _exp, **kwargs)
     return callback
 
 
-def _log_model(booster, name):
+def _log_model(booster, name, npt):
     with tempfile.TemporaryDirectory(dir='.') as d:
         path = os.path.join(d, name)
         booster.save_model(path)
-        neptune.log_artifact(path)
+        npt.log_artifact(path)
 
 
-def _log_importance(booster, max_num_features, **kwargs):
+def _log_importance(booster, max_num_features, npt, **kwargs):
     importance = xgb.plot_importance(booster, max_num_features=max_num_features, **kwargs)
-    neptune.log_image('feature_importance', importance.figure)
+    npt.log_image('feature_importance', importance.figure)
 
 
-def _log_trees(booster, tree_list, img_name, **kwargs):
+def _log_trees(booster, tree_list, img_name, npt, **kwargs):
     with tempfile.TemporaryDirectory(dir='.') as d:
         for i in tree_list:
             file_name = 'tree_{}'.format(i)
             tree = xgb.to_graphviz(booster=booster, num_trees=i, **kwargs)
             tree.render(filename=file_name, directory=d, view=False, format='png')
-            neptune.log_image(img_name,
-                              os.path.join(d, '{}.png'.format(file_name)),
-                              image_name=file_name)
+            npt.log_image(img_name,
+                          os.path.join(d, '{}.png'.format(file_name)),
+                          image_name=file_name)
