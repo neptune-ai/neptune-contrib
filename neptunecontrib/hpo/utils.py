@@ -166,7 +166,7 @@ def bayes2skopt(bayes_opt):
     format.
 
     Args:
-        bayes_opt(`bayes_opt.Bbyesian_optimization.BayesianOptimization`): BayesianOptimization instance.
+        bayes_opt(`bayes_opt.Bayesian_optimization.BayesianOptimization`): BayesianOptimization instance.
 
     Returns:
         `scipy.optimize.optimize.OptimizeResult`: Converted OptimizeResult.
@@ -184,10 +184,8 @@ def bayes2skopt(bayes_opt):
             results = hp_utils.bayes2skopt(bayes_optimization)
 
     Note:
-        Since skopt is always minimizng and BayesianOptimization is maximizing, the objective function values are
-        converted into negatives for consistency::
-
-
+        Since skopt is always minimizing and BayesianOptimization is maximizing, the objective function values are
+        converted into negatives for consistency.
     """
     results = bayes_opt.space.res()
     results = [{'target': trial['target'], **trial['params']} for trial in results]
