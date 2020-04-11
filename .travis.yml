@@ -1,4 +1,5 @@
 sudo: false
+os: linux
 language: python
 python:
 - '3.5.6'
@@ -10,11 +11,11 @@ script:
 - python -m pylint -j 0 -f parseable neptunecontrib tests
 - tox
 deploy:
-  distributions: git_version sdist
   provider: pypi
-  user: neptune-contrib
+  username: __token__
+  distributions: git_version sdist
   password:
-    secure: 47gkGApBZ8Ceq67
-on:
-  tags: true
-skip_existing: true
+    secure: 
+  on:
+    tags: true
+  skip_existing: true
