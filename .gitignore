@@ -5,6 +5,7 @@
 VERSION
 neptune_contrib.egg-info/
 dist/
+build/
 
 # tests
 .cache/
