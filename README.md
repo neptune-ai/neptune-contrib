@@ -1,5 +1,4 @@
 # neptune-contrib
-# neptune-client
 [![PyPI version](https://badge.fury.io/py/neptune-contrib.svg)](https://badge.fury.io/py/neptune-contrib)
 [![Build Status](https://travis-ci.org/neptune-ai/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ai/neptune-contrib)
 [![Documentation Status](https://readthedocs.org/projects/neptune-contrib/badge/?version=latest)](https://neptune-contrib.readthedocs.io/?badge=latest)
