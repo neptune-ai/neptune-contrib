@@ -1,5 +1,12 @@
 # neptune-contrib
+# neptune-client
+[![PyPI version](https://badge.fury.io/py/neptune-contrib.svg)](https://badge.fury.io/py/neptune-contrib)
 [![Build Status](https://travis-ci.org/neptune-ai/neptune-contrib.svg?branch=master)](https://travis-ci.org/neptune-ai/neptune-contrib)
+[![Documentation Status](https://readthedocs.org/projects/neptune-contrib/badge/?version=latest)](https://neptune-contrib.readthedocs.io/?badge=latest)
+
+[![Downloads](https://pepy.tech/badge/neptune-contrib)](https://pepy.tech/project/neptune-contrib)
+[![Downloads](https://pepy.tech/badge/neptune-contrib/month)](https://pepy.tech/project/neptune-contrib/month)
+[![Downloads](https://pepy.tech/badge/neptune-contrib/week)](https://pepy.tech/project/neptune-contrib/week)
 
 # Documentation
 See [neptune-contrib documentation site](https://neptune-contrib.readthedocs.io)
