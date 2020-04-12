@@ -218,8 +218,13 @@ def _log_model(booster, name, npt):
 
 
 def _log_importance(booster, max_num_features, npt, **kwargs):
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        raise ImportError('Please install matplotlib to log importance')
     importance = xgb.plot_importance(booster, max_num_features=max_num_features, **kwargs)
     npt.log_image('feature_importance', importance.figure)
+    plt.close('all')
 
 
 def _log_trees(booster, tree_list, img_name, npt, **kwargs):
