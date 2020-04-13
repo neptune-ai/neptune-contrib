@@ -9,7 +9,8 @@ def main():
         'bots': ['python-telegram-bot'],
         'hpo': ['scikit-optimize>=0.5.2', 'scipy'],
         'monitoring': ['scikit-optimize>=0.5.2', 'sacred>=0.7.5', 'scikit-learn>=0.21.3',
-                       'scikit-plot>=0.3.7', 'seaborn>=0.8.1', 'aif360>=0.2.1', 'xgboost>=0.82'],
+                       'scikit-plot>=0.3.7', 'seaborn>=0.8.1', 'aif360>=0.2.1', 'xgboost>=0.82',
+                       'graphviz>=0.13.2'],
         'versioning': ['boto3', 'numpy'],
         'viz': ['altair>=2.3.0', 'hiplot>=0.1.5'],
     }
@@ -23,7 +24,7 @@ def main():
 
     setup(
         name='neptune-contrib',
-        version='0.18.3',
+        version='0.18.4',
         description='Neptune.ai contributions library',
         author='neptune.ai',
         support='contact@neptune.ai',
