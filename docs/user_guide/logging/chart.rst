@@ -1,5 +1,5 @@
 Chart
-===========
+=====
 
 .. automodule:: neptunecontrib.logging.chart
     :members:
