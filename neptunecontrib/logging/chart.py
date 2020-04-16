@@ -29,9 +29,16 @@ def log_chart(name, chart, experiment=None):
     and uploaded to Neptune as an artifact with path charts/{name}.png
 
     Args:
-        name (str): name of the chart (without extension) that will be used as a part of artifact's destination.
-        chart (`matplotlib` or `plotly` Figure): Figure from matplotlib or plotly.
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        name (:obj:`str`):
+            | Name of the chart (without extension) that will be used as a part of artifact's destination.
+        chart (:obj:`matplotlib` or :obj:`plotly` Figure):
+            | Figure from `matplotlib` or `plotly`. If you want to use global figure from `matplotlib`, you
+              can also pass reference to `matplotlib.pyplot` module.
+        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
+            | For advanced users only. Pass Neptune
+              `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
+              object if you want to control to which experiment data is logged.
+            | If ``None``, log to currently active, and most recent experiment.
 
     Examples:
         Start an experiment::
