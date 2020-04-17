@@ -20,11 +20,11 @@ def main():
         all_deps += extras[group_name]
     extras['all'] = all_deps
 
-    base_libs = ['attrdict>=2.0.0', 'neptune-client', 'joblib>=0.13', 'pandas', 'matplotlib', 'Pillow>=6.2.0']
+    base_libs = ['attrdict>=2.0.0', 'neptune-client>=0.4.110', 'joblib>=0.13', 'pandas', 'matplotlib', 'Pillow>=6.2.0']
 
     setup(
         name='neptune-contrib',
-        version='0.18.4',
+        version='0.19.0',
         description='Neptune.ai contributions library',
         author='neptune.ai',
         support='contact@neptune.ai',
