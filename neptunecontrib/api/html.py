@@ -17,16 +17,16 @@
 import neptune
 
 
-def log_table(name, table, experiment=None):
-    """Logs pandas dataframe to neptune.
+def log_html(name, html, experiment=None):
+    """Logs html to neptune.
 
-    Pandas dataframe is converted to an HTML table and logged to Neptune as an artifact with path tables/{name}.html
+    HTML is logged to Neptune as an artifact with path html/{name}.html
 
     Args:
         name (:obj:`str`):
             | Name of the chart (without extension) that will be used as a part of artifact's destination.
-        table (:obj:`pandas.Dataframe`):
-            | DataFrame table
+        html_body (:obj:`str`):
+            | HTML string that is logged and rendered as HTML.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | For advanced users only. Pass Neptune
               `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
@@ -40,32 +40,31 @@ def log_table(name, table, experiment=None):
 
             neptune.init(api_token='ANONYMOUS',
                          project_qualified_name='shared/showroom')
-            neptune.create_experiment(name='experiment_with_tables')
+            neptune.create_experiment(name='experiment_with_html')
 
-        Create or load dataframe::
+        Create an HTML string::
 
-            import pandas as pd
-
-            iris_df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv', nrows=100)
+            html = "<button type='button',style='background-color:#005879; width:300px; height:200px; font-size:30px'> \
+                 <a style='color: #ccc', href='https://docs.neptune.ai'> Take me back to the docs!!<a> </button>"
 
         Log it to Neptune::
 
-             from neptunecontrib.api import log_table
+             from neptunecontrib.api import log_html
 
-             log_table('pandas_df', iris_df)
+             log_html('go_to_docs_button', html)
 
         Check out how the logged table looks in Neptune:
-        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-977/artifacts?path=tables%2F&file=pandas_df.html
-     """
+        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-988/artifacts?path=html%2F&file=button_example.html
+    """
+
     _exp = experiment if experiment else neptune
 
-    _exp.log_artifact(export_pandas_dataframe(table), "tables/" + name + '.html')
+    _exp.log_artifact(export_html(html), "htmls/" + name + '.html')
 
 
-def export_pandas_dataframe(table):
+def export_html(html):
     from io import StringIO
-
-    buffer = StringIO(table.to_html())
+    buffer = StringIO(html)
     buffer.seek(0)
 
     return buffer

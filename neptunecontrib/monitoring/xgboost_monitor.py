@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Neptune Labs Sp. z o.o.
+# Copyright (c) 2020, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import warnings
 
-from neptunecontrib.api.chart import *
-from neptunecontrib.api.html import *
-from neptunecontrib.api.table import *
-from neptunecontrib.api.utils import *
+message = """neptunecontrib.monitoring.xgboost_monitor was moved to neptunecontrib.monitoring.xgboost
+neptunecontrib.monitoring.xgboost_monitor will be deprecated in future releases.
+"""
+warnings.warn(message)
+
+from neptunecontrib.monitoring.xgboost import * # pylint: disable=C0413, W0611

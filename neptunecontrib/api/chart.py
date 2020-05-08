@@ -46,7 +46,7 @@ def log_chart(name, chart, experiment=None):
             import neptune
 
             neptune.init(api_token='ANONYMOUS',
-                        project_qualified_name='shared/showroom')
+                         project_qualified_name='shared/showroom')
             neptune.create_experiment(name='experiment_with_charts')
 
         Create matplotlib figure and log it to Neptune::
