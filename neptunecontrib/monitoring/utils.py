@@ -15,11 +15,8 @@
 #
 
 from itertools import product
-import os
-import tempfile
 import warnings
 
-import joblib
 import matplotlib.pyplot as plt
 import neptune
 
@@ -79,8 +76,8 @@ def send_figure(fig, channel_name='figures', experiment=None):
 
 
 def pickle_and_send_artifact(obj, filename, experiment=None):
-    message = """neptunecontrib.monitoring.utils pickle_and_send_artifact was moved to neptunecontrib.api and renamed to pickle_and_log_artifact.
-    You should use ``from neptunecontrib.api import pickle_and_log_artifact``
+    message = """neptunecontrib.monitoring.utils pickle_and_send_artifact was moved to neptunecontrib.api
+    and renamed to pickle_and_log_artifact. You should use ``from neptunecontrib.api import pickle_and_log_artifact``
     neptunecontrib.logging.log_chart will be deprecated in future releases.
     """
     warnings.warn(message)
