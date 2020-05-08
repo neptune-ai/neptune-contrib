@@ -13,3 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+from neptunecontrib.viz.experiments import *
+from neptunecontrib.viz.parallel_coordinates_plot import *
+from neptunecontrib.viz.projects import *

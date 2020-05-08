@@ -239,6 +239,39 @@ def get_filepaths(dirpath='.', extensions=None):
     return files
 
 
+def pickle_and_log_artifact(obj, filename, experiment=None):
+    """Logs picklable object to Neptune.
+
+    Pickles and logs your object to Neptune under specified filename.
+
+    Args:
+        obj: Picklable object.
+        filename(str): filename under which object will be saved.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+
+    Examples:
+        Initialize Neptune::
+
+            import neptune
+            neptune.init('USER_NAME/PROJECT_NAME')
+
+        Create RandomForest object and log to Neptune::
+
+            from sklearn.ensemble import RandomForestClassifier
+            from neptunecontrib.api import pickle_and_log_artifact
+
+            with neptune.create_experiment():
+                rf = RandomForestClassifier()
+                pickle_and_log_artifact(rf, 'rf')
+    """
+    _exp = experiment if experiment else neptune
+
+    with tempfile.TemporaryDirectory() as d:
+        filename = os.path.join(d, filename)
+        joblib.dump(obj, filename)
+        _exp.send_artifact(filename)
+
+
 def get_pickled_artifact(experiment, filename):
     """Downloads pickled artifact object from Neptune and returns a Python object.
 
