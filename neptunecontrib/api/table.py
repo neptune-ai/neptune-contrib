@@ -16,6 +16,9 @@
 
 import neptune
 
+__all__ = [
+    'log_table',
+]
 
 def log_table(name, table, experiment=None):
     """Logs pandas dataframe to neptune.

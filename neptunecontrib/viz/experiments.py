@@ -16,6 +16,9 @@
 
 import altair as alt
 
+__all__ = [
+    'channel_curve_compare',
+]
 
 def channel_curve_compare(experiment_df,
                           width=800,

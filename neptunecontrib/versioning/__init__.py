@@ -14,4 +14,14 @@
 # limitations under the License.
 #
 
-from neptunecontrib.versioning.data import *
+from neptunecontrib.versioning.data import (
+    log_data_version,
+    log_s3_data_version,
+    log_image_dir_snapshots
+)
+
+__all__ = [
+    'log_data_version',
+    'log_s3_data_version',
+    'log_image_dir_snapshots',
+]

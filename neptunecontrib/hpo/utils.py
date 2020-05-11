@@ -19,6 +19,14 @@ import pandas as pd
 from scipy.optimize import OptimizeResult
 import skopt
 
+__all__ = [
+    'hyperopt2skopt',
+    'df2result',
+    'optuna2skopt',
+    'bayes2skopt',
+    'hpbandster2skopt'
+]
+
 
 def hyperopt2skopt(trials, space):
     """Converts hyperopt trials to scipy OptimizeResult.

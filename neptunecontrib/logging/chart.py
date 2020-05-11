@@ -17,7 +17,7 @@ import warnings
 
 message = """neptunecontrib.logging.chart was moved to neptunecontrib.api.
 You should use ``from neptunecontrib.api import log_chart`` 
-neptunecontrib.logging.log_chart will be deprecated in future releases.
+neptunecontrib.logging.log_chart will be removed in future releases.
 """
 warnings.warn(message)
 

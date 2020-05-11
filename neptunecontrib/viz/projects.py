@@ -20,6 +20,10 @@ import pandas as pd
 
 warnings.filterwarnings('ignore')
 
+__all__ = [
+    'project_progress',
+]
+
 
 def project_progress(progress_df,
                      width=800,

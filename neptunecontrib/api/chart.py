@@ -16,11 +16,15 @@
 
 import neptune
 
+__all__ = [
+    'log_chart',
+]
+
 
 def log_chart(name, chart, experiment=None):
-    """Logs charts from matplotlib, plotly to neptune.
+    """Logs charts from matplotlib, plotly, bokeh, and altair to neptune.
 
-    Plotly figures, Bokeh figures, and Altair charts are converted to interactive HTML and then uploaded to Neptune
+    Plotly, Bokeh, and Altair charts are converted to interactive HTML objects and then uploaded to Neptune
     as an artifact with path charts/{name}.html.
 
     Matplotlib figures are converted optionally. If plotly is installed, matplotlib figures are converted

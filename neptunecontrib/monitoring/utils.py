@@ -67,7 +67,7 @@ def axes2fig(axes, fig=None):
 def send_figure(fig, channel_name='figures', experiment=None):
     message = """neptunecontrib.monitoring.utils send_figure functionality is now available in neptune-client.
     You should simply use neptune.log_image('channel_name', fig) where you used send_figure('channel_name', fig) before.
-    send_figure will be depracated in future releases.
+    send_figure will be removed in future releases.
     """
     warnings.warn(message)
 
@@ -78,7 +78,7 @@ def send_figure(fig, channel_name='figures', experiment=None):
 def pickle_and_send_artifact(obj, filename, experiment=None):
     message = """neptunecontrib.monitoring.utils pickle_and_send_artifact was moved to neptunecontrib.api
     and renamed to pickle_and_log_artifact. You should use ``from neptunecontrib.api import pickle_and_log_artifact``
-    neptunecontrib.logging.log_chart will be deprecated in future releases.
+    neptunecontrib.logging.log_chart will be removed in future releases.
     """
     warnings.warn(message)
 

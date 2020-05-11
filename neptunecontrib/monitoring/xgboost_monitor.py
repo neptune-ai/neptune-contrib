@@ -16,7 +16,7 @@
 import warnings
 
 message = """neptunecontrib.monitoring.xgboost_monitor was moved to neptunecontrib.monitoring.xgboost
-neptunecontrib.monitoring.xgboost_monitor will be deprecated in future releases.
+neptunecontrib.monitoring.xgboost_monitor will be removed in future releases.
 """
 warnings.warn(message)
 

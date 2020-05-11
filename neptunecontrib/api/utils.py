@@ -23,6 +23,18 @@ import pandas as pd
 
 warnings.filterwarnings('ignore')
 
+__all__ = [
+    'concat_experiments_on_channel',
+    'extract_project_progress_info',
+    'get_channel_columns',
+    'get_parameter_columns',
+    'get_property_columns',
+    'get_system_columns',
+    'strip_prefices',
+    'pickle_and_log_artifact',
+    'get_pickled_artifact'
+]
+
 
 def concat_experiments_on_channel(experiments, channel_name):
     """Combines channel values from experiments into one dataframe.
@@ -227,6 +239,7 @@ def get_filepaths(dirpath='.', extensions=None):
     Starting from neptune-client==4.9 you can pass ['**/*.py*', '**/*.yaml*', '**/*.yml*']
     to upload_source_files argument to upload all files with given extensions recursively.
     Read more https://docs.neptune.ai/neptune-client/docs/project.html
+    get_filepaths() will be removed in future releases.
     """
     warnings.warn(msg, DeprecationWarning)
 

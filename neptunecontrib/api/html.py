@@ -16,6 +16,10 @@
 
 import neptune
 
+__all__ = [
+    'log_html',
+]
+
 
 def log_html(name, html, experiment=None):
     """Logs html to neptune.

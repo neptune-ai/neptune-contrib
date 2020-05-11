@@ -19,6 +19,9 @@ from collections import Counter
 import hiplot as hip
 import neptune
 
+__all__ = [
+    'make_parallel_coordinates_plot',
+]
 
 def make_parallel_coordinates_plot(html_file_path=None,
                                    metrics=False,
