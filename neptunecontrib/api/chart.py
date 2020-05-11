@@ -137,7 +137,7 @@ def log_chart(name, chart, experiment=None):
         _exp.log_artifact(export_altair_chart(chart), "charts/" + name + '.html')
 
     else:
-        raise ValueError("Currently supported are matplotlib and plotly figures")
+        raise ValueError("Currently supported are matplotlib, plotly, altair, and bokeh figures")
 
 
 def is_matplotlib_pyplot(chart):
