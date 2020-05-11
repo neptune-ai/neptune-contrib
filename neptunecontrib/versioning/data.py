@@ -23,6 +23,11 @@ import numpy as np
 
 from neptunecontrib.monitoring.utils import send_figure
 
+__all__ = [
+    'log_data_version',
+    'log_s3_data_version',
+    'log_image_dir_snapshots',
+]
 
 def log_data_version(path, prefix='', experiment=None):
     """Logs data version of file or folder to Neptune

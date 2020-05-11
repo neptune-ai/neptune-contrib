@@ -18,9 +18,22 @@ import warnings
 import tempfile
 
 import joblib
+import neptune
 import pandas as pd
 
 warnings.filterwarnings('ignore')
+
+__all__ = [
+    'concat_experiments_on_channel',
+    'extract_project_progress_info',
+    'get_channel_columns',
+    'get_parameter_columns',
+    'get_property_columns',
+    'get_system_columns',
+    'strip_prefices',
+    'pickle_and_log_artifact',
+    'get_pickled_artifact'
+]
 
 
 def concat_experiments_on_channel(experiments, channel_name):
@@ -226,6 +239,7 @@ def get_filepaths(dirpath='.', extensions=None):
     Starting from neptune-client==4.9 you can pass ['**/*.py*', '**/*.yaml*', '**/*.yml*']
     to upload_source_files argument to upload all files with given extensions recursively.
     Read more https://docs.neptune.ai/neptune-client/docs/project.html
+    get_filepaths() will be removed in future releases.
     """
     warnings.warn(msg, DeprecationWarning)
 
@@ -237,6 +251,39 @@ def get_filepaths(dirpath='.', extensions=None):
             if any(file.endswith(ext) for ext in extensions):
                 files.append(os.path.join(r, file))
     return files
+
+
+def pickle_and_log_artifact(obj, filename, experiment=None):
+    """Logs picklable object to Neptune.
+
+    Pickles and logs your object to Neptune under specified filename.
+
+    Args:
+        obj: Picklable object.
+        filename(str): filename under which object will be saved.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+
+    Examples:
+        Initialize Neptune::
+
+            import neptune
+            neptune.init('USER_NAME/PROJECT_NAME')
+
+        Create RandomForest object and log to Neptune::
+
+            from sklearn.ensemble import RandomForestClassifier
+            from neptunecontrib.api import pickle_and_log_artifact
+
+            with neptune.create_experiment():
+                rf = RandomForestClassifier()
+                pickle_and_log_artifact(rf, 'rf')
+    """
+    _exp = experiment if experiment else neptune
+
+    with tempfile.TemporaryDirectory() as d:
+        filename = os.path.join(d, filename)
+        joblib.dump(obj, filename)
+        _exp.send_artifact(filename)
 
 
 def get_pickled_artifact(experiment, filename):

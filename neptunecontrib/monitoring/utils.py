@@ -15,12 +15,12 @@
 #
 
 from itertools import product
-import os
-import tempfile
+import warnings
 
-import joblib
 import matplotlib.pyplot as plt
 import neptune
+
+from neptunecontrib.api import pickle_and_log_artifact
 
 
 def axes2fig(axes, fig=None):
@@ -65,74 +65,21 @@ def axes2fig(axes, fig=None):
 
 
 def send_figure(fig, channel_name='figures', experiment=None):
-    """Logs matplotlib figure to Neptune.
-
-    Logs any figure from matplotlib to specified image channel.
-    By default it logs to 'figures' and you can log multiple images to the same channel.
-
-    Args:
-        channel_name(str): name of the neptune channel. Default is 'figures'.
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-        fig(`matplotlib.figure`): Matplotlib figure object
-
-    Examples:
-        Initialize Neptune::
-
-            import neptune
-            neptune.init('USER_NAME/PROJECT_NAME')
-
-        Create random data:::
-
-            import numpy as np
-            table = np.random.random((10,10))
-
-        Plot and log to Neptune::
-
-            import matplotlib.pyplot as plt
-            import seaborn as sns
-            from neptunecontrib.monitoring.utils import send_figure
-
-            with neptune.create_experiment():
-                fig, ax = plt.subplots()
-                sns.heatmap(table,ax=ax)
-                send_figure(fig)
-
+    message = """neptunecontrib.monitoring.utils send_figure functionality is now available in neptune-client.
+    You should simply use neptune.log_image('channel_name', fig) where you used send_figure('channel_name', fig) before.
+    send_figure will be removed in future releases.
     """
-    _exp = experiment if experiment else neptune
+    warnings.warn(message)
 
-    with tempfile.NamedTemporaryFile(suffix='.png') as f:
-        fig.savefig(f.name)
-        _exp.send_image(channel_name, f.name)
+    _exp = experiment if experiment else neptune
+    _exp.log_image(channel_name, fig)
 
 
 def pickle_and_send_artifact(obj, filename, experiment=None):
-    """Logs picklable object to Neptune.
-
-    Pickles and logs your object to Neptune under specified filename.
-
-    Args:
-        obj: Picklable object.
-        filename(str): filename under which object will be saved.
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-
-    Examples:
-        Initialize Neptune::
-
-            import neptune
-            neptune.init('USER_NAME/PROJECT_NAME')
-
-        Create RandomForest object and log to Neptune::
-
-            from sklearn.ensemble import RandomForestClassifier
-            from neptunecontrib.monitoring.utils import pickle_and_send_artifact
-
-            with neptune.create_experiment():
-                rf = RandomForestClassifier()
-                pickle_and_send_artifact(rf, 'rf')
+    message = """neptunecontrib.monitoring.utils pickle_and_send_artifact was moved to neptunecontrib.api
+    and renamed to pickle_and_log_artifact. You should use ``from neptunecontrib.api import pickle_and_log_artifact``
+    neptunecontrib.logging.log_chart will be removed in future releases.
     """
-    _exp = experiment if experiment else neptune
+    warnings.warn(message)
 
-    with tempfile.TemporaryDirectory() as d:
-        filename = os.path.join(d, filename)
-        joblib.dump(obj, filename)
-        _exp.send_artifact(filename)
+    pickle_and_log_artifact(obj, filename, experiment)

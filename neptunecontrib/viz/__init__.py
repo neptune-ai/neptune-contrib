@@ -13,3 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+from neptunecontrib.viz.experiments import channel_curve_compare
+from neptunecontrib.viz.parallel_coordinates_plot import make_parallel_coordinates_plot
+from neptunecontrib.viz.projects import project_progress
+
+__all__ = [
+    'channel_curve_compare',
+    'make_parallel_coordinates_plot',
+    'project_progress',
+]
