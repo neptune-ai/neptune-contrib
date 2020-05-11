@@ -31,6 +31,7 @@ def main():
         author_email='contact@neptune.ai',
         url="https://github.com/neptune-ai/neptune-contrib",
         long_description=readme,
+        long_description_content_type="text/markdown",
         license='MIT License',
         install_requires=base_libs,
         extras_require=extras,
