@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import neptune
 import numpy as np
 import skopt.plots as sk_plots
+from skopt.utils import dump
 
 from neptunecontrib.monitoring.utils import axes2fig
 
@@ -175,12 +176,11 @@ def _log_results_object(results, experiment=None):
 
 def _export_results_object(results):
     from io import BytesIO
-    import skopt
 
     results.specs['args'].pop('callback', None)
 
     buffer = BytesIO()
-    skopt.dump(results, buffer, store_objective=False)
+    dump(results, buffer, store_objective=False)
     buffer.seek(0)
 
     return buffer
