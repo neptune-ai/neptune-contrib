@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-import tempfile
+import warnings
 
 import matplotlib.pyplot as plt
 import neptune
@@ -24,35 +23,47 @@ import skopt.plots as sk_plots
 from neptunecontrib.monitoring.utils import axes2fig
 
 
-class NeptuneMonitor:
+class NeptuneCallback:
     """Logs hyperparameter optimization process to Neptune.
 
+    Specifically using NeptuneCallback will log: run metrics and run parameters, best run metrics so far, and
+    the current results checkpoint.
+
     Examples:
-        Initialize NeptuneMonitor::
+        Initialize NeptuneCallback::
 
             import neptune
             import neptunecontrib.monitoring.skopt as sk_utils
 
-            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
+            neptune.init(api_token='ANONYMOUS',
+                         project_qualified_name='shared/showroom')
 
-            monitor = sk_utils.NeptuneMonitor()
+            neptune.create_experiment(name='optuna sweep')
+
+            neptune_callback = sk_utils.NeptuneMonitor()
 
         Run skopt training passing monitor as a a callback::
 
             ...
-            results = skopt.forest_minimize(objective, space, callback=[monitor],
+            results = skopt.forest_minimize(objective, space, callback=[neptune_callback],
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
+        You can explore an example experiment in Neptune:
+        TODO
     """
 
-    def __init__(self, experiment=None):
+    def __init__(self, experiment=None, log_checkpoint=True):
         self._exp = experiment if experiment else neptune
+        self.log_checkpoint = log_checkpoint
         self._iteration = 0
 
     def __call__(self, res):
         self._exp.log_metric('run_score', x=self._iteration, y=res.func_vals[-1])
         self._exp.log_metric('best_so_far_run_score', x=self._iteration, y=np.min(res.func_vals))
-        self._exp.log_text('run_parameters', x=self._iteration, y=NeptuneMonitor._get_last_params(res))
+        self._exp.log_text('run_parameters', x=self._iteration, y=NeptuneCallback._get_last_params(res))
+
+        if self.log_checkpoint:
+            self._exp.log_artifact(_export_results_object(res), 'results.pkl')
         self._iteration += 1
 
     @staticmethod
@@ -62,7 +73,7 @@ class NeptuneMonitor:
         return str(named_params)
 
 
-def log_results(results, experiment=None):
+def log_results(results, experiment=None, log_plots=True, log_pickle=True):
     """Logs runs results and parameters to neptune.
 
     Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' channel),
@@ -73,6 +84,8 @@ def log_results(results, experiment=None):
          results('scipy.optimize.OptimizeResult'): Results object that is typically an
              output of the function like `skopt.forest_minimize(...)`
          experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        log_plots: ('bool'): If True skopt plots will be logged to Neptune.
+        log_pickle: ('bool'): if True pickled skopt results object will be logged to Neptune.
 
      Examples:
          Run skopt training::
@@ -90,237 +103,82 @@ def log_results(results, experiment=None):
 
              sk_utils.log_results(results)
 
+        You can explore an example experiment in Neptune:
+        TODO
      """
-    log_best_score(results, experiment)
-    log_best_parameters(results, experiment)
-    log_plot_convergence(results, experiment, channel_name='diagnostics')
-    log_plot_evaluations(results, experiment, channel_name='diagnostics')
-    log_plot_objective(results, experiment, channel_name='diagnostics')
-
-
-def log_runs(results, experiment=None):
-    """Logs runs results and parameters to neptune.
-
-    Text channel `hyperparameter_search_score` is created and a list of tuples (name, value)
-    of best paramters is logged to neptune.
-
-    Args:
-        results('scipy.optimize.OptimizeResult'): Results object that is typically an
-            output of the function like `skopt.forest_minimize(...)`
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-
-    Examples:
-        Run skopt training::
-
-            ...
-            results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
-
-        Send best parameters to neptune::
-
-            import neptune
-            import neptunecontrib.monitoring.skopt as sk_utils
-
-            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-
-            sk_utils.log_runs(results)
-
-    """
-
     _exp = experiment if experiment else neptune
 
-    for i, (loss, params) in enumerate(zip(results.func_vals, results.x_iters)):
-        _exp.log_metric('run_score', x=i, y=loss)
-        _exp.log_metric('best_so_far_run_score', x=i, y=np.min(results.func_vals))
+    _log_best_score(results, _exp)
+    _log_best_parameters(results, _exp)
 
-        named_params = _format_to_named_params(params, results)
-        _exp.log_text('run_parameters', str(named_params))
+    if log_plots:
+        _log_plot_convergence(results, _exp)
+        _log_plot_evaluations(results, _exp)
+        _log_plot_regret(results, _exp)
+        _log_plot_objective(results, _exp)
+
+    if log_pickle:
+        _log_results_object(results, _exp)
 
 
-def log_best_parameters(results, experiment=None):
-    """Logs best_parameters list to neptune.
-
-    Text channel `best_parameters` is created and a list of tuples (name, value)
-    of best paramters is logged to neptune.
-
-    Args:
-        results('scipy.optimize.OptimizeResult'): Results object that is typically an
-            output of the function like `skopt.forest_minimize(...)`
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-
-    Examples:
-        Run skopt training::
-
-            ...
-            results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
-
-        Send best parameters to neptune::
-
-            import neptune
-            import neptunecontrib.monitoring.skopt as sk_utils
-
-            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-
-            sk_utils.log_best_parameters(results)
-
+def NeptuneMonitor(*args, **kwargs):
+    message = """NeptuneMonitor was renamed to NeptuneCallback and will be removed in future releases.
     """
-    _exp = experiment if experiment else neptune
-
-    named_params = _format_to_named_params(results.x, results)
-    _exp.set_property('best_parameters', str(named_params))
+    warnings(message)
+    return NeptuneCallback(*args, **kwargs)
 
 
-def log_best_score(results, experiment=None):
-    """Logs best score to neptune.
-
-    Metric channel `best_score` is created and the best score is logged to neptune.
-
-    Args:
-        results('scipy.optimize.OptimizeResult'): Results object that is typically an
-            output of the function like `skopt.forest_minimize(...)`
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-
-    Examples:
-        Run skopt training::
-
-            ...
-            results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
-
-        Send best parameters to neptune::
-
-            import neptune
-            import neptunecontrib.monitoring.skopt as sk_utils
-
-            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-
-            sk_utils.log_best_score(results)
-
-    """
-    _exp = experiment if experiment else neptune
-    _exp.log_metric('best_score', results.fun)
+def _log_best_parameters(results, experiment=None):
+    named_params = ([(dimension.name, param) for dimension, param in zip(results.space, results.x)])
+    experiment.set_property('best_parameters', str(named_params))
 
 
-def log_plot_convergence(results, experiment=None, channel_name='convergence'):
-    """Logs skopt plot_convergence figure to neptune.
+def _log_best_score(results, experiment=None):
+    experiment.log_metric('best_score', results.fun)
 
-    Image channel `convergence` is created and the output of the
-    plot_convergence function is first covented to `neptune.Image` and
-    then sent to neptune.
 
-    Args:
-        results('scipy.optimize.OptimizeResult'): Results object that is typically an
-            output of the function like `skopt.forest_minimize(...)`
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-
-    Examples:
-        Run skopt training::
-
-            ...
-            results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
-
-        Send skopt plot_convergence figure to neptune::
-
-            import neptune
-            import neptunecontrib.monitoring.skopt as sk_utils
-
-            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-
-            sk_utils.log_plot_convergence(results)
-
-    """
-
-    _exp = experiment if experiment else neptune
-
-    fig, ax = plt.subplots(figsize=(16, 12))
+def _log_plot_convergence(results, experiment=None):
+    fig, ax = plt.subplots()
     sk_plots.plot_convergence(results, ax=ax)
-
-    with tempfile.NamedTemporaryFile(suffix='.png') as f:
-        fig.savefig(f.name)
-        _exp.send_image(channel_name, f.name)
+    experiment.log_image('plot_convergence', fig)
 
 
-def log_plot_evaluations(results, experiment=None, channel_name='evaluations'):
-    """Logs skopt plot_evaluations figure to neptune.
+def _log_plot_regret(results, experiment=None):
+    fig, ax = plt.subplots()
+    sk_plots.plot_regret(results, ax=ax)
+    experiment.log_image('plot_regret', fig)
 
-    Image channel `evaluations` is created and the output of the
-    plot_evaluations function is first covented to `neptune.Image` and
-    then sent to neptune.
 
-    Args:
-        results('scipy.optimize.OptimizeResult'): Results object that is typically an
-            output of the function like `skopt.forest_minimize(...)`
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-
-    Examples:
-        Run skopt training::
-
-            ...
-            results = skopt.forest_minimize(objective, space,
-                                base_estimator='ET', n_calls=100, n_random_starts=10)
-
-        Send skopt plot_evaluations figure to neptune::
-
-            import neptune
-            import neptunecontrib.monitoring.skopt as sk_utils
-
-            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-
-            sk_utils.log_plot_evaluations(results)
-
-    """
-    _exp = experiment if experiment else neptune
-
-    fig = plt.figure(figsize=(16, 12))
+def _log_plot_evaluations(results, experiment=None):
+    fig = plt.figure()
     fig = axes2fig(sk_plots.plot_evaluations(results, bins=10), fig=fig)
-
-    with tempfile.NamedTemporaryFile(suffix='.png') as f:
-        fig.savefig(f.name)
-        _exp.send_image(channel_name, f.name)
+    experiment.log_image('plot_evaluations', fig)
 
 
-def log_plot_objective(results, experiment=None, channel_name='objective'):
-    """Logs skopt plot_objective figure to neptune.
-
-    Image channel `objective` is created and the output of the
-    plot_objective function is first covented to `neptune.Image` and
-    then sent to neptune.
-
-    Args:
-        results('scipy.optimize.OptimizeResult'): Results object that is typically an
-            output of the function like `skopt.forest_minimize(...)`
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
-
-    Examples:
-        Run skopt training::
-
-            ...
-            results = skopt.forest_minimize(objective, space,
-                                            base_estimator='ET', n_calls=100, n_random_starts=10)
-
-        Send skopt plot_objective figure to neptune::
-
-            import neptune
-            import neptunecontrib.monitoring.skopt as sk_utils
-
-            neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
-
-            sk_utils.log_plot_objective(results)
-
-    """
-
-    _exp = experiment if experiment else neptune
-    fig = plt.figure(figsize=(16, 12))
-
+def _log_plot_objective(results, experiment=None):
     try:
+        fig = plt.figure()
         fig = axes2fig(sk_plots.plot_objective(results), fig=fig)
-        with tempfile.NamedTemporaryFile(suffix='.png') as f:
-            fig.savefig(f.name)
-            _exp.send_image(channel_name, f.name)
+        experiment.log_image('plot_objective', fig)
     except Exception as e:
-        print('Could not create ans objective chart due to error: {}'.format(e))
+        print('Could not create the objective chart due to error: {}'.format(e))
+
+
+def _log_results_object(results, experiment=None):
+    experiment.log_artifact(_export_results_object(results), 'results.pkl')
+
+
+def _export_results_object(results):
+    from io import BytesIO
+    import skopt
+
+    results.specs['args'].pop('callback', None)
+
+    buffer = BytesIO()
+    skopt.dump(results, buffer, store_objective=False)
+    buffer.seek(0)
+
+    return buffer
 
 
 def _format_to_named_params(params, result):

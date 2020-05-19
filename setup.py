@@ -8,7 +8,7 @@ def main():
     extras = {
         'bots': ['python-telegram-bot'],
         'hpo': ['scikit-optimize>=0.5.2', 'scipy'],
-        'monitoring': ['scikit-optimize>=0.5.2', 'sacred>=0.7.5', 'scikit-learn>=0.21.3',
+        'monitoring': ['scikit-optimize>=0.7.4', 'sacred>=0.7.5', 'scikit-learn>=0.21.3',
                        'scikit-plot>=0.3.7', 'seaborn>=0.8.1', 'aif360>=0.2.1', 'xgboost>=0.82',
                        'graphviz>=0.13.2'],
         'versioning': ['boto3', 'numpy'],
