@@ -40,16 +40,16 @@ class NeptuneCallback:
 
             neptune.create_experiment(name='optuna sweep')
 
-            neptune_callback = sk_utils.NeptuneMonitor()
+            neptune_callback = sk_utils.NeptuneCallback()
 
-        Run skopt training passing monitor as a a callback::
+        Run skopt training passing neptune_callback as a callback::
 
             ...
             results = skopt.forest_minimize(objective, space, callback=[neptune_callback],
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
         You can explore an example experiment in Neptune:
-        TODO
+        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1061/logs
     """
 
     def __init__(self, experiment=None, log_checkpoint=True):
@@ -94,17 +94,22 @@ def log_results(results, experiment=None, log_plots=True, log_pickle=True):
              results = skopt.forest_minimize(objective, space,
                                  base_estimator='ET', n_calls=100, n_random_starts=10)
 
-         Send best parameters to neptune::
+         Initialize Neptune::
 
-             import neptune
+            import neptune
+
+            neptune.init(api_token='ANONYMOUS',
+                         project_qualified_name='shared/showroom')
+            neptune.create_experiment(name='optuna sweep')
+
+         Send best parameters to Neptune::
+
              import neptunecontrib.monitoring.skopt as sk_utils
-
-             neptune.init(project_qualified_name='USER_NAME/PROJECT_NAME')
 
              sk_utils.log_results(results)
 
         You can explore an example experiment in Neptune:
-        TODO
+        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1061/logs
      """
     _exp = experiment if experiment else neptune
 
@@ -124,7 +129,7 @@ def log_results(results, experiment=None, log_plots=True, log_pickle=True):
 def NeptuneMonitor(*args, **kwargs):
     message = """NeptuneMonitor was renamed to NeptuneCallback and will be removed in future releases.
     """
-    warnings(message)
+    warnings.warn(message)
     return NeptuneCallback(*args, **kwargs)
 
 
@@ -150,14 +155,14 @@ def _log_plot_regret(results, experiment=None):
 
 
 def _log_plot_evaluations(results, experiment=None):
-    fig = plt.figure()
+    fig = plt.figure(figsize=(16, 12))
     fig = axes2fig(sk_plots.plot_evaluations(results, bins=10), fig=fig)
     experiment.log_image('plot_evaluations', fig)
 
 
 def _log_plot_objective(results, experiment=None):
     try:
-        fig = plt.figure()
+        fig = plt.figure(figsize=(16, 12))
         fig = axes2fig(sk_plots.plot_objective(results), fig=fig)
         experiment.log_image('plot_objective', fig)
     except Exception as e:
