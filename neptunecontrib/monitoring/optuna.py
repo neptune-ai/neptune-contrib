@@ -20,7 +20,7 @@ import neptune
 from neptunecontrib.api import log_chart, pickle_and_log_artifact
 
 
-def NeptuneCallback(experiment=None, log_charts=False, params=None):
+def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=None):
     """Logs hyperparameter optimization process to Neptune.
 
     For each iteration it logs run metric and run parameters as well as the best score to date.
@@ -28,6 +28,7 @@ def NeptuneCallback(experiment=None, log_charts=False, params=None):
     Args:
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         log_charts('bool'): Whether optuna visualization charts should be logged. By default no charts are logged.
+        log_study('bool'): Whether optuna study object should be logged. By default it is not logged.
         params(`list`): List of parameters to be visualized. Default is all parameters.
 
     Examples:
@@ -73,6 +74,9 @@ def NeptuneCallback(experiment=None, log_charts=False, params=None):
                 name='parallel_coordinate', chart=vis.plot_parallel_coordinate(study, params=params), experiment=_exp)
             log_chart(
                 name='slice', chart=vis.plot_slice(study, params=params), experiment=_exp)
+
+        if log_study:
+            pickle_and_log_artifact(study, 'study.pkl', experiment=_exp)
 
     return monitor
 
