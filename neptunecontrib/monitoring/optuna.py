@@ -20,7 +20,7 @@ import neptune
 from neptunecontrib.api import log_chart, pickle_and_log_artifact
 
 
-def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=None):
+def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=None):  # pylint: disable=W0621
     """Logs hyperparameter optimization process to Neptune.
 
     For each iteration it logs run metric and run parameters as well as the best score to date.
@@ -28,7 +28,7 @@ def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=N
     Args:
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         log_charts('bool'): Whether optuna visualization charts should be logged. By default no charts are logged.
-        log_study('bool'): Whether optuna study object should be logged. By default it is not logged.
+        log_study('bool'): Whether optuna study object should be pickled and logged. By default it is not.
         params(`list`): List of parameters to be visualized. Default is all parameters.
 
     Examples:
@@ -52,9 +52,9 @@ def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=N
         You can explore an example experiment in Neptune:
         https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1016/artifacts
 
-        You can also log optuna visualization charts after every iteration::
+        You can also log optuna visualization charts and study object after every iteration::
 
-            neptune_callback = opt_utils.NeptuneCallback(log_charts=True)
+            neptune_callback = opt_utils.NeptuneCallback(log_charts=True, log_study=True)
     """
     import optuna.visualization as vis
 
@@ -81,7 +81,7 @@ def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=N
     return monitor
 
 
-def log_study(study, experiment=None, log_charts=True, params=None):
+def log_study_info(study, experiment=None, log_charts=True, params=None):
     """Logs runs results and parameters to neptune.
 
     Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' channel),
@@ -89,7 +89,7 @@ def log_study(study, experiment=None, log_charts=True, params=None):
     ('contour', 'parallel_coordinate', 'slice', 'optimization_history').
 
     Args:
-        results('optuna.study.Study'): Optuna study object after training is completed.
+        study('optuna.study.Study'): Optuna study object after training is completed.
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         log_charts('bool'): Whether optuna visualization charts should be logged. By default all charts are logged.
         params(`list`): List of parameters to be visualized. Default is all parameters.
@@ -110,7 +110,7 @@ def log_study(study, experiment=None, log_charts=True, params=None):
             ...
             study = optuna.create_study(direction='maximize')
             study.optimize(objective, n_trials=100, callbacks=[neptune_callback])
-            opt_utils.log_study(study)
+            opt_utils.log_study_info(study)
 
         You can explore an example experiment in Neptune:
         https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1016/artifacts
@@ -129,6 +129,13 @@ def log_study(study, experiment=None, log_charts=True, params=None):
         log_chart(name='slice', chart=vis.plot_slice(study, params=params), experiment=_exp)
 
     pickle_and_log_artifact(study, 'study.pkl', experiment=_exp)
+
+
+def log_study(study, experiment=None, log_charts=True, params=None):
+    message = """log_study was renamed to log_study_info and will be removed in future releases.
+    """
+    warnings.warn(message)
+    return log_study_info(study, experiment, log_charts, params)
 
 
 def NeptuneMonitor(experiment=None):
