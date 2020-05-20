@@ -110,8 +110,10 @@ def log_chart(name, chart, experiment=None):
 
             log_chart('bokeh_figure', p)
 
+    Note:
         Check out how the logged charts look in Neptune:
-        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-973/artifacts?path=charts%2F&file=bokeh_figure.html
+        `example experiment
+        <https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-973/artifacts?path=charts%2F&file=bokeh_figure.html>`_
      """
     _exp = experiment if experiment else neptune
 
