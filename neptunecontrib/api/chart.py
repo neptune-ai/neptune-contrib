@@ -62,7 +62,7 @@ def log_chart(name, chart, experiment=None):
             plt.hist(x, bins=5)
             plt.show()
 
-            from neptunecontrib.logging.chart import log_chart
+            from neptunecontrib.api import log_chart
 
             log_chart('matplotlib_figure', fig)
 
@@ -75,7 +75,7 @@ def log_chart(name, chart, experiment=None):
                                hover_data=df.columns)
             fig.show()
 
-            from neptunecontrib.logging.chart import log_chart
+            from neptunecontrib.api import log_chart
 
             log_chart('plotly_figure', fig)
 
@@ -93,7 +93,7 @@ def log_chart(name, chart, experiment=None):
                             tooltip=['Name', 'Origin', 'Horsepower', 'Miles_per_Gallon']
             ).interactive()
 
-            from neptunecontrib.logging.chart import log_chart
+            from neptunecontrib.api import log_chart
 
             log_chart('altair_chart', chart)
 
@@ -106,12 +106,14 @@ def log_chart(name, chart, experiment=None):
             # add a circle renderer with a size, color, and alpha
             p.circle([1, 2, 3, 4, 5], [6, 7, 2, 4, 5], size=20, color="navy", alpha=0.5)
 
-            from neptunecontrib.logging.chart import log_chart
+            from neptunecontrib.api import log_chart
 
             log_chart('bokeh_figure', p)
 
+    Note:
         Check out how the logged charts look in Neptune:
-        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-973/artifacts?path=charts%2F&file=bokeh_figure.html
+        `example experiment
+        <https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-973/artifacts?path=charts%2F&file=bokeh_figure.html>`_
      """
     _exp = experiment if experiment else neptune
 

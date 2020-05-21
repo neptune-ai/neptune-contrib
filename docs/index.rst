@@ -51,10 +51,10 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    :maxdepth: 1
    :caption: User Guide
 
+   api.chart <user_guide/api/chart>
    api.utils <user_guide/api/utils>
    hpo.utils <user_guide/hpo/utils>
    bots.telegram_bot <user_guide/bots/telegram_bot>
-   logging.chart <user_guide/logging/chart>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.xgboost <user_guide/monitoring/xgboost>
    monitoring.fastai <user_guide/monitoring/fastai>

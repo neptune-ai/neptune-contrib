@@ -52,7 +52,7 @@ author = 'Neptune Dev Team'
 # The short X.Y version
 version = '0.20'
 # The full version, including alpha/beta/rc tags
-release = '0.20.0'
+release = '0.20.3'
 
 # -- General configuration ---------------------------------------------------
 
