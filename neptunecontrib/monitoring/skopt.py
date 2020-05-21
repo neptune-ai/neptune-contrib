@@ -77,9 +77,9 @@ class NeptuneCallback:
 def log_results(results, experiment=None, log_plots=True, log_pickle=True):
     """Logs runs results and parameters to neptune.
 
-    Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' channel),
-    best parameters ('best_parameters' property), convergence plot ('diagnostics' channel),
-    evaluations plot ('diagnostics' channel), and objective plot ('diagnostics' channel).
+    Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' metric),
+    best parameters ('best_parameters' property), convergence plot ('diagnostics' log),
+    evaluations plot ('diagnostics' log), and objective plot ('diagnostics' log).
 
      Args:
          results('scipy.optimize.OptimizeResult'): Results object that is typically an
