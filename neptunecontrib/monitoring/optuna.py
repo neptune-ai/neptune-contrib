@@ -20,7 +20,7 @@ import neptune
 from neptunecontrib.api import log_chart, pickle_and_log_artifact
 
 
-def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=None):  # pylint: disable=W0621
+class NeptuneCallback:
     """Logs hyperparameter optimization process to Neptune.
 
     For each iteration it logs run metric and run parameters as well as the best score to date.
@@ -43,7 +43,7 @@ def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=N
 
             neptune_callback = opt_utils.NeptuneCallback()
 
-        Run Optuna training passing monitor as callback::
+        Run Optuna training passing neptune_callback as callback::
 
             ...
             study = optuna.create_study(direction='maximize')
@@ -56,29 +56,36 @@ def NeptuneCallback(experiment=None, log_charts=False, log_study=False, params=N
 
             neptune_callback = opt_utils.NeptuneCallback(log_charts=True, log_study=True)
     """
-    import optuna.visualization as vis
 
-    _exp = experiment if experiment else neptune
+    def __init__(self, experiment=None, log_charts=False, log_study=False, params=None): # pylint: disable=W0621
+        self.exp = experiment if experiment else neptune
+        self.log_charts = log_charts
+        self.log_study = log_study
+        self.params = params
 
-    def monitor(study, trial):
-        _exp.log_metric('run_score', trial.value)
-        _exp.log_metric('best_so_far_run_score', study.best_value)
-        _exp.log_text('run_parameters', str(trial.params))
+    def __call__(self, study, trial):
+        import optuna.visualization as vis
 
-        if log_charts:
-            log_chart(
-                name='optimization_history', chart=vis.plot_optimization_history(study), experiment=_exp)
-            log_chart(
-                name='contour', chart=vis.plot_contour(study, params=params), experiment=_exp)
-            log_chart(
-                name='parallel_coordinate', chart=vis.plot_parallel_coordinate(study, params=params), experiment=_exp)
-            log_chart(
-                name='slice', chart=vis.plot_slice(study, params=params), experiment=_exp)
+        self.exp.log_metric('run_score', trial.value)
+        self.exp.log_metric('best_so_far_run_score', study.best_value)
+        self.exp.log_text('run_parameters', str(trial.params))
 
-        if log_study:
-            pickle_and_log_artifact(study, 'study.pkl', experiment=_exp)
+        if self.log_charts:
+            log_chart(name='optimization_history',
+                      chart=vis.plot_optimization_history(study),
+                      experiment=self.exp)
+            log_chart(name='contour',
+                      chart=vis.plot_contour(study, params=self.params),
+                      experiment=self.exp)
+            log_chart(name='parallel_coordinate',
+                      chart=vis.plot_parallel_coordinate(study, params=self.params),
+                      experiment=self.exp)
+            log_chart(name='slice',
+                      chart=vis.plot_slice(study, params=self.params),
+                      experiment=self.exp)
 
-    return monitor
+        if self.log_study:
+            pickle_and_log_artifact(study, 'study.pkl', experiment=self.exp)
 
 
 def log_study_info(study, experiment=None, log_charts=True, params=None):
