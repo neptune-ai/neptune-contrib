@@ -1,6 +1,6 @@
 XGBoost
 =======
 
-.. automodule:: neptunecontrib.monitoring.xgboost_monitor
+.. automodule:: neptunecontrib.monitoring.xgboost
     :members:
     :show-inheritance:

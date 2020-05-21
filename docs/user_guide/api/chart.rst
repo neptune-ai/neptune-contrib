@@ -1,6 +1,6 @@
 Chart
 =====
 
-.. automodule:: neptunecontrib.logging.chart
+.. automodule:: neptunecontrib.api.chart
     :members:
     :show-inheritance:
