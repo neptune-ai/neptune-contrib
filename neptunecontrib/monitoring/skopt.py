@@ -50,7 +50,7 @@ class NeptuneCallback:
                                 base_estimator='ET', n_calls=100, n_random_starts=10)
 
         You can explore an example experiment in Neptune:
-        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1061/logs
+        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1065/logs
     """
 
     def __init__(self, experiment=None, log_checkpoint=True):
@@ -110,7 +110,7 @@ def log_results(results, experiment=None, log_plots=True, log_pickle=True):
              sk_utils.log_results(results)
 
         You can explore an example experiment in Neptune:
-        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1061/logs
+        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1065/logs
      """
     _exp = experiment if experiment else neptune
 
@@ -134,38 +134,38 @@ def NeptuneMonitor(*args, **kwargs):
     return NeptuneCallback(*args, **kwargs)
 
 
-def _log_best_parameters(results, experiment=None):
+def _log_best_parameters(results, experiment):
     named_params = ([(dimension.name, param) for dimension, param in zip(results.space, results.x)])
     experiment.set_property('best_parameters', str(named_params))
 
 
-def _log_best_score(results, experiment=None):
+def _log_best_score(results, experiment):
     experiment.log_metric('best_score', results.fun)
 
 
-def _log_plot_convergence(results, experiment=None):
+def _log_plot_convergence(results, experiment, name='diagnostics'):
     fig, ax = plt.subplots()
     sk_plots.plot_convergence(results, ax=ax)
-    experiment.log_image('plot_convergence', fig)
+    experiment.log_image(name, fig)
 
 
-def _log_plot_regret(results, experiment=None):
+def _log_plot_regret(results, experiment, name='diagnostics'):
     fig, ax = plt.subplots()
     sk_plots.plot_regret(results, ax=ax)
-    experiment.log_image('plot_regret', fig)
+    experiment.log_image(name, fig)
 
 
-def _log_plot_evaluations(results, experiment=None):
+def _log_plot_evaluations(results, experiment, name='diagnostics'):
     fig = plt.figure(figsize=(16, 12))
     fig = axes2fig(sk_plots.plot_evaluations(results, bins=10), fig=fig)
-    experiment.log_image('plot_evaluations', fig)
+    experiment.log_image(name, fig)
 
 
-def _log_plot_objective(results, experiment=None):
+def _log_plot_objective(results, experiment, name='diagnostics'):
     try:
         fig = plt.figure(figsize=(16, 12))
         fig = axes2fig(sk_plots.plot_objective(results), fig=fig)
-        experiment.log_image('plot_objective', fig)
+        experiment.log_image(name, fig)
     except Exception as e:
         print('Could not create the objective chart due to error: {}'.format(e))
 
@@ -187,4 +187,4 @@ def _export_results_object(results):
 
 
 def _format_to_named_params(params, result):
-    return ([(dimension.name, param) for dimension, param in zip(result.space, params)])
+    return [(dimension.name, param) for dimension, param in zip(result.space, params)]
