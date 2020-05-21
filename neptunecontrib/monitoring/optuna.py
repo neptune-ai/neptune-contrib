@@ -91,9 +91,9 @@ class NeptuneCallback:
 def log_study_info(study, experiment=None, log_charts=True, params=None):
     """Logs runs results and parameters to neptune.
 
-    Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' channel),
-    best parameters ('best_parameters' property), the study object itself, and interactive optuna charts
-    ('contour', 'parallel_coordinate', 'slice', 'optimization_history').
+    Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' metric),
+    best parameters ('best_parameters' property), the study object itself as artifact, and interactive optuna charts
+    ('contour', 'parallel_coordinate', 'slice', 'optimization_history') as artifacts in 'charts' sub folder.
 
     Args:
         study('optuna.study.Study'): Optuna study object after training is completed.
