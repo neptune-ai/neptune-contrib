@@ -64,10 +64,10 @@ class NeptuneMonitor(Callback):
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
 
-    # # Workaround for a Tensorflow-Keras incommpatibility issue https://github.com/keras-team/keras/issues/14125: 
-    # def _implements_train_batch_hooks(self): return True
-    # def _implements_test_batch_hooks(self): return True
-    # def _implements_predict_batch_hooks(self): return True
+    # Workaround for a Tensorflow-Keras incommpatibility issue https://github.com/keras-team/keras/issues/14125: 
+    def _implements_train_batch_hooks(self): return True
+    def _implements_test_batch_hooks(self): return True
+    def _implements_predict_batch_hooks(self): return True
 
     def _send_metrics(self, logs, trigger):
         if not logs:
