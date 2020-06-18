@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-import sys
-
 import neptune
 from neptune.exceptions import LibraryNotInstalled, NeptuneException
 
@@ -85,4 +83,3 @@ class NeptuneMonitor(Callback):
 
     def on_epoch_end(self, epoch, logs=None):  # pylint:disable=unused-argument
         self._log_metrics(logs, 'epoch')
-
