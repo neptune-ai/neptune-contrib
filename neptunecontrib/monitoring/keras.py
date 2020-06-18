@@ -19,11 +19,15 @@ import sys
 import neptune
 from neptune.exceptions import LibraryNotInstalled, NeptuneException
 
+# Note: we purposefully try to import `tensorflow.keras.callbacks.Callback`
+# before `keras.callbacks.Callback` because the former is compatible with both
+# `tensorflow.keras` and `keras`, while the latter is only compatible
+# with `keras`. See https://github.com/keras-team/keras/issues/14125
 try:
-    from keras.callbacks import Callback
+    from tensorflow.keras.callbacks import Callback
 except ImportError:
     try:
-        from tensorflow.keras.callbacks import Callback
+        from keras.callbacks import Callback
     except ImportError:
         raise LibraryNotInstalled('Keras')
 
@@ -43,12 +47,9 @@ class NeptuneMonitor(Callback):
         prefix: str, optional:
             Prefix that should be added before the `metric_name`
             and `valid_name` before logging to the appropriate channel.
-            Defaul is 'keras_'.
+            Defaul is empty string ('').
 
     Examples:
-        Prepare data::
-
-            TODO update for keras
 
         Now, create Neptune experiment, instantiate the monitor and pass
         it to callbacks::
@@ -59,17 +60,12 @@ class NeptuneMonitor(Callback):
         You need to have Keras or Tensorflow 2 installed on your computer to use this module.
     """
 
-    def __init__(self, experiment=None, prefix='keras_'):
+    def __init__(self, experiment=None, prefix=''):
         super().__init__()
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
 
-    # Workaround for a Tensorflow-Keras incommpatibility issue https://github.com/keras-team/keras/issues/14125: 
-    def _implements_train_batch_hooks(self): return True
-    def _implements_test_batch_hooks(self): return True
-    def _implements_predict_batch_hooks(self): return True
-
-    def _send_metrics(self, logs, trigger):
+    def _log_metrics(self, logs, trigger):
         if not logs:
             return
 
@@ -80,13 +76,13 @@ class NeptuneMonitor(Callback):
                 if metric in ('batch', 'size'):
                     continue
                 name = prefix + metric
-                self._exp.send_metric(channel_name=name, x=value, y=None)
+                self._exp.log_metric(name, value, y=None)
             except NeptuneException:
                 pass
 
     def on_batch_end(self, batch, logs=None):  # pylint:disable=unused-argument
-        self._send_metrics(logs, 'batch')
+        self._log_metrics(logs, 'batch')
 
     def on_epoch_end(self, epoch, logs=None):  # pylint:disable=unused-argument
-        self._send_metrics(logs, 'epoch')
+        self._log_metrics(logs, 'epoch')
 
