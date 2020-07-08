@@ -25,15 +25,19 @@ from neptunecontrib.api.utils import (
     get_property_columns,
     get_system_columns,
     strip_prefices,
+    log_pickle,
+    get_pickle,
+    get_filepaths,
     pickle_and_log_artifact,
-    get_pickled_artifact,
-    get_filepaths
+    get_pickled_artifact
 )
 
 __all__ = [
     'log_table',
     'log_html',
     'log_chart',
+    'log_pickle',
+    'get_pickle',
     'concat_experiments_on_channel',
     'extract_project_progress_info',
     'get_channel_columns',
@@ -41,7 +45,7 @@ __all__ = [
     'get_property_columns',
     'get_system_columns',
     'strip_prefices',
+    'get_filepaths',
     'pickle_and_log_artifact',
-    'get_pickled_artifact',
-    'get_filepaths'
+    'get_pickled_artifact'
 ]

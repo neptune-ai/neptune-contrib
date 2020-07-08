@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 import os
-import warnings
 import tempfile
+import warnings
 
 import joblib
 import neptune
@@ -31,8 +31,8 @@ __all__ = [
     'get_property_columns',
     'get_system_columns',
     'strip_prefices',
-    'pickle_and_log_artifact',
-    'get_pickled_artifact'
+    'log_pickle',
+    'get_pickle'
 ]
 
 
@@ -82,7 +82,8 @@ def concat_experiments_on_channel(experiments, channel_name):
     return combined_df
 
 
-def extract_project_progress_info(leadearboard, metric_colname, time_colname='finished'):
+def extract_project_progress_info(leadearboard, metric_colname,
+                                  time_colname='finished'):
     """Extracts the project progress information from the experiment view.
 
     This function takes the experiment view (leaderboard) and extracts the information
@@ -253,15 +254,15 @@ def get_filepaths(dirpath='.', extensions=None):
     return files
 
 
-def pickle_and_log_artifact(obj, filename, experiment=None):
+def log_pickle(filename, obj, experiment=None):
     """Logs picklable object to Neptune.
 
     Pickles and logs your object to Neptune under specified filename.
 
     Args:
         obj: Picklable object.
-        filename(str): filename under which object will be saved.
-        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+        filename(str): filename under which object will be saved to Neptune.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment.
 
     Examples:
         Initialize Neptune::
@@ -272,53 +273,80 @@ def pickle_and_log_artifact(obj, filename, experiment=None):
         Create RandomForest object and log to Neptune::
 
             from sklearn.ensemble import RandomForestClassifier
-            from neptunecontrib.api import pickle_and_log_artifact
+            from neptunecontrib.api import log_pickle
 
-            with neptune.create_experiment():
-                rf = RandomForestClassifier()
-                pickle_and_log_artifact(rf, 'rf')
+            neptune.create_experiment()
+
+            rf = RandomForestClassifier()
+            log_pickle('rf.pkl', rf)
     """
     _exp = experiment if experiment else neptune
-
-    with tempfile.TemporaryDirectory() as d:
-        filename = os.path.join(d, filename)
-        joblib.dump(obj, filename)
-        _exp.send_artifact(filename)
+    _exp.log_artifact(export_pickle(obj), filename)
 
 
-def get_pickled_artifact(experiment, filename):
+def export_pickle(obj):
+    from io import BytesIO
+    import pickle
+
+    buffer = BytesIO()
+    pickle.dump(obj, buffer)
+    buffer.seek(0)
+
+    return buffer
+
+
+def get_pickle(filename, experiment):
     """Downloads pickled artifact object from Neptune and returns a Python object.
 
     Downloads the pickled object from artifacts of given experiment,
-     loads them and returns a Python object.
+     loads it to memory and returns a Python object.
 
     Args:
+        filename(str): filename under which object will be saved to Neptune.
         experiment(`neptune.experiments.Experiment`): Neptune experiment.
-        filename(str): filename under which object was saved in Neptune.
 
     Examples:
         Initialize Neptune::
 
             import neptune
 
-            session = neptune.sessions.Session()
-            project = session.get_project('USER_NAME/PROJECT_NAME')
+            project = neptune.init('USER_NAME/PROJECT_NAME')
 
         Choose Neptune experiment::
 
             experiment = project.get_experiments(id=['PRO-101'])[0]
 
-        Get your pickled object from experiment articats::
+        Get your pickled object from experiment artifacts::
 
-            from neptunecontrib.monitoring.utils import get_artifact
+            from neptunecontrib.api import get_pickle
 
-            results = get_pickled_artifact(experiment, 'results.pkl')
+            results = get_pickle('results.pkl', experiment)
     """
     with tempfile.TemporaryDirectory() as d:
         experiment.download_artifact(filename, d)
         full_path = os.path.join(d, filename)
         artifact = joblib.load(full_path)
     return artifact
+
+
+def pickle_and_log_artifact(obj, filename, experiment=None):
+    message = """pickle_and_log_artifact was renamed to log_pickle.
+    You should use ``from neptunecontrib.api import log_pickle``
+    neptunecontrib.api.pickle_and_log_artifact will be removed in future releases.
+    """
+    warnings.warn(message)
+
+    log_pickle(filename, obj, experiment)
+
+
+def get_pickled_artifact(experiment, filename):
+    message = """get_pickled_artifact was renamed to get_pickle.
+    You should use ``from neptunecontrib.api import get_pickle``
+    neptunecontrib.api.get_pickled_artifact will be removed in future releases.
+    """
+    warnings.warn(message)
+
+    get_pickle(filename, experiment)
 
 
 def _prep_time_column(progress_df):
@@ -335,14 +363,16 @@ def _prep_metric_column(progress_df):
 
 
 def _get_daily_running_time(progress_df):
-    daily_counts = progress_df.groupby('timestamp_day').sum()['running_time'].reset_index()
+    daily_counts = progress_df.groupby('timestamp_day').sum()[
+        'running_time'].reset_index()
     daily_counts.columns = ['timestamp_day', 'running_time_day']
     progress_df = pd.merge(progress_df, daily_counts, on='timestamp_day')
     return progress_df
 
 
 def _get_daily_experiment_counts(progress_df):
-    daily_counts = progress_df.groupby('timestamp_day').count()['metric'].reset_index()
+    daily_counts = progress_df.groupby('timestamp_day').count()[
+        'metric'].reset_index()
     daily_counts.columns = ['timestamp_day', 'experiment_count_day']
     progress_df = pd.merge(progress_df, daily_counts, on='timestamp_day')
     return progress_df
