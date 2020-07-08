@@ -16,7 +16,7 @@ def log_explainer(filename, explainer, experiment=None):
 
     Args:
         filename (:obj:`str`): filename that will be used as an artifact's destination.
-        explainer (:obj:`dalex.Explainer`): and instance of dalex explainer
+        explainer (:obj:`dalex.Explainer`): an instance of dalex explainer
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | For advanced users only. Pass Neptune
               `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
@@ -37,11 +37,9 @@ def log_explainer(filename, explainer, experiment=None):
             ...
             clf.fit(X, y)
 
-            exp = dx.Explainer(clf, X, y, label="Titanic MLP Pipeline")
+            expl = dx.Explainer(clf, X, y, label="Titanic MLP Pipeline")
 
-            log_local_explanations(exp, new_observation)
-            log_global_explanations(exp)
-            log_explainer('explainer.pkl', exp)
+            log_explainer('explainer.pkl', expl)
 
     Note:
         Check out how the logged explainer looks in Neptune:
@@ -68,13 +66,14 @@ def log_local_explanations(explainer, observation, experiment=None):
     Dalex explanations are converted to interactive HTML objects and then uploaded to Neptune
     as an artifact with path charts/{name}.html.
 
-    The following explanations are logged: break down, break down with interactions, shap, ceteris paribus, and ceteris paribus for categorical variables.
-    Explanation charts are created and logged with default settings. To log charts with custom settings, create a custom chart and use `neptunecontrib.api.log_chart`.
+    The following explanations are logged: break down, break down with interactions, shap, ceteris paribus,
+    and ceteris paribus for categorical variables. Explanation charts are created and logged with default settings.
+    To log charts with custom settings, create a custom chart and use `neptunecontrib.api.log_chart`.
     For more information about Dalex go to `Dalex Website <https://modeloriented.github.io/DALEX/>`_.
 
     Args:
-        explainer (:obj:`dalex.Explainer`): and instance of dalex explainer
-        observation (:obj): and observation that can be fed to the classifier or regressor for which the explainer was created
+        explainer (:obj:`dalex.Explainer`): an instance of dalex explainer
+        observation (:obj): an observation that can be fed to the classifier for which the explainer was created
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | For advanced users only. Pass Neptune
               `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
@@ -95,7 +94,7 @@ def log_local_explanations(explainer, observation, experiment=None):
             ...
             clf.fit(X, y)
 
-            exp = dx.Explainer(clf, X, y, label="Titanic MLP Pipeline")
+            expl = dx.Explainer(clf, X, y, label="Titanic MLP Pipeline")
 
             new_observation = pd.DataFrame({'gender': ['male'],
                                             'age': [25],
@@ -106,7 +105,7 @@ def log_local_explanations(explainer, observation, experiment=None):
                                             'parch': 0},
                                            index=['John'])
 
-            log_local_explanations(exp, new_observation)
+            log_local_explanations(expl, new_observation)
 
     Note:
         Check out how the logged explanations look in Neptune:
@@ -141,13 +140,15 @@ def log_global_explanations(explainer, categorical_features=None, experiment=Non
     Dalex explanations are converted to interactive HTML objects and then uploaded to Neptune
     as an artifact with path charts/{name}.html.
 
-    The following explanations are logged: variable importance. If categorical features are specified partial dependence and accumulated dependence are also logged.
-    Explanation charts are created and logged with default settings. To log charts with custom settings, create a custom chart and use `neptunecontrib.api.log_chart`.
+    The following explanations are logged: variable importance. If categorical features are specified partial dependence
+    and accumulated dependence are also logged. Explanation charts are created and logged with default settings.
+    To log charts with custom settings, create a custom chart and use `neptunecontrib.api.log_chart`.
     For more information about Dalex go to `Dalex Website <https://modeloriented.github.io/DALEX/>`_.
 
     Args:
-        explainer (:obj:`dalex.Explainer`): and instance of dalex explainer
-        categorical_features (:list): list of categorical features for which you want to create partial and accumulated dependence plots.
+        explainer (:obj:`dalex.Explainer`): an instance of dalex explainer
+        categorical_features (:list): list of categorical features for which you want to create explanation plots like
+            partial and accumulated dependence plots.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | For advanced users only. Pass Neptune
               `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
@@ -168,8 +169,8 @@ def log_global_explanations(explainer, categorical_features=None, experiment=Non
             ...
             clf.fit(X, y)
 
-            exp = dx.Explainer(clf, X, y, label="Titanic MLP Pipeline")
-            log_global_explanations(exp, categorical_features=["gender", "class"])
+            expl = dx.Explainer(clf, X, y, label="Titanic MLP Pipeline")
+            log_global_explanations(expl, categorical_features=["gender", "class"])
 
     Note:
         Check out how the logged explanations look in Neptune:
