@@ -15,6 +15,7 @@
 #
 
 from neptunecontrib.api.chart import log_chart
+from neptunecontrib.api.explainers import log_explainer, log_local_explanations, log_global_explanations
 from neptunecontrib.api.html import log_html
 from neptunecontrib.api.table import log_table
 from neptunecontrib.api.utils import (
@@ -34,6 +35,9 @@ __all__ = [
     'log_table',
     'log_html',
     'log_chart',
+    'log_explainer',
+    'log_local_explanations',
+    'log_global_explanations',
     'concat_experiments_on_channel',
     'extract_project_progress_info',
     'get_channel_columns',
