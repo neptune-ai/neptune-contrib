@@ -39,7 +39,7 @@ class NeptuneMonitor(LearnerCallback):
 
 
     Args:
-        ctx(`neptune.Context`): Neptune context.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment.
         prefix(str): Prefix that should be added before the `metric_name`
             and `valid_name` before logging to the appropriate channel.
             Defaul is ''.

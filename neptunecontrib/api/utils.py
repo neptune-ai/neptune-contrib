@@ -127,8 +127,7 @@ def extract_project_progress_info(leadearboard, metric_colname,
     system_columns = ['id', 'owner', 'running_time', 'tags']
     progress_columns = system_columns + [time_colname, metric_colname]
     progress_df = leadearboard[progress_columns]
-    progress_df.columns = ['id', 'owner', 'running_time', 'tags'] + [
-        'timestamp', 'metric']
+    progress_df.columns = ['id', 'owner', 'running_time', 'tags'] + ['timestamp', 'metric']
 
     progress_df = _prep_time_column(progress_df)
     progress_df = _prep_metric_column(progress_df)
@@ -137,8 +136,7 @@ def extract_project_progress_info(leadearboard, metric_colname,
     progress_df = _get_daily_experiment_counts(progress_df)
     progress_df = _get_current_best(progress_df)
     progress_df = progress_df[
-        ['id', 'metric', 'metric_best', 'running_time', 'running_time_day',
-         'experiment_count_day',
+        ['id', 'metric', 'metric_best', 'running_time', 'running_time_day', 'experiment_count_day',
          'owner', 'tags', 'timestamp', 'timestamp_day']]
 
     return progress_df
@@ -264,11 +262,7 @@ def log_pickle(filename, obj, experiment=None):
     Args:
         obj: Picklable object.
         filename(str): filename under which object will be saved to Neptune.
-        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
-            | For advanced users only. Pass Neptune
-              `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
-              object if you want to control to which experiment data is logged.
-            | If ``None``, log to currently active, and most recent experiment.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment.
 
     Examples:
         Initialize Neptune::
@@ -309,11 +303,7 @@ def get_pickle(filename, experiment):
 
     Args:
         filename(str): filename under which object will be saved to Neptune.
-        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
-            | For advanced users only. Pass Neptune
-              `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
-              object if you want to control to which experiment data is logged.
-            | If ``None``, log to currently active, and most recent experiment.
+        experiment(`neptune.experiments.Experiment`): Neptune experiment.
 
     Examples:
         Initialize Neptune::

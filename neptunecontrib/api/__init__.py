@@ -27,7 +27,9 @@ from neptunecontrib.api.utils import (
     strip_prefices,
     log_pickle,
     get_pickle,
-    get_filepaths
+    get_filepaths,
+    pickle_and_log_artifact,
+    get_pickled_artifact
 )
 
 __all__ = [
@@ -43,5 +45,7 @@ __all__ = [
     'get_property_columns',
     'get_system_columns',
     'strip_prefices',
-    'get_filepaths'
+    'get_filepaths',
+    'pickle_and_log_artifact',
+    'get_pickled_artifact'
 ]
