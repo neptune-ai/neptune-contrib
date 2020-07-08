@@ -201,23 +201,3 @@ def log_global_explanations(explainer, categorical_features=None, experiment=Non
 
         ale_cat_plot = ale_cat.plot(pdp_cat, show=False)
         log_chart(name="Accumulated Dependence", chart=ale_cat_plot, experiment=_exp)
-
-
-def log_pickle(name, obj, experiment=None):
-    """
-    THIS WILL BE DROPPED WHEN CONTRIB MERGEs
-    """
-    _exp = experiment if experiment else neptune
-
-    neptune.log_artifact(export_pickle(obj), f'{name}.pkl')
-
-
-def export_pickle(obj):
-    from io import BytesIO
-    import pickle
-
-    buffer = BytesIO()
-    pickle.dump(obj, buffer)
-    buffer.seek(0)
-
-    return buffer
