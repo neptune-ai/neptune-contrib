@@ -47,7 +47,7 @@ def log_explainer(filename, explainer, experiment=None):
      """
     _exp = experiment if experiment else neptune
 
-    neptune.log_artifact(export_dalex_explainer(explainer), filename)
+    _exp.log_artifact(export_dalex_explainer(explainer), filename)
 
 
 def export_dalex_explainer(explainer):
