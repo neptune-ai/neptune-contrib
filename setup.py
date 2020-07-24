@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+import versioneer
 
 
 def main():
@@ -24,7 +25,7 @@ def main():
 
     setup(
         name='neptune-contrib',
-        version='0.22.0',
+        version=versioneer.get_version(),
         description='Neptune.ai contributions library',
         author='neptune.ai',
         support='contact@neptune.ai',
