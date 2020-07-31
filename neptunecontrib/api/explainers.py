@@ -150,7 +150,7 @@ def log_local_explanations(explainer, observation, experiment=None):
     log_chart(name="Ceteris Paribus Categorical", chart=cp_plot_cat, experiment=_exp)
 
 
-def log_global_explanations(explainer, categorical_features=None, experiment=None):
+def log_global_explanations(explainer, categorical_features=None, numerical_features=None, experiment=None):
     """Logs global explanations from dalex to Neptune.
 
     Dalex explanations are converted to interactive HTML objects and then uploaded to Neptune
@@ -163,8 +163,10 @@ def log_global_explanations(explainer, categorical_features=None, experiment=Non
 
     Args:
         explainer (:obj:`dalex.Explainer`): an instance of dalex explainer
-        categorical_features (:list): list of categorical features for which you want to create explanation plots like
-            partial and accumulated dependence plots.
+        categorical_features (:list): list of categorical features for which you want to create
+            accumulated dependence plots.
+        numerical_features (:list): list of numerical features for which you want to create
+            partial dependence plots.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | For advanced users only. Pass Neptune
               `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
@@ -186,7 +188,7 @@ def log_global_explanations(explainer, categorical_features=None, experiment=Non
             clf.fit(X, y)
 
             expl = dx.Explainer(clf, X, y, label="Titanic MLP Pipeline")
-            log_global_explanations(expl, categorical_features=["gender", "class"])
+            log_global_explanations(expl, categorical_features=["gender", "class"], numerical_features=["age", "fare"])
 
     Note:
         Check out how the logged explanations look in Neptune:
@@ -199,22 +201,23 @@ def log_global_explanations(explainer, categorical_features=None, experiment=Non
     vi_plot = vi.plot(show=False)
     log_chart(name="Variable Importance", chart=vi_plot, experiment=_exp)
 
-    if categorical_features:
-        pdp_num = explainer.model_profile(type='partial')
+    if numerical_features:
+        pdp_num = explainer.model_profile(type='partial', variables=numerical_features)
         pdp_num.result["_label_"] = 'pdp'
 
+        ale_num = explainer.model_profile(type='accumulated', variables=numerical_features)
+        ale_num.result["_label_"] = 'ale'
+
+        pdp_num_plot = pdp_num.plot(ale_num, show=False)
+        log_chart(name="Partial Dependence", chart=pdp_num_plot, experiment=_exp)
+
+    if categorical_features:
         pdp_cat = explainer.model_profile(type='partial', variable_type='categorical', variables=categorical_features)
         pdp_cat.result['_label_'] = 'pdp'
 
         ale_cat = explainer.model_profile(type='accumulated', variable_type='categorical',
                                           variables=categorical_features)
         ale_cat.result['_label_'] = 'ale'
-
-        ale_num = explainer.model_profile(type='accumulated')
-        ale_num.result["_label_"] = 'ale'
-
-        pdp_num_plot = pdp_num.plot(ale_num, show=False)
-        log_chart(name="Partial Dependence", chart=pdp_num_plot, experiment=_exp)
 
         ale_cat_plot = ale_cat.plot(pdp_cat, show=False)
         log_chart(name="Accumulated Dependence", chart=ale_cat_plot, experiment=_exp)
