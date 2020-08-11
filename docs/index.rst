@@ -69,7 +69,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    viz.experiments <user_guide/viz/experiments>
    viz.projects <user_guide/viz/projects>
    viz.parallel_coordinates_plot <user_guide/viz/parallel_coordinates_plot>
-   create_experiment_comparison_markdown_table <user_guide/create_experiment_comparison_markdown_table>
+   create_experiment_comparison_comment <user_guide/create_experiment_comparison_comment>
    create_experiment_from_json <user_guide/create_experiment_from_json>
 
 

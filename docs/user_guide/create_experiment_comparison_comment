@@ -1,6 +1,6 @@
-Create experiment comparison markdown table
-===========================================
+Create experiment comparison markdown table for Github actions
+==============================================================
 
-.. automodule:: neptunecontrib.create_experiment_comparison_markdown_table
+.. automodule:: neptunecontrib.create_experiment_comparison_comment
     :members:
     :show-inheritance:

@@ -80,11 +80,14 @@ def create_comment_markdown(df, project_name):
     data = {'metrics': {},
             'parameters': {},
             'properties': {},
-            'branches': ['develop', 'master']}
+            'branches': ['main_branch', 'pull_request_branch']}
+
+    df = df.iloc[::-1].reset_index()
+
     for k, v in df.to_dict().items():
         if k == 'id':
             data[k] = [v[0], v[1]]
-
+            print(data[k])
         if 'channel_' in k:
             data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
         if 'parameter_' in k:
