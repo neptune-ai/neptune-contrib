@@ -97,13 +97,13 @@ Note:
 """
 import warnings
 
+from neptunecontrib.create_experiment_from_json import main, parse_args
+
 message = """neptunecontrib.logging.chart was moved to neptunecontrib.api.
 You should use ``from neptunecontrib.api import log_chart`` 
 neptunecontrib.logging.log_chart will be removed in future releases.
 """
 warnings.warn(message)
-
-from neptunecontrib.create_experiment_from_json import main, parse_args
 
 if __name__ == '__main__':
     args = parse_args()
