@@ -1,0 +1,6 @@
+Create experiment comparison markdown table
+===========================================
+
+.. automodule:: neptunecontrib.create_experiment_comparison_markdown_table
+    :members:
+    :show-inheritance:
