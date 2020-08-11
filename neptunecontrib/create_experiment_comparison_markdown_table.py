@@ -80,8 +80,7 @@ def create_comment_markdown(df, project_name):
     data = {'metrics': {},
             'parameters': {},
             'properties': {},
-            'branches': ['develop', 'master']
-            }
+            'branches': ['develop', 'master']}
     for k, v in df.to_dict().items():
         if k == 'id':
             data[k] = [v[0], v[1]]
@@ -164,28 +163,6 @@ def create_comment_markdown(df, project_name):
     table_text = "".join(table)
 
     return table_text
-
-
-def dataframe2dict(df):
-    data = df.to_dict()
-
-    cleaned_data = {'metrics': {},
-                    'parameters': {},
-                    'properties': {},
-                    'branches': ['develop', 'master']
-                    }
-    for k, v in data.items():
-        if k == 'id':
-            cleaned_data[k] = [v[0], v[1]]
-
-        if 'channel_' in k:
-            cleaned_data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
-        if 'parameter_' in k:
-            cleaned_data['parameters'][k.replace('parameter_', '')] = [v[0], v[1]]
-        if 'property_' in k:
-            cleaned_data['properties'][k.replace('property_', '')] = [v[0], v[1]]
-
-    return cleaned_data
 
 
 def main(arguments):
