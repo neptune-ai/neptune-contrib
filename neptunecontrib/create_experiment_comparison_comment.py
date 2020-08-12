@@ -54,16 +54,19 @@ import neptune
 import numpy as np
 
 
-def get_experiment_data_by_id(arguments):
+def get_project(arguments):
     project = neptune.init(project_qualified_name=arguments.project_name,
                            api_token=arguments.api_token)
+    return project
+
+
+def get_experiment_data_by_id(arguments):
+    project = get_project(arguments)
     return project.get_leaderboard(id=arguments.experiment_ids)
 
 
 def get_experiment_data_by_tag(arguments):
-    project = neptune.init(project_qualified_name=arguments.project_name,
-                           api_token=arguments.api_token)
-
+    project = get_project(arguments)
     experiment_ids = [project.get_experiments(tag=tag)[0].id for tag in arguments.tag_names]
 
     assert len(experiment_ids) == 2, 'tags passed should be unique to the experiments they belong to'
