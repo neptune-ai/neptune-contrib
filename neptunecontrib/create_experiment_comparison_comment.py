@@ -19,6 +19,8 @@
 Get a diff between experimenst across metrics, parameters, and properties and save it to a file as a markdown table.
 
 Attributes:
+    tag_ids(list(str)): UUID tags of experiments you would like to compare. It works only for 2 experiments.
+        You can pass it either as --tag_ids or -i. For example, --tag_ids a892ee0ds 09asajd902.
     experiment_ids(list(str)): Experiment ids of experiments you would like to compare. It works only for 2 experiments.
         You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
     api_token(str): Neptune api token. If you have NEPTUNE_API_TOKEN environment
@@ -32,7 +34,7 @@ Example:
     Create a file, comparison.md, with a comparison table of experiments GIT-83 and GIT-82::
 
         $ python -m neptunecontrib.create_experiment_comparison_comment \
-            --experiment_ids GIT-83 GIT-82 \
+            --tag_ids a892ee0ds 09asajd902 \
             --api_token ANONYMOUS \
             --project_name shared/neptune-actions \
             --filepath comment_body.md
@@ -51,10 +53,22 @@ import neptune
 import numpy as np
 
 
-def get_experiment_data(arguments):
+def get_experiment_data_by_id(arguments):
     project = neptune.init(project_qualified_name=arguments.project_name,
                            api_token=arguments.api_token)
     return project.get_leaderboard(id=arguments.experiment_ids)
+
+
+def get_experiment_data_by_tag(arguments):
+    project = neptune.init(project_qualified_name=arguments.project_name,
+                           api_token=arguments.api_token)
+
+    experiment_ids = []
+    for tag in arguments.tag_ids:
+        exp = project.get_experiments(tag=tag)[0]
+        experiment_ids.append(exp.id)
+
+    return project.get_leaderboard(id=experiment_ids)
 
 
 def find_experiment_diff(df):
@@ -87,7 +101,6 @@ def create_comment_markdown(df, project_name):
     for k, v in df.to_dict().items():
         if k == 'id':
             data[k] = [v[0], v[1]]
-            print(data[k])
         if 'channel_' in k:
             data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
         if 'parameter_' in k:
@@ -169,7 +182,13 @@ def create_comment_markdown(df, project_name):
 
 
 def main(arguments):
-    df = get_experiment_data(arguments)
+    if arguments.experiment_ids:
+        df = get_experiment_data_by_id(arguments)
+    elif arguments.tag_ids:
+        df = get_experiment_data_by_tag(arguments)
+    else:
+        ValueError("at least one of experiment_ids, tag_ids should be specified")
+
     df_diff = find_experiment_diff(df)
     comment_body = create_comment_markdown(df_diff, arguments.project_name)
 
@@ -179,7 +198,8 @@ def main(arguments):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--experiment_ids', nargs=2)
+    parser.add_argument('-i', '--tag_ids', nargs=2, default=None)
+    parser.add_argument('-e', '--experiment_ids', nargs=2, default=None)
     parser.add_argument('-t', '--api_token', default=None)
     parser.add_argument('-p', '--project_name', default=None)
     parser.add_argument('-f', '--filepath', default='comment.md')
