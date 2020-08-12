@@ -19,10 +19,11 @@
 Get a diff between experimenst across metrics, parameters, and properties and save it to a file as a markdown table.
 
 Attributes:
-    tag_ids(list(str)): UUID tags of experiments you would like to compare. It works only for 2 experiments.
-        You can pass it either as --tag_ids or -i. For example, --tag_ids a892ee0ds 09asajd902.
     experiment_ids(list(str)): Experiment ids of experiments you would like to compare. It works only for 2 experiments.
         You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
+    tag_names(list(str)): tags of experiments you would like to compare.
+        It works of tags passed are unique to the experiments they belong to.
+        You can pass it either as --tag_ids or -i. For example, --tag_ids a892ee0ds 09asajd902.
     api_token(str): Neptune api token. If you have NEPTUNE_API_TOKEN environment
         variable set to your API token you can skip this parameter. You can pass it either as --neptune_api_token or -t.
     project_name(str): Full name of the project. E.g. "neptune-ai/neptune-examples",
@@ -63,11 +64,9 @@ def get_experiment_data_by_tag(arguments):
     project = neptune.init(project_qualified_name=arguments.project_name,
                            api_token=arguments.api_token)
 
-    experiment_ids = []
-    for tag in arguments.tag_ids:
-        exp = project.get_experiments(tag=tag)[0]
-        experiment_ids.append(exp.id)
+    experiment_ids = [project.get_experiments(tag=tag)[0].id for tag in arguments.tag_names]
 
+    assert len(experiment_ids) == 2, 'tags passed should be unique to the experiments they belong to'
     return project.get_leaderboard(id=experiment_ids)
 
 
@@ -78,15 +77,15 @@ def find_experiment_diff(df):
             if name in col and not any(excluded_name in col for excluded_name in ['stderr', 'stdout']):
                 selected_cols.append(col)
                 cleaned_cols.append(col.replace(name, ''))
-    df = df[['id'] + selected_cols]
+    df_selected = df[['id'] + selected_cols]
 
     different_cols = []
-    for col in df.columns:
-        vals = df[col].values
+    for col in df_selected.columns:
+        vals = df_selected[col].values
         if vals[0] != vals[1]:
             different_cols.append(col)
 
-    return df[different_cols]
+    return df_selected[different_cols]
 
 
 def create_comment_markdown(df, project_name):
@@ -184,7 +183,7 @@ def create_comment_markdown(df, project_name):
 def main(arguments):
     if arguments.experiment_ids:
         df = get_experiment_data_by_id(arguments)
-    elif arguments.tag_ids:
+    elif arguments.tag_names:
         df = get_experiment_data_by_tag(arguments)
     else:
         ValueError("at least one of experiment_ids, tag_ids should be specified")
@@ -198,7 +197,7 @@ def main(arguments):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--tag_ids', nargs=2, default=None)
+    parser.add_argument('-n', '--tag_names', nargs=2, default=None)
     parser.add_argument('-e', '--experiment_ids', nargs=2, default=None)
     parser.add_argument('-t', '--api_token', default=None)
     parser.add_argument('-p', '--project_name', default=None)
