@@ -82,8 +82,8 @@ Example:
 
     Now you can sync your file with neptune::
 
-        $ python neptunecontrib.sync.with_json
-            --neptune_api_token 'ey7123qwwskdnaqsojnd1ru0129e12e=='
+        $ python -m neptunecontrib.create_experiment_from_json.py
+            --api_token 'ey7123qwwskdnaqsojnd1ru0129e12e=='
             --project_name neptune-ai/neptune-examples
             --filepath experiment_data.json
 
@@ -92,18 +92,54 @@ https://ui.neptune.ai/o/shared/org/any-language-integration/e/AN-2/logs
 
 Note:
     If you keep your neptune api token in the NEPTUNE_API_TOKEN environment variable
-    you can skip the --neptune_api_token
+    you can skip the --api_token.
+    If you keep your full neptune project name in the PROJECT_NAME environment variable
+    you can skip the --project_name.
 
 """
-import warnings
 
-from neptunecontrib.create_experiment_from_json import main, parse_args
+import argparse
+import json
 
-message = """neptunecontrib.logging.chart was moved to neptunecontrib.api.
-You should use ``from neptunecontrib.api import log_chart`` 
-neptunecontrib.logging.log_chart will be removed in future releases.
-"""
-warnings.warn(message)
+import neptune
+
+
+def main(arguments):
+    with open(arguments.filepath, 'r') as fp:
+        json_exp = json.load(fp)
+
+    neptune.init(api_token=arguments.api_token,
+                 project_qualified_name=arguments.project_name)
+
+    with neptune.create_experiment(name=json_exp['name'],
+                                   description=json_exp['description'],
+                                   params=json_exp['params'],
+                                   properties=json_exp['properties'],
+                                   tags=json_exp['tags'],
+                                   upload_source_files=json_exp['upload_source_files']):
+
+        for name, channel_xy in json_exp['log_metric'].items():
+            for x, y in zip(channel_xy['x'], channel_xy['y']):
+                neptune.log_metric(name, x=x, y=y)
+
+        for name, channel_xy in json_exp['log_text'].items():
+            for x, y in zip(channel_xy['x'], channel_xy['y']):
+                neptune.log_text(name, x=x, y=y)
+
+        for name, channel_xy in json_exp['log_image'].items():
+            for x, y in zip(channel_xy['x'], channel_xy['y']):
+                neptune.log_image(name, x=x, y=y)
+
+        for filename in json_exp['log_artifact']:
+            neptune.log_artifact(filename)
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--filepath')
+    parser.add_argument('-t', '--api_token', default=None)
+    parser.add_argument('-p', '--project_name', default=None)
+    return parser.parse_args()
+
 
 if __name__ == '__main__':
     args = parse_args()
