@@ -23,7 +23,7 @@ Attributes:
         You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
     tag_names(list(str)): tags of experiments you would like to compare.
         It works of tags passed are unique to the experiments they belong to.
-        You can pass it either as --tag_ids or -i. For example, --tag_ids a892ee0ds 09asajd902.
+        You can pass it either as --tag_names or -n. For example, --tag_names a892ee0ds 09asajd902.
     api_token(str): Neptune api token. If you have NEPTUNE_API_TOKEN environment
         variable set to your API token you can skip this parameter. You can pass it either as --neptune_api_token or -t.
     project_name(str): Full name of the project. E.g. "neptune-ai/neptune-examples",
@@ -34,10 +34,10 @@ Attributes:
 Example:
     Create a file, comparison.md, with a comparison table of experiments GIT-83 and GIT-82::
 
-        $ python -m neptunecontrib.create_experiment_comparison_comment \
-            --tag_ids a892ee0ds 09asajd902 \
-            --api_token ANONYMOUS \
-            --project_name shared/neptune-actions \
+        $ python -m neptunecontrib.create_experiment_comparison_comment
+            --experiment_ids GIT-83 GIT-82
+            --api_token ANONYMOUS
+            --project_name shared/neptune-actions
             --filepath comment_body.md
 
 Note:
