@@ -51,6 +51,10 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    :maxdepth: 1
    :caption: User Guide
 
+   api.audio <user_guide/api/audio>
+   api.explainers <user_guide/api/explainers>
+   api.html <user_guide/api/html>
+   api.table  <user_guide/api/table>
    api.chart <user_guide/api/chart>
    api.utils <user_guide/api/utils>
    hpo.utils <user_guide/hpo/utils>
