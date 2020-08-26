@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+from neptunecontrib.api.audio import log_audio
 from neptunecontrib.api.chart import log_chart
 from neptunecontrib.api.explainers import log_explainer, log_local_explanations, log_global_explanations
 from neptunecontrib.api.html import log_html
@@ -34,6 +35,7 @@ from neptunecontrib.api.utils import (
 )
 
 __all__ = [
+    'log_audio',
     'log_table',
     'log_html',
     'log_chart',
