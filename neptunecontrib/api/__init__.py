@@ -33,9 +33,11 @@ from neptunecontrib.api.utils import (
     pickle_and_log_artifact,
     get_pickled_artifact
 )
+from neptunecontrib.api.video import log_video
 
 __all__ = [
     'log_audio',
+    'log_video',
     'log_table',
     'log_html',
     'log_chart',
