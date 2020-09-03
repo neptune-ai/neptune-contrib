@@ -26,6 +26,7 @@ def log_video(path_to_file, video_name=None, experiment=None):
     """Logs a video file to 'artifacts/video' with player.
 
     Logs a video file to the 'artifacts/video' in the experiment, where you can play it directly from the browser.
+
     You can also download raw video file to the local machine.
     Just use "three vertical dots" located to the right from the player.
 
