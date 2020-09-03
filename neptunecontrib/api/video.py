@@ -50,7 +50,8 @@ def log_video(path_to_file, video_name=None, experiment=None):
 
     Note:
         Check out how the logged video file looks in Neptune:
-        `here <LINK>`_.
+        `here <https://ui.neptune.ai/o/shared/org/showroom/e/
+        SHOW-1542/artifacts?path=video%2F&file=jellyfish-25-mbps-hd-hevc.html>`_.
 
     Warning:
         Video files contribute to the storage usage. Be mindful with large video files.
