@@ -52,11 +52,12 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    :caption: User Guide
 
    api.audio <user_guide/api/audio>
+   api.chart <user_guide/api/chart>
    api.explainers <user_guide/api/explainers>
    api.html <user_guide/api/html>
    api.table  <user_guide/api/table>
-   api.chart <user_guide/api/chart>
    api.utils <user_guide/api/utils>
+   api.video <user_guide/api/video>
    hpo.utils <user_guide/hpo/utils>
    bots.telegram_bot <user_guide/bots/telegram_bot>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
