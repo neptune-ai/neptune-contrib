@@ -79,7 +79,7 @@ def log_video(path_to_file, video_name=None, experiment=None):
         </video>
 
         </body>
-        </html>""".format(file_ext, encoded_sound.decode())
+        </html>""".format(file_ext, encoded_video.decode())
 
     buffer = StringIO(html)
     buffer.seek(0)
