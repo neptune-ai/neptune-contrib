@@ -69,7 +69,7 @@ def log_video(path_to_file, video_name=None, experiment=None):
     else:
         assert isinstance(video_name, str), 'video_name must be string, got {}'.format(type(video_name))
 
-    encoded_sound = base64.b64encode(open(path_to_file, 'rb').read())
+    encoded_video = base64.b64encode(open(path_to_file, 'rb').read())
     html = """<!DOCTYPE html>
         <html>
         <body>
