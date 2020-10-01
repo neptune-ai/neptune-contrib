@@ -73,8 +73,8 @@ def neptune_monitor(experiment=None, prefix=''):
         If you are running a k-fold validation it is a good idea to add the k-fold prefix
         and pass it to the `neptune_monitor` function::
 
-            prefix='fold{}_'.format(fold_id)
-            monitor = neptune_monitor(prefix)
+            prefix='fold_{}'.format(fold_id)
+            monitor = neptune_monitor(prefix=prefix)
     """
 
     _exp = experiment if experiment else neptune
