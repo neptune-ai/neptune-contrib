@@ -15,7 +15,7 @@
 #
 
 import neptune
-from neptune.exceptions import LibraryNotInstalled, NeptuneException
+from neptune.exceptions import NeptuneException
 
 # Note: we purposefully try to import `tensorflow.keras.callbacks.Callback`
 # before `keras.callbacks.Callback` because the former is compatible with both
@@ -27,16 +27,21 @@ except ImportError:
     try:
         from keras.callbacks import Callback
     except ImportError:
-        raise LibraryNotInstalled('Keras')
+        msg = """
+        keras package not found. 
+
+        As Keras is now part of Tensorflow you should install it by running
+            pip install tensorflow"""
+        raise ModuleNotFoundError(msg)
 
 
 class NeptuneMonitor(Callback):
     """Logs Keras metrics to Neptune.
 
     Goes over the `last_metrics` and `smooth_loss` after each batch and epoch
-    and logs them to appropriate Neptune channels.
+    and logs them to Neptune.
 
-    See the example experiment here TODO
+    See the example experiment here https://ui.neptune.ai/shared/keras-integration/e/KERAS-23/logs
 
     Args:
         experiment: `neptune.Experiment`, optional:
@@ -47,12 +52,34 @@ class NeptuneMonitor(Callback):
             and `valid_name` before logging to the appropriate channel.
             Defaul is empty string ('').
 
-    Examples:
+    Example:
 
-        Now, create Neptune experiment, instantiate the monitor and pass
-        it to callbacks::
+        Initialize Neptune client:
 
-            TODO update for keras
+        .. code:: python
+
+            import neptune
+
+            neptune.init(api_token='ANONYMOUS',
+                         project_qualified_name='shared/keras-integration')
+
+         Create Neptune experiment:
+
+        .. code:: python
+
+            neptune.create_experiment(name='keras-integration-example')
+
+        Instantiate the monitor and pass
+        it to callbacks argument of `model.fit()`:
+
+            .. code: python
+
+                from neptunecontrib.monitoring.keras import NeptuneMonitor
+
+                model.fit(x_train, y_train,
+                          epochs=PARAMS['epoch_nr'],
+                          batch_size=PARAMS['batch_size'],
+                          callbacks=[NeptuneMonitor()])
 
     Note:
         You need to have Keras or Tensorflow 2 installed on your computer to use this module.
