@@ -32,7 +32,7 @@ except ImportError:
 
         As Keras is now part of Tensorflow you should install it by running
             pip install tensorflow"""
-        raise ModuleNotFoundError(msg)
+        raise ModuleNotFoundError(msg) # pylint:disable=undefined-variable
 
 
 class NeptuneMonitor(Callback):
