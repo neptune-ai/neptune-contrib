@@ -63,7 +63,7 @@ class NeptuneMonitor(Callback):
             neptune.init(api_token='ANONYMOUS',
                          project_qualified_name='shared/keras-integration')
 
-         Create Neptune experiment:
+        Create Neptune experiment:
 
         .. code:: python
 
@@ -72,14 +72,14 @@ class NeptuneMonitor(Callback):
         Instantiate the monitor and pass
         it to callbacks argument of `model.fit()`:
 
-            .. code: python
+        .. code:: python
 
-                from neptunecontrib.monitoring.keras import NeptuneMonitor
+            from neptunecontrib.monitoring.keras import NeptuneMonitor
 
-                model.fit(x_train, y_train,
-                          epochs=PARAMS['epoch_nr'],
-                          batch_size=PARAMS['batch_size'],
-                          callbacks=[NeptuneMonitor()])
+            model.fit(x_train, y_train,
+                      epochs=PARAMS['epoch_nr'],
+                      batch_size=PARAMS['batch_size'],
+                      callbacks=[NeptuneMonitor()])
 
     Note:
         You need to have Keras or Tensorflow 2 installed on your computer to use this module.

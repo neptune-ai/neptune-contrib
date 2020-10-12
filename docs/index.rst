@@ -60,6 +60,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    api.video <user_guide/api/video>
    hpo.utils <user_guide/hpo/utils>
    bots.telegram_bot <user_guide/bots/telegram_bot>
+   monitoring.keras <user_guide/monitoring/keras>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.xgboost <user_guide/monitoring/xgboost>
    monitoring.fastai <user_guide/monitoring/fastai>
