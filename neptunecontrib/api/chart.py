@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+import warnings
+
 import neptune
 
 __all__ = [
@@ -123,10 +125,24 @@ def log_chart(name, chart, experiment=None):
 
         try:
             from plotly import tools
-            chart = tools.mpl_to_plotly(chart)
+
+            # When Plotly cannot accurately convert a matplotlib plot, it emits a warning.
+            # Then we want to fallback on logging the plot as an image.
+            #
+            # E.g. when trying to convert a Seaborn confusion matrix or a hist2d, it emits a UserWarning with message
+            # "Dang! That path collection is out of this world. I totally don't know what to do with it yet!
+            # Plotly can only import path collections linked to 'data' coordinates"
+            with warnings.catch_warnings():
+                warnings.filterwarnings("error", category=UserWarning,
+                    message=".*Plotly can only import path collections linked to 'data' coordinates.*")
+                chart = tools.mpl_to_plotly(chart)
 
             _exp.log_artifact(export_plotly_figure(chart), "charts/" + name + '.html')
-        except ImportError:
+        except (ImportError):
+            print("Plotly not installed. Logging plot as an image.")
+            _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + '.png')
+        except (UserWarning):
+            print("Couldn't convert Matplotlib plot to interactive Plotly plot. Logging plot as an image instead.")
             _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + '.png')
 
     elif is_plotly_figure(chart):
