@@ -23,7 +23,7 @@ import xgboost as xgb
 def neptune_callback(log_model=True,
                      log_importance=True,
                      max_num_features=None,
-                     log_tree=(0,),
+                     log_tree=None,
                      experiment=None,
                      **kwargs):
     """XGBoost callback for Neptune experiments.
@@ -34,14 +34,23 @@ def neptune_callback(log_model=True,
     Check Neptune documentation for the `full example <https://docs.neptune.ai/integrations/xgboost.html>`_.
 
     Make sure you created an experiment before you start XGBoost training using ``neptune.create_experiment()``
-    (`check our docs <https://docs.neptune.ai/neptune-client/docs/project.html
+    (`check our docs <https://docs.neptune.ai/api-reference/neptune/projects/index.html
     #neptune.projects.Project.create_experiment>`_).
+
+    You need to install graphviz and graphviz Python interface for ``log_tree`` feature to work.
+    Check `Graphviz <https://graphviz.org/download/>`_ and
+    `Graphviz Python interface <https://graphviz.readthedocs.io/en/stable/manual.html#installation>`_
+    for installation info.
 
     Integration works with ``xgboost>=0.82``.
 
     Tip:
-        Use this `Google Colab <https://colab.research.google.com/github/neptune-ai/neptune-colab-examples
-        /blob/master/xgboost-integration.ipynb>`_ to try it without further ado.
+        Use this `Google Colab <https://colab.research.google.com//github/neptune-ai/neptune-examples/blob/master/integrations/xgboost/docs/Neptune-XGBoost.ipynb>`_
+        run it as a "`neptuner`" user - zero setup, it just works.
+
+    Note:
+        If you use early stopping, make sure to log model, feature importance and trees on your own.
+        Neptune logs these artifacts only after last iteration, which you may not reach because of early stop.
 
     Args:
         log_model (:obj:`bool`, optional, default is ``True``):
@@ -54,11 +63,10 @@ def neptune_callback(log_model=True,
         max_num_features (:obj:`int`, optional, default is ``None``):
             | Plot top ``max_num_features`` features on the importance plot.
             | If ``None``, plot all features.
-        log_tree (:obj:`list` of :obj:`int`, optional, default is ``[1,]``):
+        log_tree (:obj:`list` of :obj:`int`, optional, default is ``None``):
             | Log specified trees to Neptune as images after last boosting iteration.
             | If you run xgb.cv, log specified trees for each folds' booster.
-            | Default is to log first tree.
-            | If ``None``, do not log any tree.
+            | Default is ``None`` - do not log any tree.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | For advanced users only. Pass Neptune
               `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
@@ -78,10 +86,6 @@ def neptune_callback(log_model=True,
         or ``XGBClassifier.fit()``
         (`check docs <https://xgboost.readthedocs.io/en/latest/python/python_api.html?highlight=plot_tree
         #xgboost.XGBClassifier.fit>`_).
-
-    Note:
-        If you use early stopping, make sure to log model, feature importance and trees on your own.
-        Neptune logs these artifacts only after last iteration, which you may not reach because of early stop.
 
     Examples:
         ``xgb.train`` examples
@@ -115,11 +119,11 @@ def neptune_callback(log_model=True,
                                                max_num_features=None,
                                                log_tree=None)])
 
-            # log top 5 features per each folds' booster
+            # log top 3 features per each folds' booster and first tree
             xgb.cv(param, dtrain, num_boost_round=num_round, nfold=7,
                    callbacks=[neptune_callback(log_model=False,
                                                max_num_features=3,
-                                               log_tree=None)])
+                                               log_tree=[0,])])
 
         ``sklearn`` API examples
 
