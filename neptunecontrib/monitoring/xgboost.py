@@ -42,10 +42,11 @@ def neptune_callback(log_model=True,
     `Graphviz Python interface <https://graphviz.readthedocs.io/en/stable/manual.html#installation>`_
     for installation info.
 
-    Integration works with ``xgboost>=0.82``.
+    Integration works with ``xgboost>=1.2.0``.
 
     Tip:
-        Use this `Google Colab <https://colab.research.google.com//github/neptune-ai/neptune-examples/blob/master/integrations/xgboost/docs/Neptune-XGBoost.ipynb>`_
+        Use this `Google Colab <https://colab.research.google.com//github/neptune-ai/neptune-examples/blob/master/
+        integrations/xgboost/docs/Neptune-XGBoost.ipynb>`_
         run it as a "`neptuner`" user - zero setup, it just works.
 
     Note:
@@ -157,7 +158,7 @@ def neptune_callback(log_model=True,
         try:
             neptune.get_experiment()
             _exp = neptune
-        except neptune.exceptions.NoExperimentContext:
+        except neptune.exceptions.NeptuneNoExperimentContextException:
             msg = 'No currently running Neptune experiment. \n'\
                   'To start logging to Neptune create experiment by using: `neptune.create_experiment()`. \n'\
                   'More info in the documentation: '\
