@@ -140,10 +140,10 @@ def log_chart(name, chart, experiment=None):
                 chart = tools.mpl_to_plotly(chart)
 
             _exp.log_artifact(export_plotly_figure(chart), "charts/" + name + '.html')
-        except (ImportError):
+        except ImportError:
             print("Plotly not installed. Logging plot as an image.")
             _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + '.png')
-        except (UserWarning):
+        except UserWarning:
             print("Couldn't convert Matplotlib plot to interactive Plotly plot. Logging plot as an image instead.")
             _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + '.png')
 
