@@ -133,7 +133,9 @@ def log_chart(name, chart, experiment=None):
             # "Dang! That path collection is out of this world. I totally don't know what to do with it yet!
             # Plotly can only import path collections linked to 'data' coordinates"
             with warnings.catch_warnings():
-                warnings.filterwarnings("error", category=UserWarning,
+                warnings.filterwarnings(
+                    "error",
+                    category=UserWarning,
                     message=".*Plotly can only import path collections linked to 'data' coordinates.*")
                 chart = tools.mpl_to_plotly(chart)
 
