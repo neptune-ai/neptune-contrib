@@ -16,10 +16,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r test_requirements.txt
-          pip install tox-travis pylintfileheader
       - name: Build and test
         run : |
-          # python -m pylint -j 0 -f parseable neptunecontrib tests
           tox -e py
   publish:
     needs: test
@@ -33,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r test_requirements.txt
+      - name: Build and test
+        run : |
+          tox -e py
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@54b39fb9371c0b3a6f9f14bb8a67394defc7a806
         with:
