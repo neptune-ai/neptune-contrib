@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+# pylint: disable=no-member
+
 import numpy as np
 import pandas as pd
 from scipy.optimize import OptimizeResult
