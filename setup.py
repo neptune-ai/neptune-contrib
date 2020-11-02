@@ -26,6 +26,7 @@ def main():
     setup(
         name='neptune-contrib',
         version=versioneer.get_version(),
+        cmdclass=versioneer.get_cmdclass(),
         description='Neptune.ai contributions library',
         author='neptune.ai',
         support='contact@neptune.ai',
