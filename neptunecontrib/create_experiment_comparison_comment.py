@@ -16,13 +16,13 @@
 
 """Create a markdown file with an experiment comparison table.
 
-Get a diff between experimenst across metrics, parameters, and properties and save it to a file as a markdown table.
+Get a diff between experiments across metrics, parameters, and properties and save it to a file as a markdown table.
 
 Attributes:
     experiment_ids(list(str)): Experiment ids of experiments you would like to compare. It works only for 2 experiments.
         You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
     tag_names(list(str)): tags of experiments you would like to compare.
-        It works of tags passed are unique to the experiments they belong to.
+        It works if tags passed are unique to the experiments they belong to.
         You can pass it either as --tag_names or -n. For example, --tag_names a892ee0ds 09asajd902.
     api_token(str): Neptune api token. If you have NEPTUNE_API_TOKEN environment
         variable set to your API token you can skip this parameter. You can pass it either as --neptune_api_token or -t.
@@ -34,10 +34,10 @@ Attributes:
 Example:
     Create a file, comparison.md, with a comparison table of experiments GIT-83 and GIT-82::
 
-        $ python -m neptunecontrib.create_experiment_comparison_comment
-            --experiment_ids GIT-83 GIT-82
-            --api_token ANONYMOUS
-            --project_name shared/neptune-actions
+        $ python -m neptunecontrib.create_experiment_comparison_comment \
+            --experiment_ids GIT-83 GIT-82 \
+            --api_token ANONYMOUS \
+            --project_name shared/neptune-actions \
             --filepath comment_body.md
 
 Note:
@@ -110,9 +110,11 @@ def create_comment_markdown(df, project_name):
         if 'property_' in k:
             data['properties'][k.replace('property_', '')] = [v[0], v[1]]
 
+    user, project = project_name.split('/')
+
     # link to experiment comparison
-    link = "https://ui.neptune.ai/o/shared/org/github-actions/compare?shortId=%5B%22{}%22%2C%22{}%22%5D".format(
-        data['id'][0], data['id'][1])
+    link = "https://ui.neptune.ai/o/{0}/org/{1}/compare?shortId=%5B%22{2}%22%2C%22{3}%22%5D".format(
+        user, project, data['id'][0], data['id'][1])
     table = ["""<a href="{}">See the experiment comparison in Neptune </a>""".format(link)]
     table.append("<table><tr><td></td>")
 
@@ -123,7 +125,6 @@ def create_comment_markdown(df, project_name):
 
     # add experiment links and id section
     table.append("<tr><td>Neptune Experiment</td>")
-    user, project = project_name.split('/')
     for exp_id in data['id']:
         text = """<td><a href="https://ui.neptune.ai/o/{0}/org/{1}/e/{2}"><b>{2}</b></a></td>""".format(user, project,
                                                                                                         exp_id)
@@ -140,7 +141,10 @@ def create_comment_markdown(df, project_name):
         for name, values in data['metrics'].items():
             table.append("<tr><td>{}</td>".format(name))
             for value in values:
-                value = np.round(float(value), 5)
+                try:
+                    value = np.round(float(value), 5)
+                except Exception:
+                    pass
                 table.append("<td>{}</td>".format(value))
             table.append("</tr>")
 
