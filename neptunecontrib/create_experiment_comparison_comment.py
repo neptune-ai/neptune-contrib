@@ -144,7 +144,7 @@ def create_comment_markdown(df, project_name):
                 try:
                     value = np.round(float(value), 5)
                 except Exception:
-                    pass
+                    continue
                 table.append("<td>{}</td>".format(value))
             table.append("</tr>")
 
