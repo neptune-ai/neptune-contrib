@@ -113,7 +113,7 @@ def create_comment_markdown(df, project_name):
     user, project = project_name.split('/')
 
     # link to experiment comparison
-    link = "https://ui.neptune.ai/o/{0}/org/{1}/compare?shortId=%5B%22{2}%22%2C%22{3}%22%5D".format(
+    link = "https://ui.neptune.ai/{0}/{1}/compare?shortId=%5B%22{2}%22%2C%22{3}%22%5D".format(
         user, project, data['id'][0], data['id'][1])
     table = ["""<a href="{}">See the experiment comparison in Neptune </a>""".format(link)]
     table.append("<table><tr><td></td>")
@@ -126,7 +126,7 @@ def create_comment_markdown(df, project_name):
     # add experiment links and id section
     table.append("<tr><td>Neptune Experiment</td>")
     for exp_id in data['id']:
-        text = """<td><a href="https://ui.neptune.ai/o/{0}/org/{1}/e/{2}"><b>{2}</b></a></td>""".format(user, project,
+        text = """<td><a href="https://ui.neptune.ai/{0}/{1}/e/{2}"><b>{2}</b></a></td>""".format(user, project,
                                                                                                         exp_id)
         table.append(text)
     table.append("</tr>")
