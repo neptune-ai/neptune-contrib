@@ -127,7 +127,7 @@ def create_comment_markdown(df, project_name):
     table.append("<tr><td>Neptune Experiment</td>")
     for exp_id in data['id']:
         text = """<td><a href="https://ui.neptune.ai/{0}/{1}/e/{2}"><b>{2}</b></a></td>""".format(user, project,
-                                                                                                        exp_id)
+                                                                                                  exp_id)
         table.append(text)
     table.append("</tr>")
 
