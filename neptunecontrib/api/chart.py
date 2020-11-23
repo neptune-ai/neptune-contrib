@@ -23,6 +23,10 @@ __all__ = [
 ]
 
 
+class PlotlyIncompatibilityException(Exception):
+    pass
+
+
 def log_chart(name, chart, experiment=None):
     """Logs charts from matplotlib, plotly, bokeh, and altair to neptune.
 
@@ -137,7 +141,29 @@ def log_chart(name, chart, experiment=None):
                     "error",
                     category=UserWarning,
                     message=".*Plotly can only import path collections linked to 'data' coordinates.*")
-                chart = tools.mpl_to_plotly(chart)
+                try:
+                    chart = tools.mpl_to_plotly(chart)
+                except AttributeError as e:
+                    if "is_frame_like" in e.args[0]:
+                        plotly_version = "unknown"
+                        try:
+                            import plotly
+                            plotly_version = plotly.version.__version__
+                        except:
+                            pass
+                        matplotlib_version = "unknown"
+                        try:
+                            import matplotlib
+                            matplotlib_version = matplotlib.__version__
+                        except:
+                            pass
+                        raise PlotlyIncompatibilityException(
+                            "Unable to convert plotly figure to matplotlib format. "
+                            "Your matplotlib ({}) and plotlib ({}) versions are not compatible. "
+                            "See https://stackoverflow.com/q/63120058 for details."
+                            .format(matplotlib_version, plotly_version))
+                    else:
+                        raise e
 
             _exp.log_artifact(export_plotly_figure(chart), "charts/" + name + '.html')
         except ImportError:
