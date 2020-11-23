@@ -209,7 +209,7 @@ def log_global_explanations(explainer, categorical_features=None, numerical_feat
         ale_num.result["_label_"] = 'ale'
 
         pdp_num_plot = pdp_num.plot(ale_num, show=False)
-        log_chart(name="Partial Dependence", chart=pdp_num_plot, experiment=_exp)
+        log_chart(name="Aggregated Profiles Numerical", chart=pdp_num_plot, experiment=_exp)
 
     if categorical_features:
         pdp_cat = explainer.model_profile(type='partial', variable_type='categorical', variables=categorical_features)
@@ -220,4 +220,4 @@ def log_global_explanations(explainer, categorical_features=None, numerical_feat
         ale_cat.result['_label_'] = 'ale'
 
         ale_cat_plot = ale_cat.plot(pdp_cat, show=False)
-        log_chart(name="Accumulated Dependence", chart=ale_cat_plot, experiment=_exp)
+        log_chart(name="Aggregated Profiles Categorical", chart=ale_cat_plot, experiment=_exp)
