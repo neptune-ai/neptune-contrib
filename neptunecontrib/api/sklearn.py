@@ -26,6 +26,10 @@ from neptunecontrib.api.html import log_html
 from neptunecontrib.api.table import log_table
 from neptunecontrib.api.utils import log_pickle
 
+__all__ = [
+    'log_regressor_summary',
+]
+
 
 def log_regressor_summary(regressor,
                           X_train=None,
