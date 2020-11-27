@@ -29,11 +29,10 @@ def log_html(name, html, experiment=None):
     Args:
         name (:obj:`str`):
             | Name of the chart (without extension) that will be used as a part of artifact's destination.
-        html_body (:obj:`str`):
+        html (:obj:`str`):
             | HTML string that is logged and rendered as HTML.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
-            | For advanced users only. Pass Neptune
-              `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
+            | For advanced users only. Pass Neptune ``Experiment``
               object if you want to control to which experiment data is logged.
             | If ``None``, log to currently active, and most recent experiment.
 
