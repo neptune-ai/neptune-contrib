@@ -51,7 +51,7 @@ def log_regressor_summary(regressor,
         try:
             y_pred = regressor.predict(X_test)
         except ValueError:
-            print('cannot run "predict" on regressor. Will not log test predictions and test metrics')
+            print('Cannot run "predict" on regressor. Will not log test predictions and test metrics.')
             log_test_preds = False
             log_test_metrics = False
 
@@ -65,30 +65,31 @@ def log_regressor_summary(regressor,
             raise neptune.exceptions.NeptuneNoExperimentContextException()
 
     if not is_regressor(regressor):
-        raise ValueError('"regressor" is not sklearn regressor. This method works only with sklearn regressors')
+        raise ValueError('"regressor" is not sklearn regressor. This method works only with sklearn regressors.')
 
     if log_params:
         try:
             for param, value in regressor.get_params().items():
                 _exp.set_property(param, value)
         except Exception:
-            print('Did not log params')
+            print('Did not log params.')
 
     if log_model:
         try:
             log_pickle('model/regressor.skl', regressor, _exp)
         except Exception:
-            print('Did not log pickled model')
+            print('Did not log pickled model.')
 
     if log_test_preds:
+        # single output
         try:
             if len(y_pred.shape) == 1:
                 df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
                 log_table('test_predictions', df, _exp)
         except Exception:
-            print('Did not log predictions as table')
+            print('Did not log predictions as table.')
 
-        # multioutput regression
+        # multi output
         try:
             if len(y_pred.shape) == 2:
                 df = pd.DataFrame()
@@ -97,7 +98,7 @@ def log_regressor_summary(regressor,
                     df['y_pred_output_{}'.format(j)] = y_pred[:, j]
                 log_table('test_predictions', df, _exp)
         except Exception:
-            print('Did not log predictions as table')
+            print('Did not log predictions as table.')
 
     if log_visualizations:
         try:
@@ -105,30 +106,40 @@ def log_regressor_summary(regressor,
             skplt.estimators.plot_learning_curve(regressor, X_train, y_train, ax=ax)
             _exp.log_image('sklearn_charts', fig, image_name='Learning Curve')
         except Exception:
-            print('Did not log learning curve chart')
+            print('Did not log learning curve chart.')
 
         try:
             fig, ax = plt.subplots()
             skplt.estimators.plot_feature_importances(regressor, ax=ax)
             _exp.log_image('sklearn_charts', fig, image_name='Feature Importance')
         except Exception:
-            print('Did not log feature importance chart')
+            print('Did not log feature importance chart.')
 
         try:
             log_html('estimator_visualization', estimator_html_repr(regressor), _exp)
         except Exception:
-            print('Did not log estimator visualization as html')
+            print('Did not log estimator visualization as html.')
 
     if log_test_metrics:
-        try:
-            evs = explained_variance_score(y_test, y_pred)
-            me = max_error(y_test, y_pred)
-            mae = mean_absolute_error(y_test, y_pred)
-            r2 = r2_score(y_test, y_pred)
+        # single output
+        if len(y_pred.shape) == 1:
+            try:
+                evs = explained_variance_score(y_test, y_pred)
+                me = max_error(y_test, y_pred)
+                mae = mean_absolute_error(y_test, y_pred)
+                r2 = r2_score(y_test, y_pred)
 
-            _exp.log_metric('evs_sklearn', evs)
-            _exp.log_metric('me_sklearn', me)
-            _exp.log_metric('mae_sklearn', mae)
-            _exp.log_metric('r2_sklearn', r2)
-        except Exception:
-            print('Did not log test metrics')
+                _exp.log_metric('evs_sklearn', evs)
+                _exp.log_metric('me_sklearn', me)
+                _exp.log_metric('mae_sklearn', mae)
+                _exp.log_metric('r2_sklearn', r2)
+            except Exception:
+                print('Did not log test metrics.')
+
+        # multi output
+        if len(y_pred.shape) == 2:
+            try:
+                r2 = regressor.score(X_test, y_test)
+                _exp.log_metric('r2_sklearn', r2)
+            except Exception:
+                print('Did not log test metrics.')
