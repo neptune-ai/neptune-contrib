@@ -21,14 +21,11 @@ import scikitplot as skplt
 from sklearn.base import is_regressor
 from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, r2_score
 from sklearn.utils import estimator_html_repr
+from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 
 from neptunecontrib.api.html import log_html
 from neptunecontrib.api.table import log_table
 from neptunecontrib.api.utils import log_pickle
-
-__all__ = [
-    'log_regressor_summary',
-]
 
 
 def log_regressor_summary(regressor,
@@ -119,6 +116,37 @@ def log_regressor_summary(regressor,
             log_html('estimator_visualization', estimator_html_repr(regressor), _exp)
         except Exception:
             print('Did not log estimator visualization as html.')
+
+        try:
+            fig, ax = plt.subplots()
+            visualizer = ResidualsPlot(regressor, is_fitted=True, ax=ax)
+            visualizer.fit(X_train, y_train)
+            visualizer.score(X_test, y_test)
+            visualizer.finalize()
+            _exp.log_image('sklearn_charts', fig, image_name='Residuals Plot')
+        except Exception:
+            print('Did not log residuals plot chart.')
+
+        try:
+            fig, ax = plt.subplots()
+            visualizer = PredictionError(regressor, is_fitted=True, ax=ax)
+            visualizer.fit(X_train, y_train)
+            visualizer.score(X_test, y_test)
+            visualizer.finalize()
+            _exp.log_image('sklearn_charts', fig, image_name='Prediction Error')
+        except Exception:
+            print('Did not log prediction error chart.')
+
+        try:
+            fig, ax = plt.subplots()
+            visualizer = CooksDistance(ax=ax)
+            visualizer.fit(X_train, y_train)
+            visualizer.finalize()
+            _exp.log_image('sklearn_charts', fig, image_name='Cooks Distance')
+        except Exception:
+            print('Did not log cooks distance chart.')
+
+        plt.close('all')
 
     if log_test_metrics:
         # single output
