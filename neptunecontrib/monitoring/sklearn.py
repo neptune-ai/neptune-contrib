@@ -74,26 +74,35 @@ def _log_pickled_model(flag, estimator, experiment):
             experiment.log_text('sklearn-logging-summary', 'Did not log pickled model.')
 
 
-def _log_test_predictions(flag, predictions, y_test, experiment):
+def _log_test_predictions(flag, y_pred, y_test, experiment):
     if flag:
         # single output
-        try:
-            if len(predictions.shape) == 1:
-                df = pd.DataFrame(data={'y_true': y_test, 'y_pred': predictions})
+        if len(y_pred.shape) == 1:
+            try:
+                df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
                 log_table('test_predictions', df, experiment)
-        except Exception:
-            experiment.log_text('sklearn-logging-summary', 'Did not log test predictions as table.')
+            except Exception:
+                experiment.log_text('sklearn-logging-summary', 'Did not log test predictions as table.')
 
         # multi output
-        try:
-            if len(predictions.shape) == 2:
+        if len(y_pred.shape) == 2:
+            try:
                 df = pd.DataFrame()
-                for j in range(predictions.shape[1]):
+                for j in range(y_pred.shape[1]):
                     df['y_test_output_{}'.format(j)] = y_test[:, j]
-                    df['y_pred_output_{}'.format(j)] = predictions[:, j]
+                    df['y_pred_output_{}'.format(j)] = y_pred[:, j]
                 log_table('test_predictions', df, experiment)
+            except Exception:
+                experiment.log_text('sklearn-logging-summary', 'Did not log test predictions as table.')
+
+
+def _log_test_predictions_probabilities(flag, classifier, y_pred_proba, experiment):
+    if flag:
+        try:
+            df = pd.DataFrame(data=y_pred_proba, columns=classifier.classes_)
+            log_table('test_preds_proba', df, experiment)
         except Exception:
-            experiment.log_text('sklearn-logging-summary', 'Did not log test predictions as table.')
+            experiment.log_text('sklearn-logging-summary', 'Did not log test predictions probabilities as table.')
 
 
 def log_regressor_summary(regressor,
@@ -116,7 +125,7 @@ def log_regressor_summary(regressor,
     exp = _check_experiment(experiment)
     _check_estimator(regressor, 'regressor')
 
-    y_pred = _compute_test_preds
+    y_pred = _compute_test_preds(regressor, X_test)
 
     _log_estimator_params(log_params, regressor, exp)
     _log_pickled_model(log_model, regressor, exp)
@@ -196,3 +205,31 @@ def log_regressor_summary(regressor,
             experiment.log_text('sklearn-logging-summary', 'Did not log cooks distance chart.')
 
         plt.close('all')
+
+
+def log_classifier_summary(classifier,
+                           X_train=None,
+                           X_test=None,
+                           y_train=None,
+                           y_test=None,
+                           experiment=None,
+                           log_params=True,
+                           log_model=True,
+                           log_test_preds=True,
+                           log_test_metrics=True,
+                           log_visualizations=True):
+    """
+    Log sklearn classifier summary.
+
+    This method automatically logs all classifier parameters, pickled estimator (model), test predictions as table,
+    model performance visualizations, sklearn pipeline as an interactive graph and test metrics.
+    """
+    exp = _check_experiment(experiment)
+    _check_estimator(classifier, 'classifier')
+
+    (y_pred, y_pred_proba) = _compute_test_preds(classifier, X_test)
+
+    _log_estimator_params(log_params, classifier, exp)
+    _log_pickled_model(log_model, classifier, exp)
+    _log_test_predictions(log_test_preds, y_pred, y_test, exp)
+    _log_test_predictions_probabilities(log_test_preds, classifier, y_pred_proba, exp)
