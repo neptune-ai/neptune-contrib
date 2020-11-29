@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import neptune
 import pandas as pd
 import scikitplot as skplt
-from sklearn.base import is_regressor
+from sklearn.base import is_regressor, is_classifier
 from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, r2_score
 from sklearn.utils import estimator_html_repr
 from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
@@ -26,6 +26,74 @@ from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 from neptunecontrib.api.html import log_html
 from neptunecontrib.api.table import log_table
 from neptunecontrib.api.utils import log_pickle
+
+
+def _check_experiment(experiment):
+    if experiment is not None:
+        if not isinstance(experiment, neptune.experiments.Experiment):
+            ValueError('Passed experiment is not Neptune experiment. Create one by using "create_experiment()"')
+    else:
+        try:
+            experiment = neptune.get_experiment()
+        except neptune.exceptions.NeptuneNoExperimentContextException:
+            raise neptune.exceptions.NeptuneNoExperimentContextException()
+
+    return experiment
+
+
+def _check_estimator(estimator, estimator_type):
+    if estimator_type == 'regressor' and not is_regressor(estimator):
+        raise ValueError('"regressor" is not sklearn regressor. This method works only with sklearn regressors.')
+    if estimator_type == 'classifier' and not is_classifier(estimator):
+        raise ValueError('"classifier" is not sklearn classifier. This method works only with sklearn classifiers.')
+
+
+def _compute_test_preds(estimator, data):
+    if is_regressor(estimator):
+        return estimator.predict(data)
+    if is_classifier(estimator):
+        y_pred = estimator.predict(data)
+        y_pred_proba = estimator.predict_proba(data)
+        return y_pred, y_pred_proba
+
+
+def _log_estimator_params(flag, estimator, experiment):
+    if flag:
+        try:
+            for param, value in estimator.get_params().items():
+                experiment.set_property(param, value)
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log parameters.')
+
+
+def _log_pickled_model(flag, estimator, experiment):
+    if flag:
+        try:
+            log_pickle('model/estimator.skl', estimator, experiment)
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log pickled model.')
+
+
+def _log_test_predictions(flag, predictions, y_test, experiment):
+    if flag:
+        # single output
+        try:
+            if len(predictions.shape) == 1:
+                df = pd.DataFrame(data={'y_true': y_test, 'y_pred': predictions})
+                log_table('test_predictions', df, experiment)
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log test predictions as table.')
+
+        # multi output
+        try:
+            if len(predictions.shape) == 2:
+                df = pd.DataFrame()
+                for j in range(predictions.shape[1]):
+                    df['y_test_output_{}'.format(j)] = y_test[:, j]
+                    df['y_pred_output_{}'.format(j)] = predictions[:, j]
+                log_table('test_predictions', df, experiment)
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log test predictions as table.')
 
 
 def log_regressor_summary(regressor,
@@ -37,116 +105,22 @@ def log_regressor_summary(regressor,
                           log_params=True,
                           log_model=True,
                           log_test_preds=True,
-                          log_visualizations=True,
-                          log_test_metrics=True):
+                          log_test_metrics=True,
+                          log_visualizations=True):
     """
-    Log sklearn regressor summary
+    Log sklearn regressor summary.
+
+    This method automatically logs all regressor parameters, pickled estimator (model), test predictions as table,
+    model performance visualizations, sklearn pipeline as an interactive graph and test metrics.
     """
-    y_pred = None
+    exp = _check_experiment(experiment)
+    _check_estimator(regressor, 'regressor')
 
-    if log_test_preds or log_test_metrics:
-        try:
-            y_pred = regressor.predict(X_test)
-        except ValueError:
-            print('Cannot run "predict" on regressor. Will not log test predictions and test metrics.')
-            log_test_preds = False
-            log_test_metrics = False
+    y_pred = _compute_test_preds
 
-    if experiment:
-        _exp = experiment
-    else:
-        try:
-            neptune.get_experiment()
-            _exp = neptune
-        except neptune.exceptions.NeptuneNoExperimentContextException:
-            raise neptune.exceptions.NeptuneNoExperimentContextException()
-
-    if not is_regressor(regressor):
-        raise ValueError('"regressor" is not sklearn regressor. This method works only with sklearn regressors.')
-
-    if log_params:
-        try:
-            for param, value in regressor.get_params().items():
-                _exp.set_property(param, value)
-        except Exception:
-            print('Did not log params.')
-
-    if log_model:
-        try:
-            log_pickle('model/regressor.skl', regressor, _exp)
-        except Exception:
-            print('Did not log pickled model.')
-
-    if log_test_preds:
-        # single output
-        try:
-            if len(y_pred.shape) == 1:
-                df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
-                log_table('test_predictions', df, _exp)
-        except Exception:
-            print('Did not log predictions as table.')
-
-        # multi output
-        try:
-            if len(y_pred.shape) == 2:
-                df = pd.DataFrame()
-                for j in range(y_pred.shape[1]):
-                    df['y_test_output_{}'.format(j)] = y_test[:, j]
-                    df['y_pred_output_{}'.format(j)] = y_pred[:, j]
-                log_table('test_predictions', df, _exp)
-        except Exception:
-            print('Did not log predictions as table.')
-
-    if log_visualizations:
-        try:
-            fig, ax = plt.subplots()
-            skplt.estimators.plot_learning_curve(regressor, X_train, y_train, ax=ax)
-            _exp.log_image('sklearn_charts', fig, image_name='Learning Curve')
-        except Exception:
-            print('Did not log learning curve chart.')
-
-        try:
-            fig, ax = plt.subplots()
-            skplt.estimators.plot_feature_importances(regressor, ax=ax)
-            _exp.log_image('sklearn_charts', fig, image_name='Feature Importance')
-        except Exception:
-            print('Did not log feature importance chart.')
-
-        try:
-            log_html('estimator_visualization', estimator_html_repr(regressor), _exp)
-        except Exception:
-            print('Did not log estimator visualization as html.')
-
-        try:
-            fig, ax = plt.subplots()
-            visualizer = ResidualsPlot(regressor, is_fitted=True, ax=ax)
-            visualizer.fit(X_train, y_train)
-            visualizer.score(X_test, y_test)
-            visualizer.finalize()
-            _exp.log_image('sklearn_charts', fig, image_name='Residuals Plot')
-        except Exception:
-            print('Did not log residuals plot chart.')
-
-        try:
-            fig, ax = plt.subplots()
-            visualizer = PredictionError(regressor, is_fitted=True, ax=ax)
-            visualizer.fit(X_train, y_train)
-            visualizer.score(X_test, y_test)
-            visualizer.finalize()
-            _exp.log_image('sklearn_charts', fig, image_name='Prediction Error')
-        except Exception:
-            print('Did not log prediction error chart.')
-
-        try:
-            fig, ax = plt.subplots()
-            visualizer = CooksDistance(ax=ax)
-            visualizer.fit(X_train, y_train)
-            visualizer.finalize()
-            _exp.log_image('sklearn_charts', fig, image_name='Cooks Distance')
-        except Exception:
-            print('Did not log cooks distance chart.')
-
-        plt.close('all')
+    _log_estimator_params(log_params, regressor, exp)
+    _log_pickled_model(log_model, regressor, exp)
+    _log_test_predictions(log_test_preds, y_pred, y_test, exp)
 
     if log_test_metrics:
         # single output
@@ -157,17 +131,68 @@ def log_regressor_summary(regressor,
                 mae = mean_absolute_error(y_test, y_pred)
                 r2 = r2_score(y_test, y_pred)
 
-                _exp.log_metric('evs_sklearn', evs)
-                _exp.log_metric('me_sklearn', me)
-                _exp.log_metric('mae_sklearn', mae)
-                _exp.log_metric('r2_sklearn', r2)
+                exp.log_metric('evs_sklearn', evs)
+                exp.log_metric('me_sklearn', me)
+                exp.log_metric('mae_sklearn', mae)
+                exp.log_metric('r2_sklearn', r2)
             except Exception:
-                print('Did not log test metrics.')
+                experiment.log_text('sklearn-logging-summary', 'Did not log test metrics.')
 
         # multi output
         if len(y_pred.shape) == 2:
             try:
                 r2 = regressor.score(X_test, y_test)
-                _exp.log_metric('r2_sklearn', r2)
+                exp.log_metric('r2_sklearn', r2)
             except Exception:
-                print('Did not log test metrics.')
+                experiment.log_text('sklearn-logging-summary', 'Did not log test metrics.')
+
+    if log_visualizations:
+        try:
+            fig, ax = plt.subplots()
+            skplt.estimators.plot_learning_curve(regressor, X_train, y_train, ax=ax)
+            exp.log_image('sklearn_charts', fig, image_name='Learning Curve')
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log learning curve chart.')
+
+        try:
+            fig, ax = plt.subplots()
+            skplt.estimators.plot_feature_importances(regressor, ax=ax)
+            exp.log_image('sklearn_charts', fig, image_name='Feature Importance')
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log feature importance chart.')
+
+        try:
+            log_html('estimator_visualization', estimator_html_repr(regressor), exp)
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log estimator visualization as html.')
+
+        try:
+            fig, ax = plt.subplots()
+            visualizer = ResidualsPlot(regressor, is_fitted=True, ax=ax)
+            visualizer.fit(X_train, y_train)
+            visualizer.score(X_test, y_test)
+            visualizer.finalize()
+            exp.log_image('sklearn_charts', fig, image_name='Residuals Plot')
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log residuals plot chart.')
+
+        try:
+            fig, ax = plt.subplots()
+            visualizer = PredictionError(regressor, is_fitted=True, ax=ax)
+            visualizer.fit(X_train, y_train)
+            visualizer.score(X_test, y_test)
+            visualizer.finalize()
+            exp.log_image('sklearn_charts', fig, image_name='Prediction Error')
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log prediction error chart.')
+
+        try:
+            fig, ax = plt.subplots()
+            visualizer = CooksDistance(ax=ax)
+            visualizer.fit(X_train, y_train)
+            visualizer.finalize()
+            exp.log_image('sklearn_charts', fig, image_name='Cooks Distance')
+        except Exception:
+            experiment.log_text('sklearn-logging-summary', 'Did not log cooks distance chart.')
+
+        plt.close('all')
