@@ -221,7 +221,7 @@ def log_classifier_summary(classifier,
 
 
 def log_kmeans_clustering_summary(model,
-                                  k=5,
+                                  k=10,
                                   data=None,
                                   experiment=None,
                                   log_params=True,
