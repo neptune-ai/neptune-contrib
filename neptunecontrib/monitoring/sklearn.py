@@ -18,12 +18,12 @@ import matplotlib.pyplot as plt
 import neptune
 import pandas as pd
 from scikitplot.estimators import plot_learning_curve
+from scikitplot.metrics import plot_precision_recall
 from sklearn.base import is_regressor, is_classifier
 from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, r2_score, \
     precision_recall_fscore_support
 from sklearn.utils import estimator_html_repr
-from yellowbrick.classifier import ClassificationReport, ConfusionMatrix, ROCAUC, PrecisionRecallCurve, \
-    ClassPredictionError
+from yellowbrick.classifier import ClassificationReport, ConfusionMatrix, ROCAUC, ClassPredictionError
 from yellowbrick.model_selection import FeatureImportances
 from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 
@@ -258,10 +258,7 @@ def log_classifier_summary(classifier,
 
         try:
             fig, ax = plt.subplots()
-            visualizer = PrecisionRecallCurve(classifier, is_fitted=True, ax=ax)
-            visualizer.fit(X_train, y_train)
-            visualizer.score(X_test, y_test)
-            visualizer.finalize()
+            plot_precision_recall(y_test, y_pred_proba, ax=ax)
             exp.log_image('charts_sklearn', fig, image_name='Precision Recall Curve')
         except Exception:
             print('Did not log Precision-Recall chart.')
