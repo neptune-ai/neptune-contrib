@@ -24,6 +24,7 @@ from sklearn.metrics import explained_variance_score, max_error, mean_absolute_e
     precision_recall_fscore_support
 from sklearn.utils import estimator_html_repr
 from yellowbrick.classifier import ClassificationReport, ConfusionMatrix, ROCAUC, ClassPredictionError
+from yellowbrick.cluster import SilhouetteVisualizer, KElbowVisualizer
 from yellowbrick.model_selection import FeatureImportances
 from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 
@@ -272,5 +273,65 @@ def log_classifier_summary(classifier,
             exp.log_image('charts_sklearn', fig, image_name='Class Prediction Error')
         except Exception:
             print('Did not log Class Prediction Error chart.')
+
+        try:
+            log_html('estimator_visualization', estimator_html_repr(classifier), exp)
+        except Exception:
+            print('Did not log estimator visualization as html.')
+
+        plt.close('all')
+
+
+def log_kmeans_clustering_summary(model,
+                                  k=5,
+                                  data=None,
+                                  experiment=None,
+                                  log_params=True,
+                                  log_cluster_labels=True,
+                                  log_visualizations=True):
+    """
+    Log sklearn clustering summary.
+
+    This method automatically logs all clustering parameters, cluster labels on data,
+    sklearn's pipeline as an interactive graph and clustering visualizations.
+    """
+    exp = _check_experiment(experiment)
+
+    model.set_params(n_clusters=k)
+    labels = model.fit_predict(data)
+
+    _log_estimator_params(log_params, model, exp)
+
+    if log_cluster_labels:
+        df = pd.DataFrame(data={'cluster_labels': labels})
+        log_table('cluster_labels', df, experiment)
+
+    if log_visualizations:
+        try:
+            log_html('estimator_visualization', estimator_html_repr(model), exp)
+        except Exception:
+            print('Did not log estimator visualization as html.')
+
+        try:
+            fig, ax = plt.subplots()
+            visualizer = KElbowVisualizer(model, ax=ax)
+            visualizer.fit(data)
+            visualizer.finalize()
+            exp.log_image('charts_sklearn', fig, image_name='Class Prediction Error')
+        except Exception:
+            print('Did not log Class Prediction Error chart.')
+
+        for j in range(2, k+1):
+            model.set_params(n_clusters=j)
+            model.fit(data)
+
+            try:
+                fig, ax = plt.subplots()
+                visualizer = SilhouetteVisualizer(model, is_fitted=True, ax=ax)
+                visualizer.fit(data)
+                visualizer.finalize()
+                exp.log_image('charts_sklearn', fig, image_name='Silhouette Coefficients for k='.format(j))
+            except Exception:
+                print('Did not log Silhouette Coefficients chart.')
 
         plt.close('all')
