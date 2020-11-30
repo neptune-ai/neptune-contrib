@@ -29,7 +29,7 @@ from yellowbrick.model_selection import FeatureImportances
 from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 
 from neptunecontrib.api.html import log_html
-from neptunecontrib.api.table import log_table
+from neptunecontrib.api.table import log_csv
 from neptunecontrib.api.utils import log_pickle
 
 
@@ -242,7 +242,7 @@ def log_kmeans_clustering_summary(model,
 
     if log_cluster_labels:
         df = pd.DataFrame(data={'cluster_labels': labels})
-        log_table('cluster_labels', df, experiment)
+        log_csv('cluster_labels', df, experiment)
 
     if log_visualizations:
         try:
@@ -300,7 +300,11 @@ def _compute_test_preds(estimator, data):
         return estimator.predict(data)
     if is_classifier(estimator):
         y_pred = estimator.predict(data)
-        y_pred_proba = estimator.predict_proba(data)
+        y_pred_proba = None
+        try:
+            y_pred_proba = estimator.predict_proba(data)
+        except Exception:
+            print('This classifier does not provide predictions probabilities.')
         return y_pred, y_pred_proba
 
 
@@ -320,7 +324,7 @@ def _log_test_predictions(flag, y_pred, y_test, experiment):
         # single output
         if len(y_pred.shape) == 1:
             df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
-            log_table('test_predictions', df, experiment)
+            log_csv('test_predictions', df, experiment)
 
         # multi output
         if len(y_pred.shape) == 2:
@@ -328,10 +332,10 @@ def _log_test_predictions(flag, y_pred, y_test, experiment):
             for j in range(y_pred.shape[1]):
                 df['y_test_output_{}'.format(j)] = y_test[:, j]
                 df['y_pred_output_{}'.format(j)] = y_pred[:, j]
-            log_table('test_predictions', df, experiment)
+            log_csv('test_predictions', df, experiment)
 
 
 def _log_test_predictions_probabilities(flag, classifier, y_pred_proba, experiment):
-    if flag:
+    if flag and y_pred_proba is not None:
         df = pd.DataFrame(data=y_pred_proba, columns=classifier.classes_)
-        log_table('test_preds_proba', df, experiment)
+        log_csv('test_preds_proba', df, experiment)
