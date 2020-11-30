@@ -18,7 +18,7 @@ from neptunecontrib.api.audio import log_audio
 from neptunecontrib.api.chart import log_chart
 from neptunecontrib.api.explainers import log_explainer, log_local_explanations, log_global_explanations
 from neptunecontrib.api.html import log_html
-from neptunecontrib.api.table import log_table
+from neptunecontrib.api.table import log_table, log_csv
 from neptunecontrib.api.utils import (
     concat_experiments_on_channel,
     extract_project_progress_info,
@@ -39,6 +39,7 @@ __all__ = [
     'log_audio',
     'log_video',
     'log_table',
+    'log_csv',
     'log_html',
     'log_chart',
     'log_pickle',
