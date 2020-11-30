@@ -17,13 +17,14 @@
 import matplotlib.pyplot as plt
 import neptune
 import pandas as pd
-import scikitplot as skplt
+from scikitplot.estimators import plot_learning_curve
 from sklearn.base import is_regressor, is_classifier
 from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, r2_score, \
     precision_recall_fscore_support
 from sklearn.utils import estimator_html_repr
 from yellowbrick.classifier import ClassificationReport, ConfusionMatrix, ROCAUC, PrecisionRecallCurve, \
     ClassPredictionError
+from yellowbrick.model_selection import FeatureImportances
 from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 
 from neptunecontrib.api.html import log_html
@@ -108,7 +109,7 @@ def log_regressor_summary(regressor,
     Log sklearn regressor summary.
 
     This method automatically logs all regressor parameters, pickled estimator (model), test predictions as table,
-    model performance visualizations, sklearn pipeline as an interactive graph and test metrics.
+    model performance visualizations, sklearn's pipeline as an interactive graph and test metrics.
     """
     exp = _check_experiment(experiment)
     _check_estimator(regressor, 'regressor')
@@ -140,17 +141,10 @@ def log_regressor_summary(regressor,
     if log_visualizations:
         try:
             fig, ax = plt.subplots()
-            skplt.estimators.plot_learning_curve(regressor, X_train, y_train, ax=ax)
-            exp.log_image('sklearn_charts', fig, image_name='Learning Curve')
+            plot_learning_curve(regressor, X_train, y_train, ax=ax)
+            exp.log_image('charts_sklearn', fig, image_name='Learning Curve')
         except Exception:
             print('Did not log learning curve chart.')
-
-        try:
-            fig, ax = plt.subplots()
-            skplt.estimators.plot_feature_importances(regressor, ax=ax)
-            exp.log_image('sklearn_charts', fig, image_name='Feature Importance')
-        except Exception:
-            print('Did not log feature importance chart.')
 
         try:
             log_html('estimator_visualization', estimator_html_repr(regressor), exp)
@@ -159,11 +153,20 @@ def log_regressor_summary(regressor,
 
         try:
             fig, ax = plt.subplots()
+            visualizer = FeatureImportances(regressor, is_fitted=True, ax=ax)
+            visualizer.fit(X_train, y_train)
+            visualizer.finalize()
+            exp.log_image('charts_sklearn', fig, image_name='Feature Importance')
+        except Exception:
+            print('Did not log feature importance chart.')
+
+        try:
+            fig, ax = plt.subplots()
             visualizer = ResidualsPlot(regressor, is_fitted=True, ax=ax)
             visualizer.fit(X_train, y_train)
             visualizer.score(X_test, y_test)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='Residuals Plot')
+            exp.log_image('charts_sklearn', fig, image_name='Residuals Plot')
         except Exception:
             print('Did not log residuals plot chart.')
 
@@ -173,7 +176,7 @@ def log_regressor_summary(regressor,
             visualizer.fit(X_train, y_train)
             visualizer.score(X_test, y_test)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='Prediction Error')
+            exp.log_image('charts_sklearn', fig, image_name='Prediction Error')
         except Exception:
             print('Did not log prediction error chart.')
 
@@ -182,7 +185,7 @@ def log_regressor_summary(regressor,
             visualizer = CooksDistance(ax=ax)
             visualizer.fit(X_train, y_train)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='Cooks Distance')
+            exp.log_image('charts_sklearn', fig, image_name='Cooks Distance')
         except Exception:
             print('Did not log cooks distance chart.')
 
@@ -204,7 +207,7 @@ def log_classifier_summary(classifier,
     Log sklearn classifier summary.
 
     This method automatically logs all classifier parameters, pickled estimator (model), test predictions as table,
-    model performance visualizations, sklearn pipeline as an interactive graph and test metrics.
+    model performance visualizations, sklearn's pipeline as an interactive graph and test metrics.
     """
     exp = _check_experiment(experiment)
     _check_estimator(classifier, 'classifier')
@@ -229,7 +232,7 @@ def log_classifier_summary(classifier,
             visualizer.fit(X_train, y_train)
             visualizer.score(X_test, y_test)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='Classification Report')
+            exp.log_image('charts_sklearn', fig, image_name='Classification Report')
         except Exception:
             print('Did not log Classification Report chart.')
 
@@ -239,7 +242,7 @@ def log_classifier_summary(classifier,
             visualizer.fit(X_train, y_train)
             visualizer.score(X_test, y_test)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='Confusion Matrix')
+            exp.log_image('charts_sklearn', fig, image_name='Confusion Matrix')
         except Exception:
             print('Did not log Confusion Matrix chart.')
 
@@ -249,7 +252,7 @@ def log_classifier_summary(classifier,
             visualizer.fit(X_train, y_train)
             visualizer.score(X_test, y_test)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='ROC-AUC')
+            exp.log_image('charts_sklearn', fig, image_name='ROC-AUC')
         except Exception:
             print('Did not log ROC-AUC chart.')
 
@@ -259,7 +262,7 @@ def log_classifier_summary(classifier,
             visualizer.fit(X_train, y_train)
             visualizer.score(X_test, y_test)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='Precision Recall Curve')
+            exp.log_image('charts_sklearn', fig, image_name='Precision Recall Curve')
         except Exception:
             print('Did not log Precision-Recall chart.')
 
@@ -269,7 +272,7 @@ def log_classifier_summary(classifier,
             visualizer.fit(X_train, y_train)
             visualizer.score(X_test, y_test)
             visualizer.finalize()
-            exp.log_image('sklearn_charts', fig, image_name='Class Prediction Error')
+            exp.log_image('charts_sklearn', fig, image_name='Class Prediction Error')
         except Exception:
             print('Did not log Class Prediction Error chart.')
 
