@@ -33,68 +33,6 @@ from neptunecontrib.api.table import log_table
 from neptunecontrib.api.utils import log_pickle
 
 
-def _check_experiment(experiment):
-    if experiment is not None:
-        if not isinstance(experiment, neptune.experiments.Experiment):
-            ValueError('Passed experiment is not Neptune experiment. Create one by using "create_experiment()"')
-    else:
-        try:
-            experiment = neptune.get_experiment()
-        except neptune.exceptions.NeptuneNoExperimentContextException:
-            raise neptune.exceptions.NeptuneNoExperimentContextException()
-
-    return experiment
-
-
-def _check_estimator(estimator, estimator_type):
-    if estimator_type == 'regressor' and not is_regressor(estimator):
-        raise ValueError('"regressor" is not sklearn regressor. This method works only with sklearn regressors.')
-    if estimator_type == 'classifier' and not is_classifier(estimator):
-        raise ValueError('"classifier" is not sklearn classifier. This method works only with sklearn classifiers.')
-
-
-def _compute_test_preds(estimator, data):
-    if is_regressor(estimator):
-        return estimator.predict(data)
-    if is_classifier(estimator):
-        y_pred = estimator.predict(data)
-        y_pred_proba = estimator.predict_proba(data)
-        return y_pred, y_pred_proba
-
-
-def _log_estimator_params(flag, estimator, experiment):
-    if flag:
-        for param, value in estimator.get_params().items():
-            experiment.set_property(param, value)
-
-
-def _log_pickled_model(flag, estimator, experiment):
-    if flag:
-        log_pickle('model/estimator.skl', estimator, experiment)
-
-
-def _log_test_predictions(flag, y_pred, y_test, experiment):
-    if flag:
-        # single output
-        if len(y_pred.shape) == 1:
-            df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
-            log_table('test_predictions', df, experiment)
-
-        # multi output
-        if len(y_pred.shape) == 2:
-            df = pd.DataFrame()
-            for j in range(y_pred.shape[1]):
-                df['y_test_output_{}'.format(j)] = y_test[:, j]
-                df['y_pred_output_{}'.format(j)] = y_pred[:, j]
-            log_table('test_predictions', df, experiment)
-
-
-def _log_test_predictions_probabilities(flag, classifier, y_pred_proba, experiment):
-    if flag:
-        df = pd.DataFrame(data=y_pred_proba, columns=classifier.classes_)
-        log_table('test_preds_proba', df, experiment)
-
-
 def log_regressor_summary(regressor,
                           X_train=None,
                           X_test=None,
@@ -335,3 +273,65 @@ def log_kmeans_clustering_summary(model,
                 print('Did not log Silhouette Coefficients chart.')
 
         plt.close('all')
+
+
+def _check_experiment(experiment):
+    if experiment is not None:
+        if not isinstance(experiment, neptune.experiments.Experiment):
+            ValueError('Passed experiment is not Neptune experiment. Create one by using "create_experiment()"')
+    else:
+        try:
+            experiment = neptune.get_experiment()
+        except neptune.exceptions.NeptuneNoExperimentContextException:
+            raise neptune.exceptions.NeptuneNoExperimentContextException()
+
+    return experiment
+
+
+def _check_estimator(estimator, estimator_type):
+    if estimator_type == 'regressor' and not is_regressor(estimator):
+        raise ValueError('"regressor" is not sklearn regressor. This method works only with sklearn regressors.')
+    if estimator_type == 'classifier' and not is_classifier(estimator):
+        raise ValueError('"classifier" is not sklearn classifier. This method works only with sklearn classifiers.')
+
+
+def _compute_test_preds(estimator, data):
+    if is_regressor(estimator):
+        return estimator.predict(data)
+    if is_classifier(estimator):
+        y_pred = estimator.predict(data)
+        y_pred_proba = estimator.predict_proba(data)
+        return y_pred, y_pred_proba
+
+
+def _log_estimator_params(flag, estimator, experiment):
+    if flag:
+        for param, value in estimator.get_params().items():
+            experiment.set_property(param, value)
+
+
+def _log_pickled_model(flag, estimator, experiment):
+    if flag:
+        log_pickle('model/estimator.skl', estimator, experiment)
+
+
+def _log_test_predictions(flag, y_pred, y_test, experiment):
+    if flag:
+        # single output
+        if len(y_pred.shape) == 1:
+            df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
+            log_table('test_predictions', df, experiment)
+
+        # multi output
+        if len(y_pred.shape) == 2:
+            df = pd.DataFrame()
+            for j in range(y_pred.shape[1]):
+                df['y_test_output_{}'.format(j)] = y_test[:, j]
+                df['y_pred_output_{}'.format(j)] = y_pred[:, j]
+            log_table('test_predictions', df, experiment)
+
+
+def _log_test_predictions_probabilities(flag, classifier, y_pred_proba, experiment):
+    if flag:
+        df = pd.DataFrame(data=y_pred_proba, columns=classifier.classes_)
+        log_table('test_preds_proba', df, experiment)
