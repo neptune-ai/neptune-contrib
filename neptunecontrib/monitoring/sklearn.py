@@ -413,7 +413,7 @@ def log_kmeans_clustering_summary(model,
                 visualizer = SilhouetteVisualizer(model, is_fitted=True, ax=ax)
                 visualizer.fit(data)
                 visualizer.finalize()
-                exp.log_image('charts_sklearn', fig, image_name='Silhouette Coefficients for k='.format(j))
+                exp.log_image('charts_sklearn', fig, image_name='Silhouette Coefficients for k={}'.format(j))
             except Exception:
                 print('Did not log Silhouette Coefficients chart.')
 
