@@ -1069,12 +1069,18 @@ def log_kelbow_chart(model, X, experiment=None, **kwargs):
 
     model.set_params(**kwargs)
 
+    if 'n_clusters' in kwargs:
+        k = kwargs['n_clusters']
+    else:
+        k = 10
+
     try:
         fig, ax = plt.subplots()
-        visualizer = KElbowVisualizer(model, ax=ax)
+        visualizer = KElbowVisualizer(model, k=k, ax=ax)
         visualizer.fit(X)
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='KMeans elbow chart')
+        plt.close(fig)
     except Exception:
         print('Did not log KMeans elbow chart.')
 
