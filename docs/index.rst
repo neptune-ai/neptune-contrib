@@ -55,7 +55,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    api.chart <user_guide/api/chart>
    api.explainers <user_guide/api/explainers>
    api.html <user_guide/api/html>
-   api.table  <user_guide/api/table>
+   api.table <user_guide/api/table>
    api.utils <user_guide/api/utils>
    api.video <user_guide/api/video>
    hpo.utils <user_guide/hpo/utils>
@@ -63,6 +63,7 @@ And the best thing is you can extend it yourself or... tell us to do it for you 
    monitoring.keras <user_guide/monitoring/keras>
    monitoring.lightgbm <user_guide/monitoring/lightgbm>
    monitoring.xgboost <user_guide/monitoring/xgboost>
+   monitoring.sklearn <user_guide/monitoring/sklearn>
    monitoring.fastai <user_guide/monitoring/fastai>
    monitoring.metrics <user_guide/monitoring/metrics>
    monitoring.fairness <user_guide/monitoring/fairness>
