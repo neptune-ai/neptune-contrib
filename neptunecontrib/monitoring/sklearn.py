@@ -34,21 +34,74 @@ from neptunecontrib.api.utils import log_pickle
 
 
 def log_regressor_summary(regressor,
-                          X_train=None,
-                          X_test=None,
-                          y_train=None,
-                          y_test=None,
+                          X_train,
+                          X_test,
+                          y_train,
+                          y_test,
                           experiment=None,
                           log_params=True,
                           log_model=True,
                           log_test_preds=True,
                           log_test_scores=True,
                           log_visualizations=True):
-    """
-    Log sklearn regressor summary.
+    """Log sklearn regressor summary.
 
-    This method automatically logs all regressor parameters, pickled estimator (model), test predictions as table,
-    model performance visualizations, sklearn's pipeline as an interactive graph and test metrics.
+    This method automatically logs all regressor parameters, pickled estimator (model),
+    test predictions as table, model performance visualizations,
+    sklearn's pipeline as an interactive graph and test metrics.
+
+    Regressor must be fitted before calling this function.
+
+    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+
+    Tip:
+        Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
+
+    Args:
+        regressor (:obj:`regressor`):
+            | Fitted sklearn regressor object
+        X_train (:obj:`ndarray`):
+            | Training data matrix
+        X_test (:obj:`ndarray`):
+            | Testing data matrix
+        y_train (:obj:`ndarray`):
+            | The regression target for training
+        y_test (:obj:`ndarray`):
+            | The regression target for testing
+        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
+            | Neptune ``Experiment`` object to control to which experiment you log the data.
+            | If ``None``, log to currently active, and most recent experiment.
+        log_params (:obj:`bool`, optional, default is ``True``):
+            | Log regressor parameters as properties.
+        log_model (:obj:`bool`, optional, default is ``True``):
+            | Log pickled regressor.
+        log_test_preds (:obj:`bool`, optional, default is ``True``):
+            | Log test predictions as csv file.
+        log_test_scores (:obj:`bool`, optional, default is ``True``):
+            | Log suite of test scores.
+        log_visualizations (:obj:`bool`, optional, default is ``True``):
+            | Log suite of the regressor visualizations'.
+
+    Returns:
+        ``None``
+
+    Examples:
+        Log random forest regressor summary
+
+        .. code:: python3
+
+            rfr = RandomForestRegressor()
+
+            X, y = load_boston(return_X_y=True)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+
+            rfr.fit(X_train, y_train)
+
+            neptune.init('shared/sklearn-integration')
+            neptune.create_experiment(name='regression-example',
+                                      tags=['RandomForestRegressor', 'regression'])
+
+            log_regressor_summary(rfr, X_train, X_test, y_train, y_test)
     """
     exp = _check_experiment(experiment)
     _check_estimator(regressor, 'regressor')
@@ -132,21 +185,74 @@ def log_regressor_summary(regressor,
 
 
 def log_classifier_summary(classifier,
-                           X_train=None,
-                           X_test=None,
-                           y_train=None,
-                           y_test=None,
+                           X_train,
+                           X_test,
+                           y_train,
+                           y_test,
                            experiment=None,
                            log_params=True,
                            log_model=True,
                            log_test_preds=True,
                            log_test_scores=True,
                            log_visualizations=True):
-    """
-    Log sklearn classifier summary.
+    """Log sklearn classifier summary.
 
-    This method automatically logs all classifier parameters, pickled estimator (model), test predictions as table,
-    model performance visualizations, sklearn's pipeline as an interactive graph and test metrics.
+    This method automatically logs all classifier parameters, pickled estimator (model),
+    test predictions, predictions probabilities as table, model performance visualizations,
+    sklearn's pipeline as an interactive graph and test metrics.
+
+    Classifier must be fitted before calling this function.
+
+    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+
+    Tip:
+        Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
+
+    Args:
+        classifier (:obj:`classifier`):
+            | Fitted sklearn classifier object
+        X_train (:obj:`ndarray`):
+            | Training data matrix
+        X_test (:obj:`ndarray`):
+            | Testing data matrix
+        y_train (:obj:`ndarray`):
+            | The classification target for training
+        y_test (:obj:`ndarray`):
+            | The classification target for testing
+        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
+            | Neptune ``Experiment`` object to control to which experiment you log the data.
+            | If ``None``, log to currently active, and most recent experiment.
+        log_params (:obj:`bool`, optional, default is ``True``):
+            | Log classifier parameters as properties.
+        log_model (:obj:`bool`, optional, default is ``True``):
+            | Log pickled classifier.
+        log_test_preds (:obj:`bool`, optional, default is ``True``):
+            | Log test predictions as csv file.
+        log_test_scores (:obj:`bool`, optional, default is ``True``):
+            | Log suite of test scores.
+        log_visualizations (:obj:`bool`, optional, default is ``True``):
+            | Log suite of the classifier visualizations'.
+
+    Returns:
+        ``None``
+
+    Examples:
+        Log random forest classifier summary
+
+        .. code:: python3
+
+            rfr = RandomForestClassifier()
+
+            X, y = load_boston(return_X_y=True)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+
+            rfr.fit(X_train, y_train)
+
+            neptune.init('shared/sklearn-integration')
+            neptune.create_experiment(name='classification-example',
+                                      tags=['RandomForestClassifier', 'classification'])
+
+            log_classifier_summary(rfr, X_train, X_test, y_train, y_test)
     """
     exp = _check_experiment(experiment)
     _check_estimator(classifier, 'classifier')
@@ -221,17 +327,56 @@ def log_classifier_summary(classifier,
 
 
 def log_kmeans_clustering_summary(model,
+                                  data,
                                   k=10,
-                                  data=None,
                                   experiment=None,
                                   log_params=True,
                                   log_cluster_labels=True,
                                   log_visualizations=True):
-    """
-    Log sklearn clustering summary.
+    """Log sklearn clustering summary.
 
     This method automatically logs all clustering parameters, cluster labels on data,
     sklearn's pipeline as an interactive graph and clustering visualizations.
+
+    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+
+    Tip:
+        Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
+
+    Args:
+        model (:obj:`KMeans`):
+            | KMeans object
+        data (:obj:`ndarray`):
+            | Training instances to cluster
+        k (`int`):
+            | Number of clusters
+        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
+            | Neptune ``Experiment`` object to control to which experiment you log the data.
+            | If ``None``, log to currently active, and most recent experiment.
+        log_params (:obj:`bool`, optional, default is ``True``):
+            | Log kmeans parameters as properties.
+        log_cluster_labels (:obj:`bool`, optional, default is ``True``):
+            | Log the index of the cluster each sample belongs to.
+        log_visualizations (:obj:`bool`, optional, default is ``True``):
+            | Log suite of the clustering visualizations'.
+
+    Returns:
+        ``None``
+
+    Examples:
+        Log kmeans clustering summary
+
+        .. code:: python3
+
+            km = KMeans(n_init=11, max_iter=270)
+
+            X, y = make_blobs(n_samples=579, n_features=17, centers=7, random_state=28743)
+
+            neptune.init('shared/sklearn-integration')
+            neptune.create_experiment(name='clustering-example',
+                                      tags=['KMeans', 'clustering'])
+
+            log_kmeans_clustering_summary(km, data=X, k=11)
     """
     exp = _check_experiment(experiment)
 
