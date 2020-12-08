@@ -63,7 +63,7 @@ def log_table(name, table, experiment=None):
      """
     _exp = experiment if experiment else neptune
 
-    _exp.log_artifact(export_pandas_dataframe(table), "tables/" + name + '.html')
+    _exp.log_artifact(export_pandas_dataframe(table, 'html'), 'tables/{}.html'.format(name))
 
 
 def log_csv(name, table, experiment=None):
@@ -97,16 +97,18 @@ def log_csv(name, table, experiment=None):
      """
     _exp = experiment if experiment else neptune
 
-    _exp.log_artifact(export_pandas_dataframe(table, 'csv'), "csv/" + name + '.csv')
+    _exp.log_artifact(export_pandas_dataframe(table, 'csv'), 'csv/{}.csv'.format(name))
 
 
-def export_pandas_dataframe(table, target_type='html'):
+def export_pandas_dataframe(table, target_type):
     from io import StringIO
 
     if target_type == 'csv':
         buffer = StringIO(table.to_csv())
-    else:
+    elif target_type == 'html':
         buffer = StringIO(table.to_html())
+    else:
+        ValueError('Unsupported format: {}'.format(target_type))
 
     buffer.seek(0)
 
