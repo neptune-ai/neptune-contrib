@@ -32,7 +32,8 @@ from neptunecontrib.api.table import log_csv
 from neptunecontrib.api.utils import log_pickle
 
 
-def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, model_name=None, experiment=None):
+def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
+                          model_name=None, nrows=1000, experiment=None):
     """Log sklearn regressor summary.
 
     This method automatically logs all regressor parameters, pickled estimator (model),
@@ -59,6 +60,8 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, model_nam
         model_name (`str`, optional, default is ``None``):
             | If logging picked model, define a name of the file to be logged to `model/<model_name>`
             | If ``None`` - `model/estimator.skl` is used.
+        nrows (`int`, optional, default is 1000):
+            | Log first ``nrows`` rows of test predictions.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -87,7 +90,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, model_nam
     log_pickled_model(regressor, model_name, exp)
 
     y_pred = regressor.predict(X_test)
-    log_test_predictions(regressor, X_test, y_test, y_pred=y_pred, experiment=exp)
+    log_test_predictions(regressor, X_test, y_test, y_pred=y_pred, nrows=nrows, experiment=exp)
     log_test_scores(regressor, X_test, y_test, y_pred=y_pred, experiment=exp)
 
     # visualizations
@@ -98,7 +101,8 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, model_nam
     log_cooks_distance_chart(regressor, X_train, y_train, experiment=exp)
 
 
-def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, model_name=None, experiment=None):
+def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
+                           model_name=None, nrows=1000, experiment=None):
     """Log sklearn classifier summary.
 
     This method automatically logs all classifier parameters, pickled estimator (model),
@@ -125,6 +129,8 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, model_n
         model_name (`str`, optional, default is ``None``):
             | If logging picked model, define a name of the file to be logged to `model/<model_name>`
             | If ``None`` - `estimator.skl` is used.
+        nrows (`int`, optional, default is 1000):
+            | Log first ``nrows`` rows of test predictions and predictions probabilities.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -151,10 +157,10 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, model_n
 
     log_estimator_params(classifier, exp)
     log_pickled_model(classifier, model_name, exp)
-    log_test_preds_proba(classifier, X_test, experiment=exp)
+    log_test_preds_proba(classifier, X_test, nrows=nrows, experiment=exp)
 
     y_pred = classifier.predict(X_test)
-    log_test_predictions(classifier, X_test, y_test, y_pred=y_pred, experiment=exp)
+    log_test_predictions(classifier, X_test, y_test, y_pred=y_pred, nrows=nrows, experiment=exp)
     log_test_scores(classifier, X_test, y_test, y_pred=y_pred, experiment=exp)
 
     # visualizations
@@ -256,7 +262,7 @@ def log_pickled_model(estimator, model_name=None, experiment=None):
     log_pickle(model_name, estimator, exp)
 
 
-def log_test_predictions(estimator, X_test, y_test, y_pred=None, experiment=None):
+def log_test_predictions(estimator, X_test, y_test, y_pred=None, nrows=1000, experiment=None):
     """Log test predictions.
 
     Calculate and log test predictions and have them as csv file in the Neptune artifacts.
@@ -281,6 +287,8 @@ def log_test_predictions(estimator, X_test, y_test, y_pred=None, experiment=None
             | Target for testing.
         y_pred (:obj:`ndarray`, optional, default is ``None``):
             | Estimator predictions on test data.
+        nrows (`int`, optional, default is 1000):
+            | Number of rows to log.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -301,6 +309,7 @@ def log_test_predictions(estimator, X_test, y_test, y_pred=None, experiment=None
     """
     assert is_regressor(estimator) or is_classifier(estimator),\
         'Estimator should be sklearn regressor or classifier.'
+    assert isinstance(nrows, int), 'nrows should be integer, {} was passed'.format(type(nrows))
 
     exp = _validate_experiment(experiment)
 
@@ -310,7 +319,7 @@ def log_test_predictions(estimator, X_test, y_test, y_pred=None, experiment=None
     # single output
     if len(y_pred.shape) == 1:
         df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
-        log_csv('test_predictions', df, exp)
+        log_csv('test_predictions', df.head(nrows), exp)
 
     # multi output
     if len(y_pred.shape) == 2:
@@ -318,10 +327,10 @@ def log_test_predictions(estimator, X_test, y_test, y_pred=None, experiment=None
         for j in range(y_pred.shape[1]):
             df['y_test_output_{}'.format(j)] = y_test[:, j]
             df['y_pred_output_{}'.format(j)] = y_pred[:, j]
-        log_csv('test_predictions', df, exp)
+        log_csv('test_predictions', df.head(nrows), exp)
 
 
-def log_test_preds_proba(classifier, X_test, y_pred_proba=None, experiment=None):
+def log_test_preds_proba(classifier, X_test, y_pred_proba=None, nrows=1000, experiment=None):
     """Log test predictions probabilities.
 
     Calculate and log test predictions probabilities and have them as csv file in the Neptune artifacts.
@@ -344,6 +353,8 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, experiment=None)
             | Testing data matrix.
         y_pred_proba (:obj:`ndarray`, optional, default is ``None``):
             | Classifier predictions probabilities on test data.
+        nrows (`int`, optional, default is 1000):
+            | Number of rows to log.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -363,6 +374,7 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, experiment=None)
             log_test_preds_proba(rfc, X_test, y_test)
     """
     assert is_classifier(classifier), 'Classifier should be sklearn classifier.'
+    assert isinstance(nrows, int), 'nrows should be integer, {} was passed'.format(type(nrows))
 
     exp = _validate_experiment(experiment)
 
@@ -374,7 +386,7 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, experiment=None)
             return
 
     df = pd.DataFrame(data=y_pred_proba, columns=classifier.classes_)
-    log_csv('test_preds_proba', df, exp)
+    log_csv('test_preds_proba', df.head(nrows), exp)
 
 
 def log_test_scores(estimator, X_test, y_test, y_pred=None, experiment=None):
@@ -956,7 +968,8 @@ def log_class_prediction_error_chart(classifier, X_train, X_test, y_train, y_tes
         print('Did not log Class Prediction Error chart. Error {}'.format(e))
 
 
-def log_kmeans_clustering_summary(model, X, experiment=None, **kwargs):
+def log_kmeans_clustering_summary(model, X,
+                                  nrows=1000, experiment=None, **kwargs):
     """Log sklearn kmeans summary.
 
     This method fit KMeans model to data and logs cluster labels, all kmeans parameters
@@ -972,6 +985,8 @@ def log_kmeans_clustering_summary(model, X, experiment=None, **kwargs):
             | KMeans object.
         X (:obj:`ndarray`):
             | Training instances to cluster.
+        nrows (`int`, optional, default is 1000):
+            | Number of rows to log in the cluster labels
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -998,14 +1013,14 @@ def log_kmeans_clustering_summary(model, X, experiment=None, **kwargs):
 
     model.set_params(**kwargs)
     log_estimator_params(model, exp)
-    log_cluster_labels(model, X, experiment=exp, **kwargs)
+    log_cluster_labels(model, X, nrows=nrows, experiment=exp, **kwargs)
 
     # visualizations
     log_kelbow_chart(model, X, experiment=exp, **kwargs)
     log_silhouette_chart(model, X, experiment=exp, **kwargs)
 
 
-def log_cluster_labels(model, X, experiment=None, **kwargs):
+def log_cluster_labels(model, X, nrows=1000, experiment=None, **kwargs):
     """Log index of the cluster label each sample belongs to.
 
     Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
@@ -1018,6 +1033,8 @@ def log_cluster_labels(model, X, experiment=None, **kwargs):
             | KMeans object.
         X (:obj:`ndarray`):
             | Training instances to cluster.
+        nrows (`int`, optional, default is 1000):
+            | Number of rows to log.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -1039,12 +1056,13 @@ def log_cluster_labels(model, X, experiment=None, **kwargs):
             log_cluster_labels(km, X=X)
     """
     assert isinstance(model, KMeans), 'Model should be sklearn KMeans instance.'
+    assert isinstance(nrows, int), 'nrows should be integer, {} was passed'.format(type(nrows))
     exp = _validate_experiment(experiment)
 
     model.set_params(**kwargs)
     labels = model.fit_predict(X)
     df = pd.DataFrame(data={'cluster_labels': labels})
-    log_csv('cluster_labels', df, exp)
+    log_csv('cluster_labels', df.head(nrows), exp)
 
 
 def log_kelbow_chart(model, X, experiment=None, **kwargs):
