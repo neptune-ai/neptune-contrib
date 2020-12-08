@@ -40,7 +40,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, model_nam
 
     Regressor should be fitted before calling this function.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -106,7 +106,7 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, model_n
 
     Classifier should be fitted before calling this function.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -170,7 +170,7 @@ def log_estimator_params(estimator, experiment=None):
 
     Log all estimator parameters as experiment properties.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -213,7 +213,7 @@ def log_pickled_model(estimator, model_name=None, experiment=None):
 
     Path to file in the Neptune artifacts is `model/<model_name>`.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -267,7 +267,7 @@ def log_test_predictions(estimator, X_test, y_test, y_pred=None, experiment=None
 
     Path to predictions in the Neptune artifacts is 'csv/test_predictions.csv'.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -332,7 +332,7 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, experiment=None)
 
     Path to predictions probabilities in the Neptune artifacts is 'csv/test_preds_proba.csv'.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -386,7 +386,7 @@ def log_test_scores(estimator, X_test, y_test, y_pred=None, experiment=None):
 
     Estimator should be fitted before calling this function.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -453,7 +453,7 @@ def log_test_scores(estimator, X_test, y_test, y_pred=None, experiment=None):
 def log_learning_curve_chart(regressor, X_train, y_train, experiment=None):
     """Log learning curve chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -498,7 +498,7 @@ def log_learning_curve_chart(regressor, X_train, y_train, experiment=None):
 def log_feature_importance_chart(regressor, X_train, y_train, experiment=None):
     """Log feature importance chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -545,7 +545,7 @@ def log_feature_importance_chart(regressor, X_train, y_train, experiment=None):
 def log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=None):
     """Log residuals chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -597,7 +597,7 @@ def log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=
 def log_prediction_error_chart(regressor, X_train, X_test, y_train, y_test, experiment=None):
     """Log prediction error chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -649,7 +649,7 @@ def log_prediction_error_chart(regressor, X_train, X_test, y_train, y_test, expe
 def log_cooks_distance_chart(regressor, X_train, y_train, experiment=None):
     """Log feature importance chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -696,7 +696,7 @@ def log_cooks_distance_chart(regressor, X_train, y_train, experiment=None):
 def log_classification_report_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
     """Log classification report chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -748,7 +748,7 @@ def log_classification_report_chart(classifier, X_train, X_test, y_train, y_test
 def log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
     """Log confusion matrix.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -800,7 +800,7 @@ def log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, exp
 def log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
     """Log ROC-AUC chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -852,7 +852,7 @@ def log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=N
 def log_precision_recall_chart(classifier, X_test, y_test, y_pred_proba=None, experiment=None):
     """Log precision recall chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -907,7 +907,7 @@ def log_precision_recall_chart(classifier, X_test, y_test, y_pred_proba=None, ex
 def log_class_prediction_error_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
     """Log class prediction error chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -962,7 +962,7 @@ def log_kmeans_clustering_summary(model, X, experiment=None, **kwargs):
     This method fit KMeans model to data and logs cluster labels, all kmeans parameters
     and clustering visualizations: KMeans elbow chart and silhouette coefficients chart.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -1008,7 +1008,7 @@ def log_kmeans_clustering_summary(model, X, experiment=None, **kwargs):
 def log_cluster_labels(model, X, experiment=None, **kwargs):
     """Log index of the cluster label each sample belongs to.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -1050,7 +1050,7 @@ def log_cluster_labels(model, X, experiment=None, **kwargs):
 def log_kelbow_chart(model, X, experiment=None, **kwargs):
     """Log K-elbow chart for KMeans clusterer.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -1106,7 +1106,7 @@ def log_silhouette_chart(model, X, experiment=None, **kwargs):
 
     Charts are computed for j = 2, 3, ..., n_clusters.
 
-    Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
+    Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
