@@ -32,7 +32,7 @@ from neptunecontrib.api.table import log_csv
 from neptunecontrib.api.utils import log_pickle
 
 
-def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, experiment=None):
+def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, model_name=None, experiment=None):
     """Log sklearn regressor summary.
 
     This method automatically logs all regressor parameters, pickled estimator (model),
@@ -56,6 +56,9 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, experimen
             | The regression target for training
         y_test (:obj:`ndarray`):
             | The regression target for testing
+        model_name (`str`, optional, default is ``None``):
+            | If logging picked model, define a name of the file to be logged to `model/<model_name>`
+            | If ``None`` - `model/estimator.skl` is used.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -81,7 +84,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, experimen
     exp = _validate_experiment(experiment)
 
     log_estimator_params(regressor, exp)
-    log_pickled_model(regressor, exp)
+    log_pickled_model(regressor, model_name, exp)
 
     y_pred = regressor.predict(X_test)
     log_test_predictions(regressor, X_test, y_test, y_pred=y_pred, experiment=exp)
@@ -95,7 +98,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test, experimen
     log_cooks_distance_chart(regressor, X_train, y_train, experiment=exp)
 
 
-def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, experiment=None):
+def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, model_name=None, experiment=None):
     """Log sklearn classifier summary.
 
     This method automatically logs all classifier parameters, pickled estimator (model),
@@ -119,6 +122,9 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, experim
             | The classification target for training
         y_test (:obj:`ndarray`):
             | The classification target for testing
+        model_name (`str`, optional, default is ``None``):
+            | If logging picked model, define a name of the file to be logged to `model/<model_name>`
+            | If ``None`` - `estimator.skl` is used.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -144,7 +150,7 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test, experim
     exp = _validate_experiment(experiment)
 
     log_estimator_params(classifier, exp)
-    log_pickled_model(classifier, exp)
+    log_pickled_model(classifier, model_name, exp)
     log_test_preds_proba(classifier, X_test, experiment=exp)
 
     y_pred = classifier.predict(X_test)
@@ -198,14 +204,14 @@ def log_estimator_params(estimator, experiment=None):
         exp.set_property(param, value)
 
 
-def log_pickled_model(estimator, experiment=None):
+def log_pickled_model(estimator, model_name=None, experiment=None):
     """Log pickled estimator.
 
     Log estimator as pickled file to Neptune artifacts.
 
     Estimator should be fitted before calling this function.
 
-    Path to file in the Neptune artifacts is 'model/estimator.skl'.
+    Path to file in the Neptune artifacts is `model/<model_name>`.
 
     Make sure you created an experiment before you use this method: ``neptune.create_experiment()``.
 
@@ -215,6 +221,9 @@ def log_pickled_model(estimator, experiment=None):
     Args:
         estimator (:obj:`estimator`):
             | Scikit-learn estimator to log.
+        model_name (`str`, optional, default is ``None``):
+            | Name of the file.
+            | If ``None`` - `estimator.skl` is used.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -231,14 +240,20 @@ def log_pickled_model(estimator, experiment=None):
             neptune.init('my_workspace/my_project')
             neptune.create_experiment()
 
-            log_pickled_model(rfr)
+            log_pickled_model(rfr, 'my_model')
     """
     assert is_regressor(estimator) or is_classifier(estimator),\
         'Estimator should be sklearn regressor or classifier.'
+    assert isinstance(model_name, str), 'model_name should be str, {} was passed instead.'.format(type(model_name))
 
     exp = _validate_experiment(experiment)
 
-    log_pickle('model/estimator.skl', estimator, exp)
+    if model_name:
+        model_name = 'model/{}'.format(model_name)
+    else:
+        model_name = 'model/estimator.skl'
+
+    log_pickle(model_name, estimator, exp)
 
 
 def log_test_predictions(estimator, X_test, y_test, y_pred=None, experiment=None):
