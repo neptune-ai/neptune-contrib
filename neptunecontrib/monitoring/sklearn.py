@@ -369,8 +369,8 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, experiment=None)
     if y_pred_proba is None:
         try:
             y_pred_proba = classifier.predict_proba(X_test)
-        except Exception:
-            print('This classifier does not provide predictions probabilities.')
+        except Exception as e:
+            print('This classifier does not provide predictions probabilities. Error: {}'.format(e))
             return
 
     df = pd.DataFrame(data=y_pred_proba, columns=classifier.classes_)
@@ -491,8 +491,8 @@ def log_learning_curve_chart(regressor, X_train, y_train, experiment=None):
         plot_learning_curve(regressor, X_train, y_train, ax=ax)
         exp.log_image('charts_sklearn', fig, image_name='Learning Curve')
         plt.close(fig)
-    except Exception:
-        print('Did not log learning curve chart.')
+    except Exception as e:
+        print('Did not log learning curve chart. Error: {}'.format(e))
 
 
 def log_feature_importance_chart(regressor, X_train, y_train, experiment=None):
@@ -538,8 +538,8 @@ def log_feature_importance_chart(regressor, X_train, y_train, experiment=None):
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='Feature Importance')
         plt.close(fig)
-    except Exception:
-        print('Did not log feature importance chart.')
+    except Exception as e:
+        print('Did not log feature importance chart. Error: {}'.format(e))
 
 
 def log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=None):
@@ -590,8 +590,8 @@ def log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='Residuals Plot')
         plt.close(fig)
-    except Exception:
-        print('Did not log residuals chart.')
+    except Exception as e:
+        print('Did not log residuals chart. Error: {}'.format(e))
 
 
 def log_prediction_error_chart(regressor, X_train, X_test, y_train, y_test, experiment=None):
@@ -642,8 +642,8 @@ def log_prediction_error_chart(regressor, X_train, X_test, y_train, y_test, expe
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='Prediction Error')
         plt.close(fig)
-    except Exception:
-        print('Did not log prediction error chart.')
+    except Exception as e:
+        print('Did not log prediction error chart. Error: {}'.format(e))
 
 
 def log_cooks_distance_chart(regressor, X_train, y_train, experiment=None):
@@ -689,8 +689,8 @@ def log_cooks_distance_chart(regressor, X_train, y_train, experiment=None):
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='Cooks Distance')
         plt.close(fig)
-    except Exception:
-        print('Did not log cooks distance chart.')
+    except Exception as e:
+        print('Did not log cooks distance chart. Error: {}'.format(e))
 
 
 def log_classification_report_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -741,8 +741,8 @@ def log_classification_report_chart(classifier, X_train, X_test, y_train, y_test
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='Classification Report')
         plt.close(fig)
-    except Exception:
-        print('Did not log Classification Report chart.')
+    except Exception as e:
+        print('Did not log Classification Report chart. Error: {}'.format(e))
 
 
 def log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -793,8 +793,8 @@ def log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, exp
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='Confusion Matrix')
         plt.close(fig)
-    except Exception:
-        print('Did not log Confusion Matrix chart.')
+    except Exception as e:
+        print('Did not log Confusion Matrix chart. Error: {}'.format(e))
 
 
 def log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -845,8 +845,8 @@ def log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=N
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='ROC-AUC')
         plt.close(fig)
-    except Exception:
-        print('Did not log ROC-AUC chart.')
+    except Exception as e:
+        print('Did not log ROC-AUC chart. Error {}'.format(e))
 
 
 def log_precision_recall_chart(classifier, X_test, y_test, y_pred_proba=None, experiment=None):
@@ -890,8 +890,9 @@ def log_precision_recall_chart(classifier, X_test, y_test, y_pred_proba=None, ex
     if y_pred_proba is None:
         try:
             y_pred_proba = classifier.predict_proba(X_test)
-        except Exception:
-            print('Did not log Precision-Recall chart: this classifier does not provide predictions probabilities.')
+        except Exception as e:
+            print('Did not log Precision-Recall chart: this classifier does not provide predictions probabilities.'
+                  'Error {}'.format(e))
             return
 
     try:
@@ -899,8 +900,8 @@ def log_precision_recall_chart(classifier, X_test, y_test, y_pred_proba=None, ex
         plot_precision_recall(y_test, y_pred_proba, ax=ax)
         exp.log_image('charts_sklearn', fig, image_name='Precision Recall Curve')
         plt.close(fig)
-    except Exception:
-        print('Did not log Precision-Recall chart.')
+    except Exception as e:
+        print('Did not log Precision-Recall chart. Error {}'.format(e))
 
 
 def log_class_prediction_error_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -951,8 +952,8 @@ def log_class_prediction_error_chart(classifier, X_train, X_test, y_train, y_tes
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='Class Prediction Error')
         plt.close(fig)
-    except Exception:
-        print('Did not log Class Prediction Error chart.')
+    except Exception as e:
+        print('Did not log Class Prediction Error chart. Error {}'.format(e))
 
 
 def log_kmeans_clustering_summary(model, X, experiment=None, **kwargs):
@@ -1096,8 +1097,8 @@ def log_kelbow_chart(model, X, experiment=None, **kwargs):
         visualizer.finalize()
         exp.log_image('charts_sklearn', fig, image_name='KMeans elbow chart')
         plt.close(fig)
-    except Exception:
-        print('Did not log KMeans elbow chart.')
+    except Exception as e:
+        print('Did not log KMeans elbow chart. Error {}'.format(e))
 
 
 def log_silhouette_chart(model, X, experiment=None, **kwargs):
@@ -1153,8 +1154,8 @@ def log_silhouette_chart(model, X, experiment=None, **kwargs):
             visualizer.finalize()
             exp.log_image('charts_sklearn', fig, image_name='Silhouette Coefficients for k={}'.format(j))
             plt.close(fig)
-        except Exception:
-            print('Did not log Silhouette Coefficients chart.')
+        except Exception as e:
+            print('Did not log Silhouette Coefficients chart. Error {}'.format(e))
 
 
 def _validate_experiment(experiment):
