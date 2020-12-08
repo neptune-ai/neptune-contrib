@@ -217,7 +217,7 @@ def log_pickled_model(estimator, model_name=None, experiment=None):
 
     Estimator should be fitted before calling this function.
 
-    Path to file in the Neptune artifacts is `model/<model_name>`.
+    Path to file in the Neptune artifacts is ``model/<model_name>``.
 
     Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
 
@@ -229,7 +229,7 @@ def log_pickled_model(estimator, model_name=None, experiment=None):
             | Scikit-learn estimator to log.
         model_name (`str`, optional, default is ``None``):
             | Name of the file.
-            | If ``None`` - `estimator.skl` is used.
+            | If ``None`` - ``estimator.skl`` is used.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -250,7 +250,8 @@ def log_pickled_model(estimator, model_name=None, experiment=None):
     """
     assert is_regressor(estimator) or is_classifier(estimator),\
         'Estimator should be sklearn regressor or classifier.'
-    assert isinstance(model_name, str), 'model_name should be str, {} was passed instead.'.format(type(model_name))
+    assert isinstance(model_name, str) or model_name is None, 'model_name should be str,' \
+                                                              ' {} was passed instead.'.format(type(model_name))
 
     exp = _validate_experiment(experiment)
 
