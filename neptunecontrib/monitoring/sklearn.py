@@ -91,7 +91,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
 
     y_pred = regressor.predict(X_test)
     log_test_predictions(regressor, X_test, y_test, y_pred=y_pred, nrows=nrows, experiment=exp)
-    log_test_scores(regressor, X_test, y_test, y_pred=y_pred, experiment=exp)
+    log_scores(regressor, X_test, y_test, y_pred=y_pred, name='test', experiment=exp)
 
     # visualizations
     log_learning_curve_chart(regressor, X_train, y_train, experiment=exp)
@@ -161,7 +161,7 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
 
     y_pred = classifier.predict(X_test)
     log_test_predictions(classifier, X_test, y_test, y_pred=y_pred, nrows=nrows, experiment=exp)
-    log_test_scores(classifier, X_test, y_test, y_pred=y_pred, experiment=exp)
+    log_scores(classifier, X_test, y_test, y_pred=y_pred, name='test', experiment=exp)
 
     # visualizations
     log_classification_report_chart(classifier, X_train, X_test, y_train, y_test, experiment=exp)
@@ -390,16 +390,37 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, nrows=1000, expe
     log_csv('test_preds_proba', df.head(nrows), exp)
 
 
-def log_test_scores(estimator, X_test, y_test, y_pred=None, experiment=None):
-    """Log test scores.
+def log_scores(estimator, X, y, y_pred=None, name=None, experiment=None):
+    """Log estimator scores on ``X``.
 
-    Calculate and log scores on test data and have them as metrics in Neptune.
-
-    If you pass ``y_pred``, then predictions are not computed from ``X_test`` data.
+    Calculate and log scores on data and have them as metrics in Neptune.
+    If you pass ``y_pred``, then predictions are not computed from ``X`` data.
 
     Estimator should be fitted before calling this function.
 
     Make sure you created an experiment by using ``neptune.create_experiment()`` before you use this method.
+
+    **Regressor**
+
+    For regressors that outputs single value, following scores are logged:
+
+    * explained variance
+    * max error
+    * mean absolute error
+    * r2
+
+    For multi-output regressor:
+
+    * r2
+
+    **Classifier**
+
+    For classifier, following scores are logged:
+
+    * precision
+    * recall
+    * f beta score
+    * support
 
     Tip:
         Check `Neptune documentation <https://docs.neptune.ai/integrations/scikit_learn.html>`_ for the full example.
@@ -407,12 +428,14 @@ def log_test_scores(estimator, X_test, y_test, y_pred=None, experiment=None):
     Args:
         estimator (:obj:`estimator`):
             | Scikit-learn estimator to compute scores.
-        X_test (:obj:`ndarray`):
-            | Testing data matrix.
-        y_test (:obj:`ndarray`):
+        X (:obj:`ndarray`):
+            | Data matrix.
+        y (:obj:`ndarray`):
             | Target for testing.
         y_pred (:obj:`ndarray`, optional, default is ``None``):
-            | Estimator predictions on test data.
+            | Estimator predictions on data.
+        name (`str`, optional, default is ``None``):
+            | Use 'train', 'valid', 'test' to better define on what data scores are logged.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
@@ -429,38 +452,39 @@ def log_test_scores(estimator, X_test, y_test, y_pred=None, experiment=None):
             neptune.init('my_workspace/my_project')
             neptune.create_experiment()
 
-            log_test_scores(rfc, X_test, y_test, experiment=exp)
+            log_scores(rfc, X, y, name='test', experiment=exp)
     """
     assert is_regressor(estimator) or is_classifier(estimator),\
         'Estimator should be sklearn regressor or classifier.'
+    assert isinstance(name, str), 'name should be str. {} was passed.'.format(type(name))
 
     exp = _validate_experiment(experiment)
 
     if y_pred is None:
-        y_pred = estimator.predict(X_test)
+        y_pred = estimator.predict(X)
 
     if is_regressor(estimator):
         # single output
         if len(y_pred.shape) == 1:
-            evs = explained_variance_score(y_test, y_pred)
-            me = max_error(y_test, y_pred)
-            mae = mean_absolute_error(y_test, y_pred)
-            r2 = r2_score(y_test, y_pred)
+            evs = explained_variance_score(y, y_pred)
+            me = max_error(y, y_pred)
+            mae = mean_absolute_error(y, y_pred)
+            r2 = r2_score(y, y_pred)
 
-            exp.log_metric('evs_sklearn', evs)
-            exp.log_metric('me_sklearn', me)
-            exp.log_metric('mae_sklearn', mae)
-            exp.log_metric('r2_sklearn', r2)
+            exp.log_metric('evs_{}_sklearn'.format(name), evs)
+            exp.log_metric('me_{}_sklearn'.format(name), me)
+            exp.log_metric('mae_{}_sklearn'.format(name), mae)
+            exp.log_metric('r2_{}_sklearn'.format(name), r2)
 
         # multi output
         if len(y_pred.shape) == 2:
-            r2 = estimator.score(X_test, y_test)
-            exp.log_metric('r2_sklearn', r2)
+            r2 = estimator.score(X, y)
+            exp.log_metric('r2_{}_sklearn'.format(name), r2)
     elif is_classifier(estimator):
-        for name, values in zip(['precision', 'recall', 'fbeta_score', 'support'],
-                                precision_recall_fscore_support(y_test, y_pred)):
+        for metric_name, values in zip(['precision', 'recall', 'fbeta_score', 'support'],
+                                       precision_recall_fscore_support(y, y_pred)):
             for i, value in enumerate(values):
-                exp.log_metric('{}_class_{}_sklearn'.format(name, i), value)
+                exp.log_metric('{}_class_{}_{}_sklearn'.format(metric_name, i, name), value)
 
 
 def log_learning_curve_chart(regressor, X_train, y_train, experiment=None):
