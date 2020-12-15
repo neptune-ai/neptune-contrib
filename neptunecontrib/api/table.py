@@ -13,12 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 import neptune
 
 __all__ = [
     'log_table',
+    'log_csv',
 ]
+
 
 def log_table(name, table, experiment=None):
     """Logs pandas dataframe to neptune.
@@ -62,13 +63,53 @@ def log_table(name, table, experiment=None):
      """
     _exp = experiment if experiment else neptune
 
-    _exp.log_artifact(export_pandas_dataframe(table), "tables/" + name + '.html')
+    _exp.log_artifact(export_pandas_dataframe(table, 'html'), 'tables/{}.html'.format(name))
 
 
-def export_pandas_dataframe(table):
+def log_csv(name, table, experiment=None):
+    """Logs pandas dataframe to neptune as csv file.
+
+    Pandas dataframe is converted to csv fie and logged to Neptune as an artifact with path csv/{name}.csv
+
+    Args:
+        name (:obj:`str`):
+            | Name of the file (without extension) that will be used as a part of csv's destination.
+        table (:obj:`pandas.Dataframe`):
+            | DataFrame table
+        experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
+            | Neptune Experiment object if you want to control to which experiment you log the data.
+            | If ``None``, log to currently active, and most recent experiment.
+
+    Examples:
+        Create or load dataframe:
+
+        .. code:: python3
+
+            import pandas as pd
+            iris_df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv', nrows=100)
+
+        Log it to Neptune:
+
+        .. code:: python3
+
+             from neptunecontrib.api import log_csv
+             log_csv('pandas_df', iris_df)
+     """
+    _exp = experiment if experiment else neptune
+
+    _exp.log_artifact(export_pandas_dataframe(table, 'csv'), 'csv/{}.csv'.format(name))
+
+
+def export_pandas_dataframe(table, target_type):
     from io import StringIO
 
-    buffer = StringIO(table.to_html())
+    if target_type == 'csv':
+        buffer = StringIO(table.to_csv())
+    elif target_type == 'html':
+        buffer = StringIO(table.to_html())
+    else:
+        ValueError('Unsupported format: {}'.format(target_type))
+
     buffer.seek(0)
 
     return buffer

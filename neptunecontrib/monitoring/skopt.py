@@ -81,21 +81,21 @@ def log_results(results, experiment=None, log_plots=True, log_pickle=True):
     best parameters ('best_parameters' property), convergence plot ('diagnostics' log),
     evaluations plot ('diagnostics' log), and objective plot ('diagnostics' log).
 
-     Args:
-         results('scipy.optimize.OptimizeResult'): Results object that is typically an
-             output of the function like `skopt.forest_minimize(...)`
-         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
+    Args:
+        results('scipy.optimize.OptimizeResult'): Results object that is typically an output
+          | of the function like `skopt.forest_minimize(...)`
+        experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
         log_plots: ('bool'): If True skopt plots will be logged to Neptune.
         log_pickle: ('bool'): if True pickled skopt results object will be logged to Neptune.
 
-     Examples:
-         Run skopt training::
+    Examples:
+        Run skopt training::
 
-             ...
-             results = skopt.forest_minimize(objective, space,
-                                 base_estimator='ET', n_calls=100, n_random_starts=10)
+            ...
+            results = skopt.forest_minimize(objective, space,
+                                            base_estimator='ET', n_calls=100, n_random_starts=10)
 
-         Initialize Neptune::
+        Initialize Neptune::
 
             import neptune
 
@@ -103,15 +103,15 @@ def log_results(results, experiment=None, log_plots=True, log_pickle=True):
                          project_qualified_name='shared/showroom')
             neptune.create_experiment(name='optuna sweep')
 
-         Send best parameters to Neptune::
+        Send best parameters to Neptune::
 
-             import neptunecontrib.monitoring.skopt as sk_utils
+            import neptunecontrib.monitoring.skopt as sk_utils
 
-             sk_utils.log_results(results)
+            sk_utils.log_results(results)
 
-        You can explore an example experiment in Neptune:
-        https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1065/logs
-     """
+    You can explore an example experiment in Neptune:
+    https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1065/logs
+    """
     _exp = experiment if experiment else neptune
 
     _log_best_score(results, _exp)

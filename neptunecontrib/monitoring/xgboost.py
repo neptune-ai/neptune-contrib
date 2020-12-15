@@ -69,8 +69,7 @@ def neptune_callback(log_model=True,
             | If you run xgb.cv, log specified trees for each folds' booster.
             | Default is ``None`` - do not log any tree.
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
-            | For advanced users only. Pass Neptune
-              `Experiment <https://docs.neptune.ai/neptune-client/docs/experiment.html#neptune.experiments.Experiment>`_
+            | For advanced users only. Pass Neptune ``Experiment``
               object if you want to control to which experiment data is logged.
             | If ``None``, log to currently active, and most recent experiment.
         kwargs:
@@ -159,12 +158,7 @@ def neptune_callback(log_model=True,
             neptune.get_experiment()
             _exp = neptune
         except neptune.exceptions.NeptuneNoExperimentContextException:
-            msg = 'No currently running Neptune experiment. \n'\
-                  'To start logging to Neptune create experiment by using: `neptune.create_experiment()`. \n'\
-                  'More info in the documentation: '\
-                  '<https://docs.neptune.ai/neptune-client/docs/project.html' \
-                  '#neptune.projects.Project.create_experiment>.'
-            raise neptune.exceptions.NeptuneException(msg)
+            raise neptune.exceptions.NeptuneNoExperimentContextException()
 
     assert isinstance(log_model, bool),\
         'log_model must be bool, got {} instead. Check log_model parameter.'.format(type(log_model))

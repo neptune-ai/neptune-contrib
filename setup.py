@@ -10,7 +10,8 @@ def main():
         'bots': ['python-telegram-bot'],
         'hpo': ['scikit-optimize>=0.5.2', 'scipy'],
         'monitoring': ['scikit-optimize>=0.7.4', 'sacred>=0.7.5', 'scikit-learn>=0.21.3',
-                       'scikit-plot>=0.3.7', 'seaborn>=0.8.1', 'aif360>=0.2.1', 'xgboost>=0.82'],
+                       'scikit-plot>=0.3.7', 'seaborn>=0.8.1', 'aif360>=0.2.1', 'xgboost>=0.82',
+                       'yellowbrick>=1.2'],
         'versioning': ['boto3', 'numpy'],
         'viz': ['altair>=2.3.0', 'hiplot>=0.1.5'],
     }
@@ -20,7 +21,7 @@ def main():
         all_deps += extras[group_name]
     extras['all'] = all_deps
 
-    base_libs = ['attrdict>=2.0.0', 'neptune-client>=0.4.110', 'joblib>=0.13', 'pandas', 'matplotlib',
+    base_libs = ['attrdict>=2.0.0', 'neptune-client>=0.4.126', 'joblib>=0.13', 'pandas', 'matplotlib',
                  'Pillow>=6.2.0']
 
     setup(
