@@ -83,7 +83,7 @@ def log_tuner_info(tuner, experiment=None, log_project_dir=True):
     Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' metric),
     best parameters ('best_parameters' property), score for every run ('run_score', metric),
     tuner project directory as artifact, ('hyperparameters/space' text log),
-    name of the metric/loss used as objective and the direction of it  ('objective/name' and 'objective/direction' property).
+    name of the metric/loss used as objective and it's direction ('objective/name' and 'objective/direction' property).
 
     Args:
         tuner('kerastuner.engine.tuner.Tuner'): Keras Tuner object after training is completed.
@@ -130,5 +130,5 @@ def log_tuner_info(tuner, experiment=None, log_project_dir=True):
 
     exp.log_metric('best_score', tuner.oracle.get_best_trials()[0].score)
 
-    for name, trial in tuner.oracle.trials.items():
+    for _, trial in tuner.oracle.trials.items():
         exp.log_metric('run_score', trial.score)
