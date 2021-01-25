@@ -21,7 +21,8 @@ from kerastuner.engine.logger import Logger
 class NeptuneLogger(Logger):
     """Logs hyperparameter optimization process to Neptune.
 
-    For each iteration it logs run parmaeters ('hyperparameters/values' text log) and all the metrics and losses.
+    For each iteration it logs run parameters ('hyperparameters/values' text log),
+     and all the metrics and losses to Neptune.
 
     Args:
         experiment(`neptune.experiments.Experiment`): Neptune experiment. Default is None.
@@ -82,8 +83,9 @@ def log_tuner_info(tuner, experiment=None, log_project_dir=True):
 
     Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' metric),
     best parameters ('best_parameters' property), score for every run ('run_score', metric),
-    tuner project directory as artifact, ('hyperparameters/space' text log),
-    name of the metric/loss used as objective and it's direction ('objective/name' and 'objective/direction' property).
+    tuner project directory as artifact, ('hyperparameters/space' text log), tuner id ('tuner_id' property),
+    best trial id ('best_trial_id' property), name of the metric/loss used as objective,
+    and it's direction ('objective/name' and 'objective/direction' property).
 
     Args:
         tuner('kerastuner.engine.tuner.Tuner'): Keras Tuner object after training is completed.
@@ -124,6 +126,9 @@ def log_tuner_info(tuner, experiment=None, log_project_dir=True):
     exp.set_property('best_parameters', tuner.get_best_hyperparameters()[0].values)
     exp.set_property('objective/name', tuner.oracle.objective.name)
     exp.set_property('objective/direction', tuner.oracle.objective.direction)
+    exp.set_property('objective/direction', tuner.oracle.objective.direction)
+    exp.set_property('tuner_id', tuner.tuner_id)
+    exp.set_property('best_trial_id', tuner.oracle.get_best_trials()[0].trial_id)
 
     for dim in tuner.oracle.get_space().space:
         exp.log_text('hyperparameters/space', str(dim))
