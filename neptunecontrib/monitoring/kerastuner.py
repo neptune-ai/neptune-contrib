@@ -52,7 +52,7 @@ class NeptuneLogger(Logger):
                 logger=npt_utils.NeptuneLogger())
 
         You can explore an example experiment in Neptune:
-        https://ui.neptune.ai/o/shared/org/keras-tuner-integration/e/KER-15/charts
+        https://ui.neptune.ai/o/shared/org/keras-tuner-integration/e/KER-19/charts
     """
 
     def __init__(self, experiment=None):
@@ -82,10 +82,10 @@ def log_tuner_info(tuner, experiment=None, log_project_dir=True):
     """Logs runs results and parameters to neptune.
 
     Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' metric),
-    best parameters ('best_parameters' property), score for every run ('run_score', metric),
-    tuner project directory as artifact, ('hyperparameters/space' text log), tuner id ('tuner_id' property),
-    best trial id ('best_trial_id' property), name of the metric/loss used as objective,
-    and it's direction ('objective/name' and 'objective/direction' property).
+    best parameters ('best_parameters' property), score for every run ('run_score' metric),
+    tuner project directory as an artifact, parameter space ('hyperparameters/space' text log),
+    tuner id ('tuner_id' property), best trial id ('best_trial_id' property),
+    name of the metric/loss used as objective, and it's direction ('objective/name' and 'objective/direction' property).
 
     Args:
         tuner('kerastuner.engine.tuner.Tuner'): Keras Tuner object after training is completed.
@@ -116,7 +116,7 @@ def log_tuner_info(tuner, experiment=None, log_project_dir=True):
             npt_utils.log_tuner_info(tuner)
 
         You can explore an example experiment in Neptune:
-        https://ui.neptune.ai/o/shared/org/keras-tuner-integration/e/KER-15/charts
+        https://ui.neptune.ai/o/shared/org/keras-tuner-integration/e/KER-19/details
      """
     exp = experiment if experiment else neptune
 
