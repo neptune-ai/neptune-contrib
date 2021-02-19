@@ -33,7 +33,7 @@ from neptunecontrib.api.utils import log_pickle
 
 
 def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
-                          model_name=None, nrows=1000, experiment=None, calculate_visualizations=True):
+                          model_name=None, nrows=1000, experiment=None, log_charts=True):
     """Log sklearn regressor summary.
 
     This method automatically logs all regressor parameters, pickled estimator (model),
@@ -65,7 +65,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
-        calculate_visualizations (:bool:, optional, default is ``True``):
+        log_charts (:bool:, optional, default is ``True``):
             | If True, calculate and send chart visualizations.
             |
             | NOTE: calculating visualizations is potentially expensive depending on input data and regressor, and
@@ -105,7 +105,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
     log_scores(regressor, X_test, y_test, y_pred=y_pred, name='test', experiment=exp)
 
     # visualizations
-    if calculate_visualizations:
+    if log_charts:
         log_learning_curve_chart(regressor, X_train, y_train, experiment=exp)
         log_feature_importance_chart(regressor, X_train, y_train, experiment=exp)
         log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=exp)
@@ -114,7 +114,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
 
 
 def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
-                           model_name=None, nrows=1000, experiment=None, calculate_visualizations=True):
+                           model_name=None, nrows=1000, experiment=None, log_charts=True):
     """Log sklearn classifier summary.
 
     This method automatically logs all classifier parameters, pickled estimator (model),
@@ -146,7 +146,7 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
         experiment (:obj:`neptune.experiments.Experiment`, optional, default is ``None``):
             | Neptune ``Experiment`` object to control to which experiment you log the data.
             | If ``None``, log to currently active, and most recent experiment.
-        calculate_visualizations (:bool:, optional, default is ``True``):
+        log_charts (:bool:, optional, default is ``True``):
             | If True, calculate and send chart visualizations.
             |
             | NOTE: calculating visualizations is potentially expensive depending on input data and classifier, and
@@ -188,7 +188,7 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
     log_scores(classifier, X_test, y_test, y_pred=y_pred, name='test', experiment=exp)
 
     # visualizations
-    if calculate_visualizations:
+    if log_charts:
         log_classification_report_chart(classifier, X_train, X_test, y_train, y_test, experiment=exp)
         log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, experiment=exp)
         log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=exp)
