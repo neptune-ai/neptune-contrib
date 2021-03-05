@@ -28,9 +28,14 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Build and test
+      - name: Build neptune-contrib package
         run : |
           python setup.py sdist
+      - name: Build neptune-tensorflow-keras package
+        run : |
+          cd integrations/tensorflow-keras
+          python setup.py sdist
+          cp dist/* ../../dist/
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@54b39fb9371c0b3a6f9f14bb8a67394defc7a806
         with:
