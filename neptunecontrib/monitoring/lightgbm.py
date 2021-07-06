@@ -80,7 +80,7 @@ def neptune_monitor(experiment=None, prefix=''):
     """
 
     _exp = experiment if experiment else neptune
-    expect_not_a_run(self._exp)
+    expect_not_a_run(_exp)
 
     def callback(env):
         for name, loss_name, loss_value, _ in env.evaluation_result_list:

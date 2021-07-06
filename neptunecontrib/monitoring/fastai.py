@@ -18,6 +18,8 @@ import sys
 
 import neptune
 
+from neptunecontrib.monitoring.utils import expect_not_a_run
+
 if sys.version_info[0] == 3 and sys.version_info[1] >= 6:
     from fastai.basic_train import LearnerCallback
 else:
@@ -26,8 +28,6 @@ else:
 
 
     LearnerCallback.__module__ = 'fastai.basic_train'
-
-from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
 class NeptuneMonitor(LearnerCallback):

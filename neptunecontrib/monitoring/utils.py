@@ -87,17 +87,5 @@ def pickle_and_send_artifact(obj, filename, experiment=None):
 
 
 def expect_not_a_run(experiment):
-    try:
-        # neptune-client=0.9.0 package structure
-        import neptune.new as neptune
-    except ImportError:
-        # neptune-client=1.0.0 package structure
-        import neptune
-    finally:
-        try:
-            from neptune import Run
-
-            if isinstance(experiment, Run):
-                raise NeptuneLegacyIncompatibilityException()
-        except ImportError:
-            pass
+    if type(experiment).__name__ == 'Run':
+        raise NeptuneLegacyIncompatibilityException()

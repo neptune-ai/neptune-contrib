@@ -173,7 +173,7 @@ def log_study_info(study, experiment=None,
 
     _exp = experiment if experiment else neptune
 
-    expect_not_a_run(self._exp)
+    expect_not_a_run(_exp)
 
     _exp.log_metric('best_score', study.best_value)
     _exp.set_property('best_parameters', study.best_params)

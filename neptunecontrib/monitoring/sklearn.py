@@ -30,6 +30,7 @@ from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 
 from neptunecontrib.api.table import log_csv
 from neptunecontrib.api.utils import log_pickle
+from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
 def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
