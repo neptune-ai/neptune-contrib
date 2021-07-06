@@ -1228,9 +1228,9 @@ def log_silhouette_chart(model, X, experiment=None, **kwargs):
 
 
 def _validate_experiment(experiment):
-    expect_not_a_run(experiment)
-
     if experiment is not None:
+        expect_not_a_run(experiment)
+
         if not isinstance(experiment, neptune.experiments.Experiment):
             ValueError('Passed experiment is not Neptune experiment. Create one by using "create_experiment()"')
     else:
