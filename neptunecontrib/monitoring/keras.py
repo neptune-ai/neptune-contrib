@@ -34,6 +34,8 @@ except ImportError:
             pip install tensorflow"""
         raise ModuleNotFoundError(msg) # pylint:disable=undefined-variable
 
+from neptunecontrib.monitoring.utils import expect_not_a_run
+
 
 class NeptuneMonitor(Callback):
     """Logs Keras metrics to Neptune.
@@ -89,6 +91,8 @@ class NeptuneMonitor(Callback):
         super().__init__()
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
+
+        expect_not_a_run(self._exp)
 
     def _log_metrics(self, logs, trigger):
         if not logs:

@@ -19,6 +19,8 @@ import tempfile
 import neptune
 import xgboost as xgb
 
+from neptunecontrib.monitoring.utils import expect_not_a_run
+
 
 def neptune_callback(log_model=True,
                      log_importance=True,
@@ -159,6 +161,8 @@ def neptune_callback(log_model=True,
             _exp = neptune
         except neptune.exceptions.NeptuneNoExperimentContextException:
             raise neptune.exceptions.NeptuneNoExperimentContextException()
+
+    expect_not_a_run(_exp)
 
     assert isinstance(log_model, bool),\
         'log_model must be bool, got {} instead. Check log_model parameter.'.format(type(log_model))

@@ -18,6 +18,8 @@ import sys
 
 import neptune
 
+from neptunecontrib.monitoring.utils import expect_not_a_run
+
 if sys.version_info[0] == 3 and sys.version_info[1] >= 6:
     from fastai.basic_train import LearnerCallback
 else:
@@ -79,6 +81,9 @@ class NeptuneMonitor(LearnerCallback):
     def __init__(self, learn=None, experiment=None, prefix=''):
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
+
+        expect_not_a_run(self._exp)
+
         if learn is not None:
             super().__init__(learn)
 

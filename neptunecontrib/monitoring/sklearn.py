@@ -30,6 +30,7 @@ from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
 
 from neptunecontrib.api.table import log_csv
 from neptunecontrib.api.utils import log_pickle
+from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
 def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
@@ -1228,6 +1229,8 @@ def log_silhouette_chart(model, X, experiment=None, **kwargs):
 
 def _validate_experiment(experiment):
     if experiment is not None:
+        expect_not_a_run(experiment)
+
         if not isinstance(experiment, neptune.experiments.Experiment):
             ValueError('Passed experiment is not Neptune experiment. Create one by using "create_experiment()"')
     else:

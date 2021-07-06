@@ -21,7 +21,7 @@ import numpy as np
 import skopt.plots as sk_plots
 from skopt.utils import dump
 
-from neptunecontrib.monitoring.utils import axes2fig
+from neptunecontrib.monitoring.utils import axes2fig, expect_not_a_run
 
 
 class NeptuneCallback:
@@ -55,6 +55,9 @@ class NeptuneCallback:
 
     def __init__(self, experiment=None, log_checkpoint=True):
         self._exp = experiment if experiment else neptune
+
+        expect_not_a_run(self._exp)
+
         self.log_checkpoint = log_checkpoint
         self._iteration = 0
 
@@ -114,6 +117,8 @@ def log_results(results, experiment=None, log_plots=True, log_pickle=True):
     """
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     _log_best_score(results, _exp)
     _log_best_parameters(results, _exp)
 
@@ -135,6 +140,7 @@ def NeptuneMonitor(*args, **kwargs):
 
 
 def _log_best_parameters(results, experiment):
+    expect_not_a_run(experiment)
     named_params = ([(dimension.name, param) for dimension, param in zip(results.space, results.x)])
     experiment.set_property('best_parameters', str(named_params))
 
@@ -144,18 +150,21 @@ def _log_best_score(results, experiment):
 
 
 def _log_plot_convergence(results, experiment, name='diagnostics'):
+    expect_not_a_run(experiment)
     fig, ax = plt.subplots()
     sk_plots.plot_convergence(results, ax=ax)
     experiment.log_image(name, fig)
 
 
 def _log_plot_regret(results, experiment, name='diagnostics'):
+    expect_not_a_run(experiment)
     fig, ax = plt.subplots()
     sk_plots.plot_regret(results, ax=ax)
     experiment.log_image(name, fig)
 
 
 def _log_plot_evaluations(results, experiment, name='diagnostics'):
+    expect_not_a_run(experiment)
     fig = plt.figure(figsize=(16, 12))
     fig = axes2fig(sk_plots.plot_evaluations(results, bins=10), fig=fig)
     experiment.log_image(name, fig)
@@ -163,6 +172,7 @@ def _log_plot_evaluations(results, experiment, name='diagnostics'):
 
 def _log_plot_objective(results, experiment, name='diagnostics'):
     try:
+        expect_not_a_run(experiment)
         fig = plt.figure(figsize=(16, 12))
         fig = axes2fig(sk_plots.plot_objective(results), fig=fig)
         experiment.log_image(name, fig)
@@ -171,6 +181,7 @@ def _log_plot_objective(results, experiment, name='diagnostics'):
 
 
 def _log_results_object(results, experiment=None):
+    expect_not_a_run(experiment)
     experiment.log_artifact(_export_results_object(results), 'results.pkl')
 
 
