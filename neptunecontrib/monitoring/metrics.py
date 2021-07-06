@@ -15,7 +15,7 @@
 #
 import matplotlib.pyplot as plt
 import neptune
-from neptunecontrib.monitoring.utils import send_figure
+from neptunecontrib.monitoring.utils import send_figure, expect_not_a_run
 import numpy as np
 import pandas as pd
 import scikitplot.metrics as plt_metrics
@@ -78,6 +78,8 @@ def log_binary_classification_metrics(y_true, y_pred, threshold=0.5, experiment=
 
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     log_confusion_matrix(y_true, y_pred[:, 1] > threshold, experiment=_exp, prefix=prefix)
     log_classification_report(y_true, y_pred[:, 1] > threshold, experiment=_exp, prefix=prefix)
     log_class_metrics(y_true, y_pred[:, 1] > threshold, experiment=_exp, prefix=prefix)
@@ -134,6 +136,8 @@ def log_confusion_matrix(y_true, y_pred_class, experiment=None, channel_name='me
 
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     fig, ax = plt.subplots()
     _plot_confusion_matrix(y_true, y_pred_class, ax=ax)
     send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
@@ -181,6 +185,8 @@ def log_classification_report(y_true, y_pred_class, experiment=None, channel_nam
     assert len(y_pred_class.shape) == 1, 'y_pred_class needs to be 1D class prediction with values 0, 1'
 
     _exp = experiment if experiment else neptune
+
+    expect_not_a_run(_exp)
 
     fig = _plot_classification_report(y_true, y_pred_class)
     send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
@@ -231,6 +237,8 @@ def log_class_metrics(y_true, y_pred_class, experiment=None, prefix=''):
     assert len(y_pred_class.shape) == 1, 'y_pred_class needs to be 1D class prediction with values 0, 1'
 
     _exp = experiment if experiment else neptune
+
+    expect_not_a_run(_exp)
 
     scores = _class_metrics(y_true, y_pred_class)
     for metric_name, score in scores.items():
@@ -283,6 +291,8 @@ def log_class_metrics_by_threshold(y_true, y_pred_pos, experiment=None, channel_
 
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     figs = _plot_class_metrics_by_threshold(y_true, y_pred_pos)
 
     for fig in figs:
@@ -331,6 +341,8 @@ def log_roc_auc(y_true, y_pred, experiment=None, channel_name='metric_charts', p
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
 
     _exp = experiment if experiment else neptune
+
+    expect_not_a_run(_exp)
 
     roc_auc = sk_metrics.roc_auc_score(y_true, y_pred[:, 1])
     _exp.log_metric(prefix + 'roc_auc', roc_auc)
@@ -383,6 +395,8 @@ def log_precision_recall_auc(y_true, y_pred, experiment=None, channel_name='metr
 
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     avg_precision = sk_metrics.average_precision_score(y_true, y_pred[:, 1])
     _exp.log_metric(prefix + 'avg_precision', avg_precision)
 
@@ -433,6 +447,8 @@ def log_brier_loss(y_true, y_pred_pos, experiment=None, prefix=''):
 
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     brier = sk_metrics.brier_score_loss(y_true, y_pred_pos)
     _exp.log_metric(prefix + 'brier_loss', brier)
 
@@ -477,6 +493,8 @@ def log_log_loss(y_true, y_pred, experiment=None, prefix=''):
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
 
     _exp = experiment if experiment else neptune
+
+    expect_not_a_run(_exp)
 
     log_loss = sk_metrics.log_loss(y_true, y_pred)
     _exp.log_metric(prefix + 'log_loss', log_loss)
@@ -527,6 +545,8 @@ def log_ks_statistic(y_true, y_pred, experiment=None, channel_name='metric_chart
     assert len(y_pred.shape) == 2, 'y_pred needs to be (n_samples, 2), use expand_prediction helper to format it'
 
     _exp = experiment if experiment else neptune
+
+    expect_not_a_run(_exp)
 
     res = binary_ks_curve(y_true, y_pred[:, 1])
     ks_stat = res[3]
@@ -580,6 +600,8 @@ def log_cumulative_gain(y_true, y_pred, experiment=None, channel_name='metric_ch
 
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     fig, ax = plt.subplots()
     plt_metrics.plot_cumulative_gain(y_true, y_pred, ax=ax)
     send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
@@ -628,6 +650,8 @@ def log_lift_curve(y_true, y_pred, experiment=None, channel_name='metric_charts'
 
     _exp = experiment if experiment else neptune
 
+    expect_not_a_run(_exp)
+
     fig, ax = plt.subplots()
     plt_metrics.plot_lift_curve(y_true, y_pred, ax=ax)
     send_figure(fig, channel_name=prefix + channel_name, experiment=_exp)
@@ -669,6 +693,8 @@ def log_prediction_distribution(y_true, y_pred_pos, experiment=None, channel_nam
     assert len(y_pred_pos.shape) == 1, 'y_pred_pos needs to be 1D prediction for positive class'
 
     _exp = experiment if experiment else neptune
+
+    expect_not_a_run(_exp)
 
     fig, ax = plt.subplots()
     _plot_prediction_distribution(y_true, y_pred_pos, ax=ax)

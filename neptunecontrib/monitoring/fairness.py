@@ -21,7 +21,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from neptunecontrib.monitoring.utils import send_figure
+from neptunecontrib.monitoring.utils import send_figure, expect_not_a_run
 
 
 def log_fairness_classification_metrics(y_true, y_pred_class, y_pred_score, sensitive_attributes,
@@ -78,6 +78,7 @@ def log_fairness_classification_metrics(y_true, y_pred_class, y_pred_score, sens
 
     """
     _exp = experiment if experiment else neptune
+    expect_not_a_run(_exp)
 
     bias_info = {'favorable_label': favorable_label,
                  'unfavorable_label': unfavorable_label,

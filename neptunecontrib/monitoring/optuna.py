@@ -18,6 +18,7 @@ import warnings
 import neptune
 
 from neptunecontrib.api import log_chart, pickle_and_log_artifact
+from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
 class NeptuneCallback:
@@ -76,6 +77,8 @@ class NeptuneCallback:
                  params=None):  # pylint: disable=W0621
         self.exp = experiment if experiment else neptune
         self.log_study = log_study
+
+        expect_not_a_run(self.exp)
 
         if log_charts:
 
@@ -169,6 +172,8 @@ def log_study_info(study, experiment=None,
     import optuna.visualization as vis
 
     _exp = experiment if experiment else neptune
+
+    expect_not_a_run(self._exp)
 
     _exp.log_metric('best_score', study.best_value)
     _exp.set_property('best_parameters', study.best_params)

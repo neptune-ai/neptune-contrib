@@ -17,6 +17,8 @@ import neptune
 
 from kerastuner.engine.logger import Logger
 
+from neptunecontrib.monitoring.utils import expect_not_a_run
+
 
 class NeptuneLogger(Logger):
     """Logs hyperparameter optimization process to Neptune.
@@ -57,6 +59,8 @@ class NeptuneLogger(Logger):
 
     def __init__(self, experiment=None):
         self.exp = experiment if experiment else neptune
+
+        expect_not_a_run(self.exp)
 
     def report_trial_state(self, trial_id, trial_state):
         """Gives the logger information about trial status."""

@@ -27,6 +27,8 @@ else:
 
     LearnerCallback.__module__ = 'fastai.basic_train'
 
+from neptunecontrib.monitoring.utils import expect_not_a_run
+
 
 class NeptuneMonitor(LearnerCallback):
     """Logs metrics from the fastai learner to Neptune.
@@ -79,6 +81,9 @@ class NeptuneMonitor(LearnerCallback):
     def __init__(self, learn=None, experiment=None, prefix=''):
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
+
+        expect_not_a_run(self._exp)
+
         if learn is not None:
             super().__init__(learn)
 

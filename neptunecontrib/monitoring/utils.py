@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 import neptune
 
 from neptunecontrib.api import pickle_and_log_artifact
+from neptunecontrib.monitoring.exceptions import NeptuneLegacyIncompatibilityException
 
 
 def axes2fig(axes, fig=None):
@@ -83,3 +84,20 @@ def pickle_and_send_artifact(obj, filename, experiment=None):
     warnings.warn(message)
 
     pickle_and_log_artifact(obj, filename, experiment)
+
+
+def expect_not_a_run(experiment):
+    try:
+        # neptune-client=0.9.0 package structure
+        import neptune.new as neptune
+    except ImportError:
+        # neptune-client=1.0.0 package structure
+        import neptune
+    finally:
+        try:
+            from neptune import Run
+
+            if isinstance(experiment, Run):
+                raise NeptuneLegacyIncompatibilityException()
+        except ImportError:
+            pass
