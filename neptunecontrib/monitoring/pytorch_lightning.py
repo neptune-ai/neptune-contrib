@@ -11,20 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import logging
 from argparse import Namespace
 from typing import Any, Dict, Iterable, Optional, Union
+
+import neptune
+from neptune.experiments import Experiment
 
 import torch
 from torch import is_tensor
 
 from pytorch_lightning.loggers.base import LightningLoggerBase, rank_zero_experiment
 from pytorch_lightning.utilities import rank_zero_only
-
-log = logging.getLogger(__name__)
-
-import neptune
-from neptune.experiments import Experiment
 
 
 class NeptuneLogger(LightningLoggerBase):
@@ -193,8 +190,9 @@ class NeptuneLogger(LightningLoggerBase):
         self._kwargs = kwargs
         self.experiment_id = experiment_id
         self._experiment = None
-
-        log.info(f'NeptuneLogger will work in {"offline" if self.offline_mode else "online"} mode')
+        self.params = None
+        self.properties = None
+        self.tags = None
 
     def __getstate__(self):
         state = self.__dict__.copy()
