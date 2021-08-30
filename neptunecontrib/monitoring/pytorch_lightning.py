@@ -165,15 +165,15 @@ class NeptuneLogger(LightningLoggerBase):
     LOGGER_JOIN_CHAR = "-"
 
     def __init__(
-        self,
-        api_key: Optional[str] = None,
-        project_name: Optional[str] = None,
-        close_after_fit: Optional[bool] = True,
-        offline_mode: bool = False,
-        experiment_name: Optional[str] = None,
-        experiment_id: Optional[str] = None,
-        prefix: str = "",
-        **kwargs,
+            self,
+            api_key: Optional[str] = None,
+            project_name: Optional[str] = None,
+            close_after_fit: Optional[bool] = True,
+            offline_mode: bool = False,
+            experiment_name: Optional[str] = None,
+            experiment_id: Optional[str] = None,
+            prefix: str = "",
+            **kwargs,
     ):
         if neptune is None:
             raise ImportError(
@@ -291,7 +291,7 @@ class NeptuneLogger(LightningLoggerBase):
 
     @rank_zero_only
     def log_metric(
-        self, metric_name: str, metric_value: Union[torch.Tensor, float, str], step: Optional[int] = None
+            self, metric_name: str, metric_value: Union[torch.Tensor, float, str], step: Optional[int] = None
     ) -> None:
         """
         Log metrics (numeric values) in Neptune experiments.
