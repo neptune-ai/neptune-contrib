@@ -1,4 +1,5 @@
-# Copyright The PyTorch Lightning team.
+#
+# Copyright (c) 2021, Neptune Labs Sp. z o.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+
 from argparse import Namespace
 from typing import Any, Dict, Iterable, Optional, Union
 
@@ -207,7 +210,7 @@ class NeptuneLogger(LightningLoggerBase):
     @property
     @rank_zero_experiment
     def experiment(self) -> Experiment:
-        r"""
+        r"""KU
         Actual Neptune object. To use neptune features in your
         :class:`~pytorch_lightning.core.lightning.LightningModule` do the following.
 
