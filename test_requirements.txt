@@ -1,8 +1,0 @@
-neptune-client
-mock==2.0.0
-pylint==2.4.2
-pytest==5.2.0
-pytest-cov==2.6.1
-pytest-xdist==1.25.0
-tox==3.6.1
-pylintfileheader==0.0.2
