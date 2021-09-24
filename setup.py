@@ -7,13 +7,7 @@ def main():
         readme = readme_file.read()
 
     extras = {
-        'bots': ['python-telegram-bot'],
-        'hpo': ['scikit-optimize>=0.5.2', 'scipy'],
-        'monitoring': ['scikit-optimize>=0.7.4', 'sacred>=0.7.5', 'scikit-learn>=0.21.3', 'keras-tuner>=1.0.2',
-                       'scikit-plot>=0.3.7', 'seaborn>=0.8.1', 'aif360>=0.2.1', 'xgboost>=0.82',
-                       'yellowbrick>=1.2', 'pytorch-lightning>=1.0.0'],
-        'versioning': ['boto3', 'numpy'],
-        'viz': ['altair>=2.3.0', 'hiplot>=0.1.5'],
+        'monitoring': ['pytorch-lightning>=1.0.0'],
     }
 
     all_deps = []

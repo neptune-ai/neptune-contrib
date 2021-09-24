@@ -1,100 +1,52 @@
-neptune-contrib: open-source contributions to Neptune.ai
-========================================================
+Neptune Legacy Logger for PyTorch Lightning
+===========================================
 
-This library is a collection of helpers and extensions that make working
-with `Neptune app`_ more effective and better. It is build on top of neptune-client
-and gives you option to do things like:
+This library is a location of the ``NeptuneLegacyLogger`` for PyTorch Lightning.
 
-* interactive visualizations of experiment runs or hyperparameters
-* running hyper parameter sweeps in scikit-optimize, hyperopt or any other tool you like
-* monitor training of the lightGBM or fastai models with a single callback
-* much more
+.. warning::
+    This is LegacyLogger implementation that is under maintenance support only.
+    No new updates will be made to this logger.
 
-Enjoy the following integrations:
+    **Please visit integration**
+    ** `docs <https://docs.neptune.ai/integrations-and-supported-tools/model-training/pytorch-lightning>`_ **
+    **to learn about the latest, fully supported version.**
 
-.. image:: _static/images/fastai_neptuneML.png
-   :target: _static/images/fastai_neptuneML.png
-   :alt: fastai neptune.ai integration
+.. image:: _static/images/ptl-dashboard.png
+   :target: _static/images/ptl-dashboard.png
+   :alt: PyTorch Lightning - neptune.ai integration
 
-.. image:: _static/images/sacred_neptuneML.png
-   :target: _static/images/sacred_neptuneML.png
-   :alt: Sacred neptune.ai integration
+Installation
+------------
 
-.. image:: _static/images/LightGBM_neptuneML.png
-   :target: _static/images/LightGBM_neptuneML.png
-   :alt: lightGBM neptune.ai integration
+Install neptune-contrib via pip:
 
-.. image:: _static/images/matplotlib_neptuneML.png
-   :target: _static/images/matplotlib_neptuneML.png
-   :alt: matplotlib neptune.ai integration
+.. code-block:: bash
 
-.. image:: _static/images/Telegram_neptuneML.png
-   :target: _static/images/Telegram_neptuneML.png
-   :alt: Telegram neptune.ai integration
+    pip install neptune-contrib
 
-And the best thing is you can extend it yourself or... tell us to do it for you :).
+or
+
+.. code-block:: bash
+
+    pip install neptune-contrib[monitoring]
 
 .. toctree::
    :maxdepth: 1
-   :caption: Get Started
+   :caption: Reference
 
-   installation
-   overview
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Examples
-
-   examples/examples_index
-
-.. toctree::
-   :maxdepth: 1
-   :caption: User Guide
-
-   api.audio <user_guide/api/audio>
-   api.chart <user_guide/api/chart>
-   api.explainers <user_guide/api/explainers>
-   api.html <user_guide/api/html>
-   api.table <user_guide/api/table>
-   api.utils <user_guide/api/utils>
-   api.video <user_guide/api/video>
-   hpo.utils <user_guide/hpo/utils>
-   bots.telegram_bot <user_guide/bots/telegram_bot>
-   monitoring.keras <user_guide/monitoring/keras>
-   monitoring.lightgbm <user_guide/monitoring/lightgbm>
-   monitoring.xgboost <user_guide/monitoring/xgboost>
-   monitoring.sklearn <user_guide/monitoring/sklearn>
-   monitoring.fastai <user_guide/monitoring/fastai>
-   monitoring.metrics <user_guide/monitoring/metrics>
-   monitoring.fairness <user_guide/monitoring/fairness>
-   monitoring.optuna <user_guide/monitoring/optuna>
-   monitoring.sacred <user_guide/monitoring/sacred>
-   monitoring.skopt <user_guide/monitoring/skopt>
-   monitoring.utils <user_guide/monitoring/utils>
-   sync.with_json <user_guide/sync/with_json>
-   versioning.data <user_guide/versioning/data>
-   viz.experiments <user_guide/viz/experiments>
-   viz.projects <user_guide/viz/projects>
-   viz.parallel_coordinates_plot <user_guide/viz/parallel_coordinates_plot>
-   create_experiment_comparison_comment <user_guide/create_experiment_comparison_comment>
-   create_experiment_from_json <user_guide/create_experiment_from_json>
-
+   PyTorch Lightning <user_guide/monitoring/pytorch_lightning>
 
 Bug Reports and Questions
 -------------------------
+If you found yourself in any trouble drop an issue on `Git Issues`_.
 
-neptune-contrib is MIT-licensed and the source code is available on `GitHub`_. If you
-find yourself in any trouble drop an isse on `Git Issues`_, fire a feature request on
-`Git Feature Request`_ or ask us on the `Neptune community forum`_ or `Neptune community spectrum`_.
+.. warning::
+    This is LegacyLogger implementation that is under maintenance support only.
+    No new updates will be made to this logger.
 
-
-Contribute
-----------
-
-We keep an updated list of open issues/feature ideas on github project page `Github projects`_.
-If you feel like taking a shot at one of those do go for it!
-In case of any trouble please talk to us on the `Neptune community spectrum`_.
-
+    **Please visit integration**
+    ** `docs <https://docs.neptune.ai/integrations-and-supported-tools/model-training/pytorch-lightning>`_ **
+    **to learn about the latest, fully supported version.**
 
 Indices and tables
 ------------------
@@ -105,8 +57,3 @@ Indices and tables
 
 .. _GitHub: https://github.com/neptune-ai/neptune-contrib
 .. _Git Issues: https://github.com/neptune-ai/neptune-contrib/issues
-.. _Git Feature Request: https://github.com/neptune-ai/neptune-contrib/issues
-.. _Neptune app: https://neptune.ai/
-.. _Neptune community forum: https://community.neptune.ai/
-.. _Github projects: https://github.com/neptune-ai/neptune-contrib/projects
-.. _Neptune community spectrum: https://spectrum.chat/neptune-community?tab=posts

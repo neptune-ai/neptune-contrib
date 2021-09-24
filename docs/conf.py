@@ -18,45 +18,20 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # -- Imports mock -----------------------------------------------------]
-autodoc_mock_imports = ['aif360',
-                        'altair',
-                        'boto3',
-                        'joblib',
-                        'fastai',
-                        'fastai.basic_train',
-                        'hiplot',
-                        'keras',
-                        'tensorflow',
-                        'tensorflow.keras',
-                        'telegram',
-                        'numpy',
-                        'pandas',
-                        'neptune',
-                        'matplotlib',
-                        'sacred',
-                        'sacred.dependencies',
-                        'sacred.observers',
-                        'scipy',
-                        'seaborn',
-                        'sklearn',
-                        'sklearn.metrics',
-                        'skopt',
-                        'optuna',
-                        'scikitplot',
-                        'scikitplot.metrics',
-                        'xgboost',
-                        'yellowbrick']
+autodoc_mock_imports = ['neptune',
+                        'torch',
+                        'pytorch_lightning']
 
 # -- Project information -----------------------------------------------------
 
 project = 'neptune-contrib'
-copyright = '2020, Neptune Dev Team'
+copyright = '2021, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
-version = '0.24'
+version = '1.0'
 # The full version, including alpha/beta/rc tags
-release = '0.24.3'
+release = '1.0.0'
 
 # -- General configuration ---------------------------------------------------
 
