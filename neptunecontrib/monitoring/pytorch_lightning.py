@@ -29,27 +29,28 @@ from pytorch_lightning.utilities import rank_zero_only
 
 class NeptuneLogger(LightningLoggerBase):
     r"""
-    Log using `Neptune <https://neptune.ai>`_.
+    .. warning::
+        This is LegacyLogger implementation that is under maintenance support only.
+        No new updates will be made to this logger.
 
-    Install it with pip:
+        Please visit integration
+        `docs <https://docs.neptune.ai/integrations-and-supported-tools/model-training/pytorch-lightning>`_
+        to learn about the latest, fully supported version.
 
-    .. code-block:: bash
-
-        pip install neptune-client
-
-    The Neptune logger can be used in the online mode or offline (silent) mode.
+    The legacy Logger can be used in the online mode or offline (silent) mode.
     To log experiment data in online mode, :class:`NeptuneLogger` requires an API key.
     In offline mode, the logger does not connect to Neptune.
 
     **ONLINE MODE**
 
-    .. testcode::
+    .. code-block:: python
 
         from pytorch_lightning import Trainer
-        from pytorch_lightning.loggers import NeptuneLogger
+        from neptunecontrib.monitoring.pytorch_lightning import NeptuneLogger
 
         # arguments made to NeptuneLogger are passed on to the neptune.experiments.Experiment class
         # We are using an api_key for the anonymous user "neptuner" but you can use your own.
+
         neptune_logger = NeptuneLogger(
             api_key="ANONYMOUS",
             project_name="shared/pytorch-lightning-integration",
@@ -61,11 +62,13 @@ class NeptuneLogger(LightningLoggerBase):
 
     **OFFLINE MODE**
 
-    .. testcode::
+    .. code-block:: python
 
-        from pytorch_lightning.loggers import NeptuneLogger
+        from pytorch_lightning import Trainer
+        from neptunecontrib.monitoring.pytorch_lightning import NeptuneLogger
 
         # arguments made to NeptuneLogger are passed on to the neptune.experiments.Experiment class
+
         neptune_logger = NeptuneLogger(
             offline_mode=True,
             project_name="USER_NAME/PROJECT_NAME",
@@ -87,19 +90,20 @@ class NeptuneLogger(LightningLoggerBase):
                 self.logger.experiment.log_image("worse_predictions", ...)
                 # log model checkpoint
                 self.logger.experiment.log_artifact("model_checkpoint.pt", ...)
-                self.logger.experiment.whatever_neptune_supports(...)
 
             def any_lightning_module_function_or_hook(self):
                 self.logger.experiment.log_metric("acc_train", ...)
                 self.logger.experiment.log_image("worse_predictions", ...)
                 self.logger.experiment.log_artifact("model_checkpoint.pt", ...)
-                self.logger.experiment.whatever_neptune_supports(...)
 
     If you want to log objects after the training is finished use ``close_after_fit=False``:
 
     .. code-block:: python
 
-        neptune_logger = NeptuneLogger(..., close_after_fit=False, ...)
+        neptune_logger = NeptuneLogger(
+            close_after_fit=False,
+            ...,
+            )
         trainer = Trainer(logger=neptune_logger)
         trainer.fit()
 
@@ -129,8 +133,14 @@ class NeptuneLogger(LightningLoggerBase):
     See Also:
         - An `Example experiment <https://ui.neptune.ai/o/shared/org/
           pytorch-lightning-integration/e/PYTOR-66/charts>`_ showing the UI of Neptune.
-        - `Tutorial <https://docs.neptune.ai/integrations/pytorch_lightning.html>`_ on how to use
-          Pytorch Lightning with Neptune.
+
+    .. warning::
+        This is LegacyLogger implementation that is under maintenance support only.
+        No new updates will be made to this logger.
+
+        Please visit integration
+        `docs <https://docs.neptune.ai/integrations-and-supported-tools/model-training/pytorch-lightning>`_
+        to learn about the latest, fully supported version.
 
     Args:
         api_key: Required in online mode.
@@ -163,6 +173,14 @@ class NeptuneLogger(LightningLoggerBase):
     Raises:
         ImportError:
             If required Neptune package is not installed on the device.
+
+    .. warning::
+        This is LegacyLogger implementation that is under maintenance support only.
+        No new updates will be made to this logger.
+
+        Please visit integration
+        `docs <https://docs.neptune.ai/integrations-and-supported-tools/model-training/pytorch-lightning>`_
+        to learn about the latest, fully supported version.
     """
 
     LOGGER_JOIN_CHAR = "-"
@@ -210,9 +228,9 @@ class NeptuneLogger(LightningLoggerBase):
     @property
     @rank_zero_experiment
     def experiment(self) -> Experiment:
-        r"""KU
+        r"""
         Actual Neptune object. To use neptune features in your
-        :class:`~pytorch_lightning.core.lightning.LightningModule` do the following.
+        :class:`~pytorch_lightning.core.lightning.LightningModule` do the following:
 
         Example::
 
