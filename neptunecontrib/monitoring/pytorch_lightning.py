@@ -30,7 +30,7 @@ from pytorch_lightning.utilities import rank_zero_only
 class NeptuneLogger(LightningLoggerBase):
     r"""
     .. warning::
-        This is LegacyLogger implementation that is under maintenance support only.
+        This is a LegacyLogger implementation that is under maintenance support only.
         No new updates will be made to this logger.
 
         Please visit integration
