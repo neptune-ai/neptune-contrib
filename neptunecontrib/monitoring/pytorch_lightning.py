@@ -37,7 +37,7 @@ class NeptuneLogger(LightningLoggerBase):
         `docs <https://docs.neptune.ai/integrations-and-supported-tools/model-training/pytorch-lightning>`_
         to learn about the latest, fully supported version.
 
-    The legacy Logger can be used in the online mode or offline (silent) mode.
+    The legacy Logger can be used in online mode or silent mode.
     To log experiment data in online mode, :class:`NeptuneLogger` requires an API key.
     In offline mode, the logger does not connect to Neptune.
 
