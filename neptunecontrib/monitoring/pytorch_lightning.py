@@ -33,7 +33,7 @@ class NeptuneLogger(LightningLoggerBase):
         This is a LegacyLogger implementation that is under maintenance support only.
         No new updates will be made to this logger.
 
-        Please visit integration
+        Please visit the current PyTorch Lightning integration
         `docs <https://docs.neptune.ai/integrations-and-supported-tools/model-training/pytorch-lightning>`_
         to learn about the latest, fully supported version.
 
