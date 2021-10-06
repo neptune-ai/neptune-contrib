@@ -45,18 +45,20 @@ autodoc_mock_imports = ['aif360',
                         'scikitplot',
                         'scikitplot.metrics',
                         'xgboost',
-                        'yellowbrick']
+                        'yellowbrick',
+                        'torch',
+                        'pytorch_lightning']
 
 # -- Project information -----------------------------------------------------
 
 project = 'neptune-contrib'
-copyright = '2020, Neptune Dev Team'
+copyright = '2021, Neptune Dev Team'
 author = 'Neptune Dev Team'
 
 # The short X.Y version
-version = '0.24'
+version = '0.25'
 # The full version, including alpha/beta/rc tags
-release = '0.24.3'
+release = '0.25.0'
 
 # -- General configuration ---------------------------------------------------
 
