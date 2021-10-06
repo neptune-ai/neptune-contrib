@@ -168,7 +168,7 @@ def _md5_hash_dir(dirpath):
 
 def _md5_hash_bucket(bucket_name, path):
     s3 = boto3.resource('s3')
-    bucket = s3.Bucket(bucket_name)
+    bucket = s3.Bucket(bucket_name)  # pylint: disable=E1101
 
     hash_md5 = hashlib.md5()
 
