@@ -19,7 +19,7 @@ import neptune
 from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
-def neptune_monitor(experiment=None, prefix=''):
+def neptune_monitor(experiment=None, prefix=""):
     """Logs lightGBM learning curves to Neptune.
 
     Goes over the list of metrics and valid_sets passed to the `lgb.train`
@@ -84,7 +84,7 @@ def neptune_monitor(experiment=None, prefix=''):
 
     def callback(env):
         for name, loss_name, loss_value, _ in env.evaluation_result_list:
-            channel_name = '{}{}_{}'.format(prefix, name, loss_name)
+            channel_name = "{}{}_{}".format(prefix, name, loss_name)
             _exp.send_metric(channel_name, x=env.iteration, y=loss_value)
 
     return callback

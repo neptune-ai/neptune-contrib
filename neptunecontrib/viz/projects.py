@@ -18,19 +18,14 @@ import warnings
 import altair as alt
 import pandas as pd
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 __all__ = [
-    'project_progress',
+    "project_progress",
 ]
 
 
-def project_progress(progress_df,
-                     width=800,
-                     heights=(50, 400),
-                     line_size=5,
-                     text_size=15,
-                     opacity=0.3):
+def project_progress(progress_df, width=800, heights=(50, 400), line_size=5, text_size=15, opacity=0.3):
     """Creates an interactive project progress exploration chart.
 
     It lets you choose the resources you want to see ('experiment_count_day' or 'running_time_day'), you
@@ -95,100 +90,117 @@ def project_progress(progress_df,
 
     progress_df = _prep_progress_df(progress_df)
 
-    nearest = alt.selection(type='single', nearest=True, on='mouseover',
-                            fields=['timestamp'], empty='none')
-    brush = alt.selection(type='interval', encodings=['x'])
-    exp_box = alt.binding_select(options=['running_time_day', 'experiment_count_day'])
-    exp_selection = alt.selection_single(name='select', fields=['resource'], bind=exp_box)
+    nearest = alt.selection(type="single", nearest=True, on="mouseover", fields=["timestamp"], empty="none")
+    brush = alt.selection(type="interval", encodings=["x"])
+    exp_box = alt.binding_select(options=["running_time_day", "experiment_count_day"])
+    exp_selection = alt.selection_single(name="select", fields=["resource"], bind=exp_box)
 
-    top_view = alt.Chart(height=top_height, width=width).mark_line(interpolate='step-after', size=line_size).encode(
-        x='timestamp:T',
-        y=alt.Y('metric:Q', scale=alt.Scale(zero=False), axis=None),
-        color=alt.Color('actual_or_best:N', legend=alt.Legend(title='Metric actual or current best')),
-    ).add_selection(
-        brush
+    top_view = (
+        alt.Chart(height=top_height, width=width)
+        .mark_line(interpolate="step-after", size=line_size)
+        .encode(
+            x="timestamp:T",
+            y=alt.Y("metric:Q", scale=alt.Scale(zero=False), axis=None),
+            color=alt.Color("actual_or_best:N", legend=alt.Legend(title="Metric actual or current best")),
+        )
+        .add_selection(brush)
     )
 
-    selectors = alt.Chart().mark_point().encode(
-        x=alt.X('timestamp:T'),
-        opacity=alt.value(0),
-    ).add_selection(
-        nearest
-    ).transform_filter(
-        brush
+    selectors = (
+        alt.Chart()
+        .mark_point()
+        .encode(
+            x=alt.X("timestamp:T"),
+            opacity=alt.value(0),
+        )
+        .add_selection(nearest)
+        .transform_filter(brush)
     )
-    line = alt.Chart().mark_line(interpolate='step-after', size=line_size).encode(
-        x=alt.X('timestamp:T'),
-        y=alt.Y('metric:Q', scale=alt.Scale(zero=False)),
-        color=alt.Color('actual_or_best:N', legend=alt.Legend(title='Metric actual or current best')),
-    ).transform_filter(
-        brush
+    line = (
+        alt.Chart()
+        .mark_line(interpolate="step-after", size=line_size)
+        .encode(
+            x=alt.X("timestamp:T"),
+            y=alt.Y("metric:Q", scale=alt.Scale(zero=False)),
+            color=alt.Color("actual_or_best:N", legend=alt.Legend(title="Metric actual or current best")),
+        )
+        .transform_filter(brush)
     )
-    points = line.mark_point().encode(
-        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+    points = line.mark_point().encode(opacity=alt.condition(nearest, alt.value(1), alt.value(0)))
+    text = line.mark_text(align="left", dx=5, dy=-5, size=text_size).encode(
+        text=alt.condition(nearest, "metric:Q", alt.value(" ")), color="actual_or_best:N"
     )
-    text = line.mark_text(align='left', dx=5, dy=-5, size=text_size).encode(
-        text=alt.condition(nearest, 'metric:Q', alt.value(' ')),
-        color='actual_or_best:N'
-    )
-    rules = alt.Chart().mark_rule(color='gray').encode(
-        x=alt.X('timestamp:T'),
-    ).transform_filter(
-        nearest
+    rules = (
+        alt.Chart()
+        .mark_rule(color="gray")
+        .encode(
+            x=alt.X("timestamp:T"),
+        )
+        .transform_filter(nearest)
     )
     metrics = alt.layer(line, points, text, rules, selectors).properties(
         height=bottom_height,
         width=width,
     )
 
-    exp_selector = alt.Chart().mark_area().encode(
-        x=alt.X('timestamp:T'),
-        opacity=alt.value(0),
-    ).add_selection(
-        exp_selection
-    ).transform_filter(
-        exp_selection
-    ).transform_filter(
-        brush
+    exp_selector = (
+        alt.Chart()
+        .mark_area()
+        .encode(
+            x=alt.X("timestamp:T"),
+            opacity=alt.value(0),
+        )
+        .add_selection(exp_selection)
+        .transform_filter(exp_selection)
+        .transform_filter(brush)
     )
-    exp_line = alt.Chart().mark_area(interpolate='step-after').encode(
-        x=alt.X('timestamp:T'),
-        y=alt.Y('time_or_count:Q', scale=alt.Scale(zero=False)),
-        color=alt.ColorValue('red'),
-        opacity=alt.OpacityValue(opacity)
-    ).transform_filter(
-        brush
-    ).transform_filter(
-        exp_selection
+    exp_line = (
+        alt.Chart()
+        .mark_area(interpolate="step-after")
+        .encode(
+            x=alt.X("timestamp:T"),
+            y=alt.Y("time_or_count:Q", scale=alt.Scale(zero=False)),
+            color=alt.ColorValue("red"),
+            opacity=alt.OpacityValue(opacity),
+        )
+        .transform_filter(brush)
+        .transform_filter(exp_selection)
     )
     exp_points = exp_line.mark_point(filled=True).encode(
-        color=alt.ColorValue('black'),
-        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+        color=alt.ColorValue("black"), opacity=alt.condition(nearest, alt.value(1), alt.value(0))
     )
-    exp_text = exp_line.mark_text(align='left', dx=5, dy=-5, fontWeight='bold', size=text_size).encode(
-        text=alt.condition(nearest, 'time_or_count:Q', alt.value(' ')),
-        color=alt.ColorValue('black')
+    exp_text = exp_line.mark_text(align="left", dx=5, dy=-5, fontWeight="bold", size=text_size).encode(
+        text=alt.condition(nearest, "time_or_count:Q", alt.value(" ")), color=alt.ColorValue("black")
     )
-    exp_rules = alt.Chart().mark_rule(color='gray').encode(
-        x=alt.X('timestamp:T'),
-    ).transform_filter(
-        nearest
+    exp_rules = (
+        alt.Chart()
+        .mark_rule(color="gray")
+        .encode(
+            x=alt.X("timestamp:T"),
+        )
+        .transform_filter(nearest)
     )
     exps = alt.layer(exp_line, exp_points, exp_rules, exp_text, exp_selector).properties(
         height=bottom_height,
         width=width,
     )
 
-    main_view = alt.layer(exps, metrics).properties(
-        height=bottom_height,
-        width=width,
-    ).resolve_scale(
-        y='independent'
+    main_view = (
+        alt.layer(exps, metrics)
+        .properties(
+            height=bottom_height,
+            width=width,
+        )
+        .resolve_scale(y="independent")
     )
 
-    tags = alt.Chart(height=1, width=1).mark_text(align='left', size=text_size, fontWeight='bold').encode(
-        x=alt.X('timestamp:T', axis=None),
-        text=alt.condition(nearest, 'text:N', alt.value(' ')),
+    tags = (
+        alt.Chart(height=1, width=1)
+        .mark_text(align="left", size=text_size, fontWeight="bold")
+        .encode(
+            x=alt.X("timestamp:T", axis=None),
+            text=alt.condition(nearest, "text:N", alt.value(" ")),
+        )
     )
 
     combined = alt.vconcat(top_view, tags, main_view, data=progress_df)
@@ -196,34 +208,33 @@ def project_progress(progress_df,
 
 
 def _prep_progress_df(progress_df):
-    progress_df['text'] = progress_df.apply(_get_text, axis=1)
+    progress_df["text"] = progress_df.apply(_get_text, axis=1)
 
-    metric_df = progress_df[['id', 'metric', 'metric_best']]
-    metric_df.columns = ['id', 'actual', 'best']
-    metric_df = metric_df.melt(id_vars=['id'],
-                               value_vars=['actual', 'best'],
-                               var_name='actual_or_best',
-                               value_name='metric')
+    metric_df = progress_df[["id", "metric", "metric_best"]]
+    metric_df.columns = ["id", "actual", "best"]
+    metric_df = metric_df.melt(
+        id_vars=["id"], value_vars=["actual", "best"], var_name="actual_or_best", value_name="metric"
+    )
 
-    exp_df = progress_df[['id', 'experiment_count_day', 'running_time_day']]
-    exp_df.columns = ['id', 'experiment_count_day', 'running_time_day']
-    exp_df['running_time_day'] = exp_df['running_time_day'] / (60 * 60)
-    exp_df = exp_df.melt(id_vars=['id'],
-                         value_vars=['experiment_count_day', 'running_time_day'],
-                         var_name='resource',
-                         value_name='time_or_count')
+    exp_df = progress_df[["id", "experiment_count_day", "running_time_day"]]
+    exp_df.columns = ["id", "experiment_count_day", "running_time_day"]
+    exp_df["running_time_day"] = exp_df["running_time_day"] / (60 * 60)
+    exp_df = exp_df.melt(
+        id_vars=["id"],
+        value_vars=["experiment_count_day", "running_time_day"],
+        var_name="resource",
+        value_name="time_or_count",
+    )
 
-    progress_df = progress_df.drop(labels=['metric', 'metric_best', 'experiment_count_day', 'running_time_day'], axis=1)
-    progress_df = pd.merge(metric_df, progress_df, on='id')
-    progress_df = pd.merge(exp_df, progress_df, on='id')
+    progress_df = progress_df.drop(labels=["metric", "metric_best", "experiment_count_day", "running_time_day"], axis=1)
+    progress_df = pd.merge(metric_df, progress_df, on="id")
+    progress_df = pd.merge(exp_df, progress_df, on="id")
 
-    progress_df['timestamp'] = progress_df['timestamp'].astype(str)
-    progress_df['timestamp_day'] = progress_df['timestamp_day'].astype(str)
+    progress_df["timestamp"] = progress_df["timestamp"].astype(str)
+    progress_df["timestamp_day"] = progress_df["timestamp_day"].astype(str)
     return progress_df
 
 
 def _get_text(row):
-    text = '{0} | {1:.4f} | {2}'.format(row['id'],
-                                        row['metric'],
-                                        ' ({})'.format(' , '.join(row['tags'])))
+    text = "{0} | {1:.4f} | {2}".format(row["id"], row["metric"], " ({})".format(" , ".join(row["tags"])))
     return text

@@ -62,11 +62,15 @@ Example:
 import argparse
 from io import BytesIO
 
-from neptune.sessions import Session
 import matplotlib.pyplot as plt
 import pandas as pd
-from telegram.ext import Updater
-from telegram.ext import CommandHandler, MessageHandler, Filters
+from neptune.sessions import Session
+from telegram.ext import (
+    CommandHandler,
+    Filters,
+    MessageHandler,
+    Updater,
+)
 
 
 class TelegramBot:
@@ -77,9 +81,9 @@ class TelegramBot:
         self.neptune_project = None
         self.project_name = None
 
-        self.dispatcher.add_handler(CommandHandler('project', self.project, pass_args=True))
-        self.dispatcher.add_handler(CommandHandler('experiments', self.experiments, pass_args=True))
-        self.dispatcher.add_handler(CommandHandler('experiment', self.experiment, pass_args=True))
+        self.dispatcher.add_handler(CommandHandler("project", self.project, pass_args=True))
+        self.dispatcher.add_handler(CommandHandler("experiments", self.experiments, pass_args=True))
+        self.dispatcher.add_handler(CommandHandler("experiment", self.experiment, pass_args=True))
         self.dispatcher.add_handler(MessageHandler(Filters.command, self.unknown))
 
     def run(self):
@@ -87,9 +91,9 @@ class TelegramBot:
 
     def project(self, bot, update, args):
         if args:
-            if args[0] == 'select':
+            if args[0] == "select":
                 self._project_select(bot, update, args)
-            elif args[0] == 'list':
+            elif args[0] == "list":
                 self._project_list(bot, update, args)
             else:
                 self._project_help(bot, update)
@@ -101,11 +105,11 @@ class TelegramBot:
             self._no_project_selected(bot, update)
         else:
             if args:
-                if args[0] == 'last':
+                if args[0] == "last":
                     self._experiments_last(bot, update, args)
-                elif args[0] == 'best':
+                elif args[0] == "best":
                     self._experiments_best(bot, update, args)
-                elif args[0] == 'state':
+                elif args[0] == "state":
                     self._experiments_state(bot, update, args)
                 else:
                     self._experiments_help(bot, update)
@@ -117,9 +121,9 @@ class TelegramBot:
             self._no_project_selected(bot, update)
         else:
             if args:
-                if args[0] == 'link':
+                if args[0] == "link":
                     self._experiment_link(bot, update, args)
-                elif args[0] == 'plot':
+                elif args[0] == "plot":
                     self._experiment_plot(bot, update, args)
                 else:
                     self._experiment_help(bot, update)
@@ -127,35 +131,40 @@ class TelegramBot:
                 self._experiment_help(bot, update)
 
     def unknown(self, bot, update):
-        bot.send_message(chat_id=update.message.chat_id,
-                         text="Sorry, I only undestand /project, /experiments, /experiment")
+        bot.send_message(
+            chat_id=update.message.chat_id, text="Sorry, I only undestand /project, /experiments, /experiment"
+        )
 
     def _project_list(self, bot, update, args):
         if len(args) != 2:
-            msg = ['message should have a format:',
-                   '/project list NAMESPACE',
-                   'for example:',
-                   '/project list neptune-ai']
-            msg = '\n'.join(msg)
+            msg = [
+                "message should have a format:",
+                "/project list NAMESPACE",
+                "for example:",
+                "/project list neptune-ai",
+            ]
+            msg = "\n".join(msg)
         else:
             namespace = args[1]
             project_names = self.session.get_projects(namespace).keys()
-            msg = '\n'.join(project_names)
+            msg = "\n".join(project_names)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _project_select(self, bot, update, args):
         if len(args) != 2:
-            msg = ['message should have a format:',
-                   '/project select NAMESPACE/PROJECT_NAME',
-                   'for example:',
-                   '/project select neptune-ai/neptune-examples']
-            msg = '\n'.join(msg)
+            msg = [
+                "message should have a format:",
+                "/project select NAMESPACE/PROJECT_NAME",
+                "for example:",
+                "/project select neptune-ai/neptune-examples",
+            ]
+            msg = "\n".join(msg)
         else:
             self.project_name = args[1]
-            namespace = self.project_name.split('/')[0]
+            namespace = self.project_name.split("/")[0]
             self.neptune_project = self.session.get_projects(namespace)[self.project_name]
 
-            msg = 'Selected a project: {}'.format(self.project_name)
+            msg = "Selected a project: {}".format(self.project_name)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _project_help(self, bot, update):
@@ -167,64 +176,70 @@ class TelegramBot:
 
     def _experiments_last(self, bot, update, args):
         if len(args) != 3:
-            msg = ['message should have a format:',
-                   '/experiments last NR_EXPS TIMESTAMP',
-                   'for example:',
-                   '/experiments last 5 finished']
-            msg = '\n'.join(msg)
+            msg = [
+                "message should have a format:",
+                "/experiments last NR_EXPS TIMESTAMP",
+                "for example:",
+                "/experiments last 5 finished",
+            ]
+            msg = "\n".join(msg)
         else:
             nr_exps = int(args[1])
             timestamp = args[2]
 
-            if timestamp not in ['created', 'finished']:
-                msg = 'choose created or finished as timestamp'
+            if timestamp not in ["created", "finished"]:
+                msg = "choose created or finished as timestamp"
             else:
                 leaderboard = self.neptune_project.get_leaderboard()
                 leaderboard[timestamp] = pd.to_datetime(leaderboard[timestamp])
                 leaderboard.sort_values(timestamp, ascending=False, inplace=True)
-                ids = leaderboard['id'].tolist()[:nr_exps]
-                ids = ['id'] + ids
-                msg = '\n'.join(ids)
+                ids = leaderboard["id"].tolist()[:nr_exps]
+                ids = ["id"] + ids
+                msg = "\n".join(ids)
 
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiments_best(self, bot, update, args):
         if len(args) != 3:
-            msg = ['message should have a format:',
-                   '/experiments best METRIC NR_EXPS',
-                   'for example:',
-                   '/experiments best log_loss 3']
-            msg = '\n'.join(msg)
+            msg = [
+                "message should have a format:",
+                "/experiments best METRIC NR_EXPS",
+                "for example:",
+                "/experiments best log_loss 3",
+            ]
+            msg = "\n".join(msg)
         else:
             metric_name = args[1]
-            metric_column = 'channel_' + metric_name
+            metric_column = "channel_" + metric_name
             nr_exps = int(args[2])
 
             leaderboard = self.neptune_project.get_leaderboard()
-            scores = leaderboard.sort_values([metric_column], ascending=False)[['id', metric_column]]
+            scores = leaderboard.sort_values([metric_column], ascending=False)[["id", metric_column]]
 
-            msg = 'id | {}\n'.format(metric_name)
+            msg = "id | {}\n".format(metric_name)
             for idx, metric in scores.values[:nr_exps]:
-                msg = msg + '{} | {}\n'.format(idx, metric)
+                msg = msg + "{} | {}\n".format(idx, metric)
 
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiments_state(self, bot, update, args):
         if len(args) != 3:
-            msg = ['message should have a format:',
-                   '/experiments state STATE NR_EXPS',
-                   'for example:',
-                   '/experiments state running 4']
-            msg = '\n'.join(msg)
+            msg = [
+                "message should have a format:",
+                "/experiments state STATE NR_EXPS",
+                "for example:",
+                "/experiments state running 4",
+            ]
+            msg = "\n".join(msg)
         else:
             state = args[1]
             nr_exps = int(args[2])
             leaderboard = self.neptune_project.get_leaderboard(state=state)
-            leaderboard['created'] = pd.to_datetime(leaderboard['created'])
-            leaderboard.sort_values('created', ascending=False, inplace=True)
-            ids = leaderboard['id'].tolist()[:nr_exps]
-            ids = ['id'] + ids
-            msg = '\n'.join(ids)
+            leaderboard["created"] = pd.to_datetime(leaderboard["created"])
+            leaderboard.sort_values("created", ascending=False, inplace=True)
+            ids = leaderboard["id"].tolist()[:nr_exps]
+            ids = ["id"] + ids
+            msg = "\n".join(ids)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiments_help(self, bot, update):
@@ -237,25 +252,29 @@ class TelegramBot:
 
     def _experiment_link(self, bot, update, args):
         if len(args) != 2:
-            msg = ['message should have a format:',
-                   '/experiment link SHORT_ID',
-                   'for example:',
-                   '/experiment link NEP-508']
-            msg = '\n'.join(msg)
+            msg = [
+                "message should have a format:",
+                "/experiment link SHORT_ID",
+                "for example:",
+                "/experiment link NEP-508",
+            ]
+            msg = "\n".join(msg)
         else:
             short_id = args[1]
-            namespace, project = self.project_name.split('/')
+            namespace, project = self.project_name.split("/")
 
-            msg = 'https://ui.neptune.ai/o/{}/org/{}/e/{}/details'.format(namespace, project, short_id)
+            msg = "https://ui.neptune.ai/o/{}/org/{}/e/{}/details".format(namespace, project, short_id)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _experiment_plot(self, bot, update, args):
         if len(args) < 3:
-            msg = ['message should have a format:',
-                   '/experiment plot SHORT_ID METRIC_NAME OTHER_METRIC_NAME',
-                   'for example:',
-                   '/experiment plot NEP-508 train_loss valid_loss']
-            msg = '\n'.join(msg)
+            msg = [
+                "message should have a format:",
+                "/experiment plot SHORT_ID METRIC_NAME OTHER_METRIC_NAME",
+                "for example:",
+                "/experiment plot NEP-508 train_loss valid_loss",
+            ]
+            msg = "\n".join(msg)
             bot.send_message(chat_id=update.message.chat_id, text=msg)
         else:
             short_id = args[1]
@@ -269,45 +288,46 @@ class TelegramBot:
 
             fig = plt.figure()
             for channel_name in data.columns:
-                if channel_name != 'x':
-                    plt.plot('x', channel_name, data=data,
-                             marker='', linewidth=2, label=channel_name)
+                if channel_name != "x":
+                    plt.plot("x", channel_name, data=data, marker="", linewidth=2, label=channel_name)
             plt.legend()
 
             buffer = BytesIO()
-            fig.savefig(buffer, format='png')
+            fig.savefig(buffer, format="png")
             buffer.seek(0)
             update.message.reply_photo(buffer)
 
     def _experiment_help(self, bot, update):
         msg = """Available options are:\n
         /experiment link SHORT_ID
-        /experiments plot SHORT_ID METRIC_NAME (OTHER_METRIC_NAME) 
+        /experiments plot SHORT_ID METRIC_NAME (OTHER_METRIC_NAME)
         """
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
     def _no_project_selected(self, bot, update):
-        msg = ["You haven't selected your project.",
-               "Do so by running:\n"
-               "/project select NAMESPACE/PROJECT_NAME",
-               "For example:",
-               "/project select neptune-ai/neptune-examples"]
-        msg = '\n'.join(msg)
+        msg = [
+            "You haven't selected your project.",
+            "Do so by running:\n" "/project select NAMESPACE/PROJECT_NAME",
+            "For example:",
+            "/project select neptune-ai/neptune-examples",
+        ]
+        msg = "\n".join(msg)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--telegram_api_token')
-    parser.add_argument('-n', '--neptune_api_token', default=None)
+    parser.add_argument("-t", "--telegram_api_token")
+    parser.add_argument("-n", "--neptune_api_token", default=None)
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     arguments = parse_args()
 
-    telegram_bot = TelegramBot(telegram_api_token=arguments.telegram_api_token,
-                               neptune_api_token=arguments.neptune_api_token)
+    telegram_bot = TelegramBot(
+        telegram_api_token=arguments.telegram_api_token, neptune_api_token=arguments.neptune_api_token
+    )
 
     while True:
         telegram_bot.run()

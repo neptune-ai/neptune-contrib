@@ -17,7 +17,7 @@
 import neptune
 
 __all__ = [
-    'log_html',
+    "log_html",
 ]
 
 
@@ -62,11 +62,12 @@ def log_html(name, html, experiment=None):
 
     _exp = experiment if experiment else neptune
 
-    _exp.log_artifact(export_html(html), "htmls/" + name + '.html')
+    _exp.log_artifact(export_html(html), "htmls/" + name + ".html")
 
 
 def export_html(html):
     from io import StringIO
+
     buffer = StringIO(html)
     buffer.seek(0)
 

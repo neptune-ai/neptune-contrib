@@ -23,11 +23,11 @@ from neptunecontrib.monitoring.utils import expect_not_a_run
 if sys.version_info[0] == 3 and sys.version_info[1] >= 6:
     from fastai.basic_train import LearnerCallback
 else:
+
     class LearnerCallback:
         pass
 
-
-    LearnerCallback.__module__ = 'fastai.basic_train'
+    LearnerCallback.__module__ = "fastai.basic_train"
 
 
 class NeptuneMonitor(LearnerCallback):
@@ -78,7 +78,7 @@ class NeptuneMonitor(LearnerCallback):
         you need to have the fastai library installed on your computer to use this module.
     """
 
-    def __init__(self, learn=None, experiment=None, prefix=''):
+    def __init__(self, learn=None, experiment=None, prefix=""):
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
 
@@ -88,17 +88,17 @@ class NeptuneMonitor(LearnerCallback):
             super().__init__(learn)
 
     def on_epoch_end(self, **kwargs):
-        self._exp.send_metric(self._prefix + 'train_smooth_loss', float(kwargs['smooth_loss']))
-        metric_values = kwargs['last_metrics']
-        metric_names = ['valid_last_loss'] + kwargs['metrics']
+        self._exp.send_metric(self._prefix + "train_smooth_loss", float(kwargs["smooth_loss"]))
+        metric_values = kwargs["last_metrics"]
+        metric_names = ["valid_last_loss"] + kwargs["metrics"]
         for metric_value, metric_name in zip(metric_values, metric_names):
             if metric_value is None:
                 continue
 
-            metric_name = getattr(metric_name, '__name__', metric_name)
+            metric_name = getattr(metric_name, "__name__", metric_name)
             self._exp.send_metric(self._prefix + str(metric_name), float(metric_value))
 
     def on_batch_end(self, last_loss, iteration, train, **kwargs):
         if iteration == 0 or not train:
             return
-        self._exp.send_metric('{}last_loss'.format(self._prefix), last_loss)
+        self._exp.send_metric("{}last_loss".format(self._prefix), last_loss)

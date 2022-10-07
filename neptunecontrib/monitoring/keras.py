@@ -28,11 +28,11 @@ except ImportError:
         from keras.callbacks import Callback
     except ImportError:
         msg = """
-        keras package not found. 
+        keras package not found.
 
         As Keras is now part of Tensorflow you should install it by running
             pip install tensorflow"""
-        raise ModuleNotFoundError(msg) # pylint:disable=undefined-variable
+        raise ModuleNotFoundError(msg)  # pylint:disable=undefined-variable
 
 from neptunecontrib.monitoring.utils import expect_not_a_run
 
@@ -87,7 +87,7 @@ class NeptuneMonitor(Callback):
         You need to have Keras or Tensorflow 2 installed on your computer to use this module.
     """
 
-    def __init__(self, experiment=None, prefix=''):
+    def __init__(self, experiment=None, prefix=""):
         super().__init__()
         self._exp = experiment if experiment else neptune
         self._prefix = prefix
@@ -98,11 +98,11 @@ class NeptuneMonitor(Callback):
         if not logs:
             return
 
-        prefix = self._prefix + trigger + '_'
+        prefix = self._prefix + trigger + "_"
 
         for metric, value in logs.items():
             try:
-                if metric in ('batch', 'size'):
+                if metric in ("batch", "size"):
                     continue
                 name = prefix + metric
                 self._exp.log_metric(name, value, y=None)
@@ -110,7 +110,7 @@ class NeptuneMonitor(Callback):
                 pass
 
     def on_batch_end(self, batch, logs=None):  # pylint:disable=unused-argument
-        self._log_metrics(logs, 'batch')
+        self._log_metrics(logs, "batch")
 
     def on_epoch_end(self, epoch, logs=None):  # pylint:disable=unused-argument
-        self._log_metrics(logs, 'epoch')
+        self._log_metrics(logs, "epoch")

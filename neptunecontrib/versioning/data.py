@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import os
 import hashlib
+import os
 
 import boto3
 import matplotlib.pyplot as plt
@@ -24,12 +24,13 @@ import numpy as np
 from neptunecontrib.monitoring.utils import send_figure
 
 __all__ = [
-    'log_data_version',
-    'log_s3_data_version',
-    'log_image_dir_snapshots',
+    "log_data_version",
+    "log_s3_data_version",
+    "log_image_dir_snapshots",
 ]
 
-def log_data_version(path, prefix='', experiment=None):
+
+def log_data_version(path, prefix="", experiment=None):
     """Logs data version of file or folder to Neptune
 
     For a path it calculates the hash and logs it along with the path itself as a property to Neptune experiment.
@@ -58,11 +59,11 @@ def log_data_version(path, prefix='', experiment=None):
 
     _exp = experiment if experiment else neptune
 
-    _exp.set_property('{}data_path'.format(prefix), path)
-    _exp.set_property('{}data_version'.format(prefix), _md5_hash_path(path))
+    _exp.set_property("{}data_path".format(prefix), path)
+    _exp.set_property("{}data_version".format(prefix), _md5_hash_path(path))
 
 
-def log_s3_data_version(bucket_name, path, prefix='', experiment=None):
+def log_s3_data_version(bucket_name, path, prefix="", experiment=None):
     """Logs data version of s3 bucket to Neptune
 
     For a bucket and path it calculates the hash and logs it along with the path itself as a property to
@@ -94,11 +95,11 @@ def log_s3_data_version(bucket_name, path, prefix='', experiment=None):
 
     _exp = experiment if experiment else neptune
 
-    _exp.set_property('{}data_path'.format(prefix), '{}/{}'.format(bucket_name, path))
-    _exp.set_property('{}data_version'.format(prefix), _md5_hash_bucket(bucket_name, path))
+    _exp.set_property("{}data_path".format(prefix), "{}/{}".format(bucket_name, path))
+    _exp.set_property("{}data_version".format(prefix), _md5_hash_bucket(bucket_name, path))
 
 
-def log_image_dir_snapshots(image_dir, channel_name='image_dir_snapshots', experiment=None, sample=16, seed=1234):
+def log_image_dir_snapshots(image_dir, channel_name="image_dir_snapshots", experiment=None, sample=16, seed=1234):
     """Logs visual snapshot of the directory with image data to Neptune.
 
     For a given directory with images it logs a sample of images as figure to Neptune.
@@ -158,7 +159,7 @@ def _md5_hash_dir(dirpath):
             filepath = os.path.join(root, names)
 
             # Hash the path and add to the digest to account for empty files/directories
-            hash_md5.update(hashlib.sha1(filepath[len(dirpath):].encode()).digest())
+            hash_md5.update(hashlib.sha1(filepath[len(dirpath) :].encode()).digest())
 
             if os.path.isfile(filepath):
                 hash_md5 = _update_hash_md5(hash_md5, filepath)
@@ -167,14 +168,14 @@ def _md5_hash_dir(dirpath):
 
 
 def _md5_hash_bucket(bucket_name, path):
-    s3 = boto3.resource('s3')
+    s3 = boto3.resource("s3")
     bucket = s3.Bucket(bucket_name)  # pylint: disable=E1101
 
     hash_md5 = hashlib.md5()
 
     for obj in bucket.objects.all():
         if obj.key.startswith(path):
-            hash_md5.update(obj.e_tag.encode('utf-8'))
+            hash_md5.update(obj.e_tag.encode("utf-8"))
 
     return hash_md5.hexdigest()
 
@@ -195,8 +196,7 @@ def _get_collated_images(image_dir, sample, seed):
     figures = []
     if labels:
         for label in labels:
-            label_paths = [path for path in filepaths
-                           if path.startswith(os.path.join(image_dir, label))]
+            label_paths = [path for path in filepaths if path.startswith(os.path.join(image_dir, label))]
             if len(label_paths) > sample:
                 sample_paths = np.random.choice(label_paths, size=sample, replace=False)
             else:

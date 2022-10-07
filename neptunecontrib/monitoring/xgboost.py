@@ -22,12 +22,9 @@ import xgboost as xgb
 from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
-def neptune_callback(log_model=True,
-                     log_importance=True,
-                     max_num_features=None,
-                     log_tree=None,
-                     experiment=None,
-                     **kwargs):
+def neptune_callback(
+    log_model=True, log_importance=True, max_num_features=None, log_tree=None, experiment=None, **kwargs
+):
     """XGBoost callback for Neptune experiments.
 
     This is XGBoost callback that automatically logs training and evaluation metrics, feature importance chart,
@@ -164,19 +161,24 @@ def neptune_callback(log_model=True,
 
     expect_not_a_run(_exp)
 
-    assert isinstance(log_model, bool),\
-        'log_model must be bool, got {} instead. Check log_model parameter.'.format(type(log_model))
-    assert isinstance(log_importance, bool),\
-        'log_importance must be bool, got {} instead. Check log_importance parameter.'.format(type(log_importance))
+    assert isinstance(log_model, bool), "log_model must be bool, got {} instead. Check log_model parameter.".format(
+        type(log_model)
+    )
+    assert isinstance(
+        log_importance, bool
+    ), "log_importance must be bool, got {} instead. Check log_importance parameter.".format(type(log_importance))
     if max_num_features is not None:
-        assert isinstance(max_num_features, int),\
-            'max_num_features must be int, got {} instead. ' \
-            'Check max_num_features parameter.'.format(type(max_num_features))
+        assert isinstance(
+            max_num_features, int
+        ), "max_num_features must be int, got {} instead. " "Check max_num_features parameter.".format(
+            type(max_num_features)
+        )
     if log_tree is not None:
         if isinstance(log_tree, tuple):
             log_tree = list(log_tree)
-        assert isinstance(log_tree, list),\
-            'log_tree must be list of int, got {} instead. Check log_tree parameter.'.format(type(log_tree))
+        assert isinstance(
+            log_tree, list
+        ), "log_tree must be list of int, got {} instead. Check log_tree parameter.".format(type(log_tree))
 
     def callback(env):
         # Log metrics after iteration
@@ -184,22 +186,22 @@ def neptune_callback(log_model=True,
             if len(item) == 2:  # train case
                 _exp.log_metric(item[0], item[1])
             if len(item) == 3:  # cv case
-                _exp.log_metric('{}-mean'.format(item[0]), item[1])
-                _exp.log_metric('{}-std'.format(item[0]), item[2])
+                _exp.log_metric("{}-mean".format(item[0]), item[1])
+                _exp.log_metric("{}-std".format(item[0]), item[2])
 
         # Log booster, end of training
         if env.iteration + 1 == env.end_iteration and log_model:
             if env.cvfolds:  # cv case
                 for i, cvpack in enumerate(env.cvfolds):
-                    _log_model(cvpack.bst, 'cv-fold-{}-bst.model'.format(i), _exp)
+                    _log_model(cvpack.bst, "cv-fold-{}-bst.model".format(i), _exp)
             else:  # train case
-                _log_model(env.model, 'bst.model', _exp)
+                _log_model(env.model, "bst.model", _exp)
 
         # Log feature importance, end of training
         if env.iteration + 1 == env.end_iteration and log_importance:
             if env.cvfolds:  # cv case
                 for i, cvpack in enumerate(env.cvfolds):
-                    _log_importance(cvpack.bst, max_num_features, _exp, title='cv-fold-{}'.format(i), **kwargs)
+                    _log_importance(cvpack.bst, max_num_features, _exp, title="cv-fold-{}".format(i), **kwargs)
             else:  # train case
                 _log_importance(env.model, max_num_features, _exp, **kwargs)
 
@@ -207,14 +209,15 @@ def neptune_callback(log_model=True,
         if env.iteration + 1 == env.end_iteration and log_tree:
             if env.cvfolds:
                 for j, cvpack in enumerate(env.cvfolds):
-                    _log_trees(cvpack.bst, log_tree, 'trees-cv-fold-{}'.format(j), _exp, **kwargs)
+                    _log_trees(cvpack.bst, log_tree, "trees-cv-fold-{}".format(j), _exp, **kwargs)
             else:
-                _log_trees(env.model, log_tree, 'trees', _exp, **kwargs)
+                _log_trees(env.model, log_tree, "trees", _exp, **kwargs)
+
     return callback
 
 
 def _log_model(booster, name, npt):
-    with tempfile.TemporaryDirectory(dir='.') as d:
+    with tempfile.TemporaryDirectory(dir=".") as d:
         path = os.path.join(d, name)
         booster.save_model(path)
         npt.log_artifact(path)
@@ -224,18 +227,16 @@ def _log_importance(booster, max_num_features, npt, **kwargs):
     try:
         import matplotlib.pyplot as plt
     except ImportError:
-        raise ImportError('Please install matplotlib to log importance')
+        raise ImportError("Please install matplotlib to log importance")
     importance = xgb.plot_importance(booster, max_num_features=max_num_features, **kwargs)  # pylint: disable=E1101
-    npt.log_image('feature_importance', importance.figure)
-    plt.close('all')
+    npt.log_image("feature_importance", importance.figure)
+    plt.close("all")
 
 
 def _log_trees(booster, tree_list, img_name, npt, **kwargs):
-    with tempfile.TemporaryDirectory(dir='.') as d:
+    with tempfile.TemporaryDirectory(dir=".") as d:
         for i in tree_list:
-            file_name = 'tree_{}'.format(i)
-            tree = xgb.to_graphviz(booster=booster, num_trees=i, **kwargs) # pylint: disable=E1101
-            tree.render(filename=file_name, directory=d, view=False, format='png')
-            npt.log_image(img_name,
-                          os.path.join(d, '{}.png'.format(file_name)),
-                          image_name=file_name)
+            file_name = "tree_{}".format(i)
+            tree = xgb.to_graphviz(booster=booster, num_trees=i, **kwargs)  # pylint: disable=E1101
+            tree.render(filename=file_name, directory=d, view=False, format="png")
+            npt.log_image(img_name, os.path.join(d, "{}.png".format(file_name)), image_name=file_name)

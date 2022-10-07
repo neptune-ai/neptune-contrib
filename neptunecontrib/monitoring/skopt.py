@@ -21,7 +21,10 @@ import numpy as np
 import skopt.plots as sk_plots
 from skopt.utils import dump
 
-from neptunecontrib.monitoring.utils import axes2fig, expect_not_a_run
+from neptunecontrib.monitoring.utils import (
+    axes2fig,
+    expect_not_a_run,
+)
 
 
 class NeptuneCallback:
@@ -62,12 +65,12 @@ class NeptuneCallback:
         self._iteration = 0
 
     def __call__(self, res):
-        self._exp.log_metric('run_score', x=self._iteration, y=res.func_vals[-1])
-        self._exp.log_metric('best_so_far_run_score', x=self._iteration, y=np.min(res.func_vals))
-        self._exp.log_text('run_parameters', x=self._iteration, y=NeptuneCallback._get_last_params(res))
+        self._exp.log_metric("run_score", x=self._iteration, y=res.func_vals[-1])
+        self._exp.log_metric("best_so_far_run_score", x=self._iteration, y=np.min(res.func_vals))
+        self._exp.log_text("run_parameters", x=self._iteration, y=NeptuneCallback._get_last_params(res))
 
         if self.log_checkpoint:
-            self._exp.log_artifact(_export_results_object(res), 'results.pkl')
+            self._exp.log_artifact(_export_results_object(res), "results.pkl")
         self._iteration += 1
 
     @staticmethod
@@ -141,54 +144,54 @@ def NeptuneMonitor(*args, **kwargs):
 
 def _log_best_parameters(results, experiment):
     expect_not_a_run(experiment)
-    named_params = ([(dimension.name, param) for dimension, param in zip(results.space, results.x)])
-    experiment.set_property('best_parameters', str(named_params))
+    named_params = [(dimension.name, param) for dimension, param in zip(results.space, results.x)]
+    experiment.set_property("best_parameters", str(named_params))
 
 
 def _log_best_score(results, experiment):
-    experiment.log_metric('best_score', results.fun)
+    experiment.log_metric("best_score", results.fun)
 
 
-def _log_plot_convergence(results, experiment, name='diagnostics'):
+def _log_plot_convergence(results, experiment, name="diagnostics"):
     expect_not_a_run(experiment)
     fig, ax = plt.subplots()
     sk_plots.plot_convergence(results, ax=ax)
     experiment.log_image(name, fig)
 
 
-def _log_plot_regret(results, experiment, name='diagnostics'):
+def _log_plot_regret(results, experiment, name="diagnostics"):
     expect_not_a_run(experiment)
     fig, ax = plt.subplots()
     sk_plots.plot_regret(results, ax=ax)
     experiment.log_image(name, fig)
 
 
-def _log_plot_evaluations(results, experiment, name='diagnostics'):
+def _log_plot_evaluations(results, experiment, name="diagnostics"):
     expect_not_a_run(experiment)
     fig = plt.figure(figsize=(16, 12))
     fig = axes2fig(sk_plots.plot_evaluations(results, bins=10), fig=fig)
     experiment.log_image(name, fig)
 
 
-def _log_plot_objective(results, experiment, name='diagnostics'):
+def _log_plot_objective(results, experiment, name="diagnostics"):
     try:
         expect_not_a_run(experiment)
         fig = plt.figure(figsize=(16, 12))
         fig = axes2fig(sk_plots.plot_objective(results), fig=fig)
         experiment.log_image(name, fig)
     except Exception as e:
-        print('Could not create the objective chart due to error: {}'.format(e))
+        print("Could not create the objective chart due to error: {}".format(e))
 
 
 def _log_results_object(results, experiment=None):
     expect_not_a_run(experiment)
-    experiment.log_artifact(_export_results_object(results), 'results.pkl')
+    experiment.log_artifact(_export_results_object(results), "results.pkl")
 
 
 def _export_results_object(results):
     from io import BytesIO
 
-    results.specs['args'].pop('callback', None)
+    results.specs["args"].pop("callback", None)
 
     buffer = BytesIO()
     dump(results, buffer, store_objective=False)

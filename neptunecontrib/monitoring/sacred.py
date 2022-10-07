@@ -18,9 +18,10 @@ import collections
 import warnings
 
 import neptune
-from neptunecontrib.monitoring.utils import pickle_and_send_artifact
 from sacred.dependencies import get_digest
 from sacred.observers import RunObserver
+
+from neptunecontrib.monitoring.utils import pickle_and_send_artifact
 
 
 class NeptuneObserver(RunObserver):
@@ -85,26 +86,31 @@ class NeptuneObserver(RunObserver):
         if source_extensions:
             self.source_extensions = source_extensions
         else:
-            self.source_extensions = ['**/*.py', '**/*.yaml', '**/*.yml']
+            self.source_extensions = ["**/*.py", "**/*.yaml", "**/*.yml"]
 
     def started_event(self, ex_info, command, host_info, start_time, config, meta_info, _id):
 
-        neptune.create_experiment(name=ex_info['name'],
-                                  params=_flatten_dict(config),
-                                  upload_source_files=self.source_extensions,
-                                  properties={'mainfile': ex_info['mainfile'],
-                                              'dependencies': str(ex_info['dependencies']),
-                                              'sacred_id': str(_id),
-                                              **_str_dict_values(host_info),
-                                              **_str_dict_values(_flatten_dict(meta_info)),
-                                              **_str_dict_values(_flatten_dict(ex_info))},
-                                  git_info=neptune.utils.get_git_info(ex_info['base_dir']))
+        neptune.create_experiment(
+            name=ex_info["name"],
+            params=_flatten_dict(config),
+            upload_source_files=self.source_extensions,
+            properties={
+                "mainfile": ex_info["mainfile"],
+                "dependencies": str(ex_info["dependencies"]),
+                "sacred_id": str(_id),
+                **_str_dict_values(host_info),
+                **_str_dict_values(_flatten_dict(meta_info)),
+                **_str_dict_values(_flatten_dict(ex_info)),
+            },
+            git_info=neptune.utils.get_git_info(ex_info["base_dir"]),
+        )
 
     def completed_event(self, stop_time, result):
         if result:
             if not isinstance(result, tuple):
                 result = (
-                    result,)  # transform single result to tuple so that both single & multiple results use same code
+                    result,
+                )  # transform single result to tuple so that both single & multiple results use same code
 
             for i, r in enumerate(result):
                 if isinstance(r, float) or isinstance(r, int):
@@ -113,7 +119,8 @@ class NeptuneObserver(RunObserver):
                     pickle_and_send_artifact(r, "result_{}.pkl".format(i))
                 else:
                     warnings.warn(
-                        "logging results does not support type '{}' results. Ignoring this result".format(type(r)))
+                        "logging results does not support type '{}' results. Ignoring this result".format(type(r))
+                    )
 
         neptune.stop()
 
@@ -131,7 +138,7 @@ class NeptuneObserver(RunObserver):
             md5 = get_digest(filename)
             self.resources[filename] = md5
 
-        neptune.set_property('resources', str(list(self.resources.keys())))
+        neptune.set_property("resources", str(list(self.resources.keys())))
         neptune.set_property(filename, self.resources[filename])
 
     def log_metrics(self, metrics_by_name, info):
@@ -140,7 +147,7 @@ class NeptuneObserver(RunObserver):
                 neptune.log_metric(metric_name, x=step, y=value)
 
 
-def _flatten_dict(d, parent_key='', sep=' '):
+def _flatten_dict(d, parent_key="", sep=" "):
     items = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k

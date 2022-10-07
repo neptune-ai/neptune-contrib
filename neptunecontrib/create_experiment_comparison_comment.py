@@ -55,8 +55,7 @@ import numpy as np
 
 
 def get_project(arguments):
-    project = neptune.init(project_qualified_name=arguments.project_name,
-                           api_token=arguments.api_token)
+    project = neptune.init(project_qualified_name=arguments.project_name, api_token=arguments.api_token)
     return project
 
 
@@ -69,18 +68,18 @@ def get_experiment_data_by_tag(arguments):
     project = get_project(arguments)
     experiment_ids = [project.get_experiments(tag=tag)[0].id for tag in arguments.tag_names]
 
-    assert len(experiment_ids) == 2, 'tags passed should be unique to the experiments they belong to'
+    assert len(experiment_ids) == 2, "tags passed should be unique to the experiments they belong to"
     return project.get_leaderboard(id=experiment_ids)
 
 
 def find_experiment_diff(df):
     selected_cols, cleaned_cols = [], []
     for col in df.columns:
-        for name in ['channel_', 'parameter_', 'property_']:
-            if name in col and not any(excluded_name in col for excluded_name in ['stderr', 'stdout']):
+        for name in ["channel_", "parameter_", "property_"]:
+            if name in col and not any(excluded_name in col for excluded_name in ["stderr", "stdout"]):
                 selected_cols.append(col)
-                cleaned_cols.append(col.replace(name, ''))
-    df_selected = df[['id'] + selected_cols]
+                cleaned_cols.append(col.replace(name, ""))
+    df_selected = df[["id"] + selected_cols]
 
     different_cols = []
     for col in df_selected.columns:
@@ -93,52 +92,51 @@ def find_experiment_diff(df):
 
 def create_comment_markdown(df, project_name):
     # format data
-    data = {'metrics': {},
-            'parameters': {},
-            'properties': {},
-            'branches': ['main_branch', 'pull_request_branch']}
+    data = {"metrics": {}, "parameters": {}, "properties": {}, "branches": ["main_branch", "pull_request_branch"]}
 
     df = df.iloc[::-1].reset_index()
 
     for k, v in df.to_dict().items():
-        if k == 'id':
+        if k == "id":
             data[k] = [v[0], v[1]]
-        if 'channel_' in k:
-            data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
-        if 'parameter_' in k:
-            data['parameters'][k.replace('parameter_', '')] = [v[0], v[1]]
-        if 'property_' in k:
-            data['properties'][k.replace('property_', '')] = [v[0], v[1]]
+        if "channel_" in k:
+            data["metrics"][k.replace("channel_", "")] = [v[0], v[1]]
+        if "parameter_" in k:
+            data["parameters"][k.replace("parameter_", "")] = [v[0], v[1]]
+        if "property_" in k:
+            data["properties"][k.replace("property_", "")] = [v[0], v[1]]
 
-    user, project = project_name.split('/')
+    user, project = project_name.split("/")
 
     # link to experiment comparison
     link = "https://ui.neptune.ai/{0}/{1}/compare?shortId=%5B%22{2}%22%2C%22{3}%22%5D".format(
-        user, project, data['id'][0], data['id'][1])
+        user, project, data["id"][0], data["id"][1]
+    )
     table = ["""<a href="{}">See the experiment comparison in Neptune </a>""".format(link)]
     table.append("<table><tr><td></td>")
 
     # add branch names section
-    for branch in data['branches']:
+    for branch in data["branches"]:
         text = "<td><b>{}</b></td>".format(branch)
         table.append(text)
 
     # add experiment links and id section
     table.append("<tr><td>Neptune Experiment</td>")
-    for exp_id in data['id']:
-        text = """<td><a href="https://ui.neptune.ai/{0}/{1}/e/{2}"><b>{2}</b></a></td>""".format(user, project,
-                                                                                                  exp_id)
+    for exp_id in data["id"]:
+        text = """<td><a href="https://ui.neptune.ai/{0}/{1}/e/{2}"><b>{2}</b></a></td>""".format(user, project, exp_id)
         table.append(text)
     table.append("</tr>")
 
     # add metrics section
-    if data['metrics']:
-        table.append("""<tr>
+    if data["metrics"]:
+        table.append(
+            """<tr>
             <th colspan=3, style="text-align:left;">
                 Metrics
-            </th>""")
+            </th>"""
+        )
 
-        for name, values in data['metrics'].items():
+        for name, values in data["metrics"].items():
             table.append("<tr><td>{}</td>".format(name))
             for value in values:
                 try:
@@ -151,13 +149,15 @@ def create_comment_markdown(df, project_name):
         table.append("</tr>")
 
     # add parameters section
-    if data['parameters']:
-        table.append("""<tr>
+    if data["parameters"]:
+        table.append(
+            """<tr>
             <th colspan=3, style="text-align:left;">
                 Parameters
-            </th>""")
+            </th>"""
+        )
 
-        for name, values in data['parameters'].items():
+        for name, values in data["parameters"].items():
             table.append("<tr><td>{}</td>".format(name))
             for value in values:
                 table.append("<td>{}</td>".format(value))
@@ -166,13 +166,15 @@ def create_comment_markdown(df, project_name):
         table.append("</tr>")
 
     # add properties sectio
-    if data['properties']:
-        table.append("""<tr>
+    if data["properties"]:
+        table.append(
+            """<tr>
             <th colspan=3, style="text-align:left;">
                 Properties
-            </th>""")
+            </th>"""
+        )
 
-        for name, values in data['properties'].items():
+        for name, values in data["properties"].items():
             table.append("<tr><td>{}</td>".format(name))
             for value in values:
                 table.append("<td>{}</td>".format(value))
@@ -204,14 +206,14 @@ def main(arguments):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--tag_names', nargs=2, default=None)
-    parser.add_argument('-e', '--experiment_ids', nargs=2, default=None)
-    parser.add_argument('-t', '--api_token', default=None)
-    parser.add_argument('-p', '--project_name', default=None)
-    parser.add_argument('-f', '--filepath', default='comment.md')
+    parser.add_argument("-n", "--tag_names", nargs=2, default=None)
+    parser.add_argument("-e", "--experiment_ids", nargs=2, default=None)
+    parser.add_argument("-t", "--api_token", default=None)
+    parser.add_argument("-p", "--project_name", default=None)
+    parser.add_argument("-f", "--filepath", default="comment.md")
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parse_args()
     main(args)

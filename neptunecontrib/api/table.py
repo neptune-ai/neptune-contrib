@@ -16,8 +16,8 @@
 import neptune
 
 __all__ = [
-    'log_table',
-    'log_csv',
+    "log_table",
+    "log_csv",
 ]
 
 
@@ -60,10 +60,10 @@ def log_table(name, table, experiment=None):
 
         Check out how the logged table looks in Neptune:
         https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-977/artifacts?path=tables%2F&file=pandas_df.html
-     """
+    """
     _exp = experiment if experiment else neptune
 
-    _exp.log_artifact(export_pandas_dataframe(table, 'html'), 'tables/{}.html'.format(name))
+    _exp.log_artifact(export_pandas_dataframe(table, "html"), "tables/{}.html".format(name))
 
 
 def log_csv(name, table, experiment=None):
@@ -94,21 +94,21 @@ def log_csv(name, table, experiment=None):
 
              from neptunecontrib.api import log_csv
              log_csv('pandas_df', iris_df)
-     """
+    """
     _exp = experiment if experiment else neptune
 
-    _exp.log_artifact(export_pandas_dataframe(table, 'csv'), 'csv/{}.csv'.format(name))
+    _exp.log_artifact(export_pandas_dataframe(table, "csv"), "csv/{}.csv".format(name))
 
 
 def export_pandas_dataframe(table, target_type):
     from io import StringIO
 
-    if target_type == 'csv':
+    if target_type == "csv":
         buffer = StringIO(table.to_csv())
-    elif target_type == 'html':
+    elif target_type == "html":
         buffer = StringIO(table.to_html())
     else:
-        ValueError('Unsupported format: {}'.format(target_type))
+        ValueError("Unsupported format: {}".format(target_type))
 
     buffer.seek(0)
 

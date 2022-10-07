@@ -19,7 +19,7 @@ import warnings
 import neptune
 
 __all__ = [
-    'log_chart',
+    "log_chart",
 ]
 
 
@@ -120,7 +120,7 @@ def log_chart(name, chart, experiment=None):
         Check out how the logged charts look in Neptune:
         `example experiment
         <https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-973/artifacts?path=charts%2F&file=bokeh_figure.html>`_
-     """
+    """
     _exp = experiment if experiment else neptune
 
     if is_matplotlib_pyplot(chart) or is_matplotlib_figure(chart):
@@ -140,7 +140,8 @@ def log_chart(name, chart, experiment=None):
                 warnings.filterwarnings(
                     "error",
                     category=UserWarning,
-                    message=".*Plotly can only import path collections linked to 'data' coordinates.*")
+                    message=".*Plotly can only import path collections linked to 'data' coordinates.*",
+                )
                 try:
                     chart = tools.mpl_to_plotly(chart)
                 except AttributeError as e:
@@ -148,62 +149,66 @@ def log_chart(name, chart, experiment=None):
                         plotly_version = "unknown"
                         try:
                             import plotly
+
                             plotly_version = plotly.version.__version__
                         except:
                             pass
                         matplotlib_version = "unknown"
                         try:
                             import matplotlib
+
                             matplotlib_version = matplotlib.__version__
                         except:
                             pass
                         raise PlotlyIncompatibilityException(
                             "Unable to convert plotly figure to matplotlib format. "
                             "Your matplotlib ({}) and plotlib ({}) versions are not compatible. "
-                            "See https://stackoverflow.com/q/63120058 for details."
-                            .format(matplotlib_version, plotly_version))
+                            "See https://stackoverflow.com/q/63120058 for details.".format(
+                                matplotlib_version, plotly_version
+                            )
+                        )
                     else:
                         raise e
 
-            _exp.log_artifact(export_plotly_figure(chart), "charts/" + name + '.html')
+            _exp.log_artifact(export_plotly_figure(chart), "charts/" + name + ".html")
         except ImportError:
             print("Plotly not installed. Logging plot as an image.")
-            _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + '.png')
+            _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + ".png")
         except UserWarning:
             print("Couldn't convert Matplotlib plot to interactive Plotly plot. Logging plot as an image instead.")
-            _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + '.png')
+            _exp.log_artifact(export_matplotlib_figure(chart), "charts/" + name + ".png")
 
     elif is_plotly_figure(chart):
-        _exp.log_artifact(export_plotly_figure(chart), "charts/" + name + '.html')
+        _exp.log_artifact(export_plotly_figure(chart), "charts/" + name + ".html")
 
     elif is_bokeh_figure(chart):
-        _exp.log_artifact(export_bokeh_figure(chart), "charts/" + name + '.html')
+        _exp.log_artifact(export_bokeh_figure(chart), "charts/" + name + ".html")
 
     elif is_altair_chart(chart):
-        _exp.log_artifact(export_altair_chart(chart), "charts/" + name + '.html')
+        _exp.log_artifact(export_altair_chart(chart), "charts/" + name + ".html")
 
     else:
         raise ValueError("Currently supported are matplotlib, plotly, altair, and bokeh figures")
 
 
 def is_matplotlib_pyplot(chart):
-    return hasattr(chart, '__name__') and chart.__name__.startswith('matplotlib.')
+    return hasattr(chart, "__name__") and chart.__name__.startswith("matplotlib.")
 
 
 def is_matplotlib_figure(chart):
-    return chart.__class__.__module__.startswith('matplotlib.') and chart.__class__.__name__ == 'Figure'
+    return chart.__class__.__module__.startswith("matplotlib.") and chart.__class__.__name__ == "Figure"
 
 
 def is_plotly_figure(chart):
-    return chart.__class__.__module__.startswith('plotly.') and chart.__class__.__name__ == 'Figure'
+    return chart.__class__.__module__.startswith("plotly.") and chart.__class__.__name__ == "Figure"
 
 
 def is_altair_chart(chart):
-    return chart.__class__.__module__.startswith('altair.') and 'Chart' in chart.__class__.__name__
+    return chart.__class__.__module__.startswith("altair.") and "Chart" in chart.__class__.__name__
 
 
 def is_bokeh_figure(chart):
-    return chart.__class__.__module__.startswith('bokeh.') and chart.__class__.__name__ == 'Figure'
+    return chart.__class__.__module__.startswith("bokeh.") and chart.__class__.__name__ == "Figure"
 
 
 def export_plotly_figure(chart):
@@ -220,7 +225,7 @@ def export_matplotlib_figure(chart):
     from io import BytesIO
 
     buffer = BytesIO()
-    chart.savefig(buffer, format='png')
+    chart.savefig(buffer, format="png")
     buffer.seek(0)
 
     return buffer
@@ -230,7 +235,7 @@ def export_altair_chart(chart):
     from io import StringIO
 
     buffer = StringIO()
-    chart.save(buffer, format='html')
+    chart.save(buffer, format="html")
     buffer.seek(0)
 
     return buffer
@@ -238,8 +243,9 @@ def export_altair_chart(chart):
 
 def export_bokeh_figure(chart):
     from io import StringIO
-    from bokeh.resources import CDN
+
     from bokeh.embed import file_html
+    from bokeh.resources import CDN
 
     html = file_html(chart, CDN)
     buffer = StringIO(html)

@@ -18,11 +18,7 @@ import neptune
 
 from neptunecontrib.api import log_chart
 
-__all__ = [
-    'log_explainer',
-    'log_local_explanations',
-    'log_global_explanations'
-]
+__all__ = ["log_explainer", "log_local_explanations", "log_global_explanations"]
 
 
 def log_explainer(filename, explainer, experiment=None):
@@ -60,7 +56,7 @@ def log_explainer(filename, explainer, experiment=None):
     Note:
         Check out how the logged explainer looks in Neptune:
         `example experiment <https://ui.neptune.ai/o/shared/org/dalex-integration/e/DAL-48/artifacts>`_
-     """
+    """
     _exp = experiment if experiment else neptune
 
     _exp.log_artifact(export_dalex_explainer(explainer), filename)
@@ -126,22 +122,22 @@ def log_local_explanations(explainer, observation, experiment=None):
     Note:
         Check out how the logged explanations look in Neptune:
         `example experiment <https://ui.neptune.ai/o/shared/org/dalex-integration/e/DAL-48/artifacts?path=charts%2F>`_
-     """
+    """
     _exp = experiment if experiment else neptune
 
-    bd = explainer.predict_parts(observation, type='break_down')
-    bd_interactions = explainer.predict_parts(observation, type='break_down_interactions')
-    sh = explainer.predict_parts(observation, type='shap')
+    bd = explainer.predict_parts(observation, type="break_down")
+    bd_interactions = explainer.predict_parts(observation, type="break_down_interactions")
+    sh = explainer.predict_parts(observation, type="shap")
     cp = explainer.predict_profile(observation)
 
     bd_plot = bd.plot(show=False)
-    log_chart(name='Break Down', chart=bd_plot, experiment=_exp)
+    log_chart(name="Break Down", chart=bd_plot, experiment=_exp)
 
     bd_interactions_plot = bd_interactions.plot(show=False)
-    log_chart(name='Break Down Interactions', chart=bd_interactions_plot, experiment=_exp)
+    log_chart(name="Break Down Interactions", chart=bd_interactions_plot, experiment=_exp)
 
     sh_plot = sh.plot(show=False)
-    log_chart(name='SHAP', chart=sh_plot, experiment=_exp)
+    log_chart(name="SHAP", chart=sh_plot, experiment=_exp)
 
     cp_plot = cp.plot(show=False)
     log_chart(name="Ceteris Paribus", chart=cp_plot, experiment=_exp)
@@ -193,7 +189,7 @@ def log_global_explanations(explainer, categorical_features=None, numerical_feat
     Note:
         Check out how the logged explanations look in Neptune:
         `example experiment <https://ui.neptune.ai/o/shared/org/dalex-integration/e/DAL-48/artifacts?path=charts%2F>`_
-     """
+    """
     _exp = experiment if experiment else neptune
 
     vi = explainer.model_parts()
@@ -202,22 +198,23 @@ def log_global_explanations(explainer, categorical_features=None, numerical_feat
     log_chart(name="Variable Importance", chart=vi_plot, experiment=_exp)
 
     if numerical_features:
-        pdp_num = explainer.model_profile(type='partial', variables=numerical_features)
-        pdp_num.result["_label_"] = 'pdp'
+        pdp_num = explainer.model_profile(type="partial", variables=numerical_features)
+        pdp_num.result["_label_"] = "pdp"
 
-        ale_num = explainer.model_profile(type='accumulated', variables=numerical_features)
-        ale_num.result["_label_"] = 'ale'
+        ale_num = explainer.model_profile(type="accumulated", variables=numerical_features)
+        ale_num.result["_label_"] = "ale"
 
         pdp_num_plot = pdp_num.plot(ale_num, show=False)
         log_chart(name="Aggregated Profiles Numerical", chart=pdp_num_plot, experiment=_exp)
 
     if categorical_features:
-        pdp_cat = explainer.model_profile(type='partial', variable_type='categorical', variables=categorical_features)
-        pdp_cat.result['_label_'] = 'pdp'
+        pdp_cat = explainer.model_profile(type="partial", variable_type="categorical", variables=categorical_features)
+        pdp_cat.result["_label_"] = "pdp"
 
-        ale_cat = explainer.model_profile(type='accumulated', variable_type='categorical',
-                                          variables=categorical_features)
-        ale_cat.result['_label_'] = 'ale'
+        ale_cat = explainer.model_profile(
+            type="accumulated", variable_type="categorical", variables=categorical_features
+        )
+        ale_cat.result["_label_"] = "ale"
 
         ale_cat_plot = ale_cat.plot(pdp_cat, show=False)
         log_chart(name="Aggregated Profiles Categorical", chart=ale_cat_plot, experiment=_exp)

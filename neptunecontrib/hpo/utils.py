@@ -18,16 +18,10 @@
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import OptimizeResult
 import skopt
+from scipy.optimize import OptimizeResult
 
-__all__ = [
-    'hyperopt2skopt',
-    'df2result',
-    'optuna2skopt',
-    'bayes2skopt',
-    'hpbandster2skopt'
-]
+__all__ = ["hyperopt2skopt", "df2result", "optuna2skopt", "bayes2skopt", "hpbandster2skopt"]
 
 
 def hyperopt2skopt(trials, space):
@@ -71,14 +65,14 @@ def hyperopt2skopt(trials, space):
     skopt_space = _convert_space_hop_skopt(space)
     results_ = {}
     for trial in trials.trials:
-        trial_params = [trial['misc']['vals'][name][0] for name in param_names]
-        results_.setdefault('x_iters', []).append(trial_params)
-        results_.setdefault('func_vals', []).append(trial['result']['loss'])
+        trial_params = [trial["misc"]["vals"][name][0] for name in param_names]
+        results_.setdefault("x_iters", []).append(trial_params)
+        results_.setdefault("func_vals", []).append(trial["result"]["loss"])
     optimize_results = OptimizeResult()
     optimize_results.x = [trials.argmin[name] for name in param_names]
-    optimize_results.x_iters = results_['x_iters']
-    optimize_results.fun = trials.best_trial['result']['loss']
-    optimize_results.func_vals = results_['func_vals']
+    optimize_results.x_iters = results_["x_iters"]
+    optimize_results.fun = trials.best_trial["result"]["loss"]
+    optimize_results.func_vals = results_["func_vals"]
     optimize_results.space = skopt_space
     return optimize_results
 
@@ -162,11 +156,9 @@ def optuna2skopt(study):
             results = hp_utils.optuna2skopt(study)
     """
     results = study.trials_dataframe()
-    results_ = results['params']
-    results_['target'] = results['value']
-    return df2result(results_,
-                     metric_col='target',
-                     param_cols=[col for col in results_.columns if col != 'target'])
+    results_ = results["params"]
+    results_["target"] = results["value"]
+    return df2result(results_, metric_col="target", param_cols=[col for col in results_.columns if col != "target"])
 
 
 def bayes2skopt(bayes_opt):
@@ -198,12 +190,10 @@ def bayes2skopt(bayes_opt):
         converted into negatives for consistency.
     """
     results = bayes_opt.space.res()
-    results = [{'target': trial['target'], **trial['params']} for trial in results]
+    results = [{"target": trial["target"], **trial["params"]} for trial in results]
     results_df = pd.DataFrame(results)
-    results_df['target'] = -1.0 * results_df['target']
-    return df2result(results_df,
-                     metric_col='target',
-                     param_cols=[col for col in results_df.columns if col != 'target'])
+    results_df["target"] = -1.0 * results_df["target"]
+    return df2result(results_df, metric_col="target", param_cols=[col for col in results_df.columns if col != "target"])
 
 
 def hpbandster2skopt(results):
@@ -231,10 +221,10 @@ def hpbandster2skopt(results):
     """
     results = results.get_pandas_dataframe()
     params, loss = results
-    params.drop(columns='budget', index=1, inplace=True)
+    params.drop(columns="budget", index=1, inplace=True)
     results_ = params.copy()
-    results_['target'] = loss['loss']
-    return df2result(results_, metric_col='target', param_cols=params.columns)
+    results_["target"] = loss["loss"]
+    return df2result(results_, metric_col="target", param_cols=params.columns)
 
 
 def _prep_df(df, param_cols, param_types):
@@ -247,8 +237,7 @@ def _convert_to_param_space(df, param_cols, param_types):
     dimensions = []
     for colname, col_type in zip(param_cols, param_types):
         if col_type == str:
-            dimensions.append(skopt.space.Categorical(categories=df[colname].unique(),
-                                                      name=colname))
+            dimensions.append(skopt.space.Categorical(categories=df[colname].unique(), name=colname))
         elif col_type == float:
             low, high = df[colname].min(), df[colname].max()
             dimensions.append(skopt.space.Real(low, high, name=colname))
@@ -261,25 +250,24 @@ def _convert_to_param_space(df, param_cols, param_types):
 def _convert_space_hop_skopt(space):
     dimensions = []
     for name, specs in space.items():
-        specs = str(specs).split('\n')
-        method = specs[3].split(' ')[-1]
+        specs = str(specs).split("\n")
+        method = specs[3].split(" ")[-1]
         bounds = specs[4:]
         if len(bounds) == 1:
-            bounds = bounds[0].split('range')[-1]
-            bounds = bounds.replace('(', '').replace(')', '').replace('}', '')
-            low, high = [float(v) for v in bounds.split(',')]
+            bounds = bounds[0].split("range")[-1]
+            bounds = bounds.replace("(", "").replace(")", "").replace("}", "")
+            low, high = [float(v) for v in bounds.split(",")]
         else:
-            vals = [float(b.split('Literal')[-1].replace('}', '').replace('{', ''))
-                    for b in bounds]
+            vals = [float(b.split("Literal")[-1].replace("}", "").replace("{", "")) for b in bounds]
             low = min(vals)
             high = max(vals)
-        if method == 'randint':
+        if method == "randint":
             dimensions.append(skopt.space.Integer(low, high, name=name))
-        elif method == 'uniform':
-            dimensions.append(skopt.space.Real(low, high, name=name, prior='uniform'))
-        elif method == 'loguniform':
+        elif method == "uniform":
+            dimensions.append(skopt.space.Real(low, high, name=name, prior="uniform"))
+        elif method == "loguniform":
             low, high = np.exp(low), np.exp(high)
-            dimensions.append(skopt.space.Real(low, high, name=name, prior='log-uniform'))
+            dimensions.append(skopt.space.Real(low, high, name=name, prior="log-uniform"))
         else:
             raise NotImplementedError
     skopt_space = skopt.Space(dimensions)

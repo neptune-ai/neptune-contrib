@@ -16,9 +16,9 @@
 import warnings
 
 message = """neptunecontrib.logging.chart was moved to neptunecontrib.api.
-You should use ``from neptunecontrib.api import log_chart`` 
+You should use ``from neptunecontrib.api import log_chart``
 neptunecontrib.logging.log_chart will be removed in future releases.
 """
 warnings.warn(message)
 
-from neptunecontrib.api import log_chart # pylint: disable=C0413, W0611
+from neptunecontrib.api import log_chart  # pylint: disable=C0413, W0611

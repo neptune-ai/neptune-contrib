@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-from itertools import product
 import warnings
+from itertools import product
 
 import matplotlib.pyplot as plt
 import neptune
@@ -65,7 +65,7 @@ def axes2fig(axes, fig=None):
     return fig
 
 
-def send_figure(fig, channel_name='figures', experiment=None):
+def send_figure(fig, channel_name="figures", experiment=None):
     message = """neptunecontrib.monitoring.utils send_figure functionality is now available in neptune-client.
     You should simply use neptune.log_image('channel_name', fig) where you used send_figure('channel_name', fig) before.
     send_figure will be removed in future releases.
@@ -87,5 +87,5 @@ def pickle_and_send_artifact(obj, filename, experiment=None):
 
 
 def expect_not_a_run(experiment):
-    if type(experiment).__name__ == 'Run':
+    if type(experiment).__name__ == "Run":
         raise NeptuneLegacyIncompatibilityException()

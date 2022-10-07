@@ -20,7 +20,7 @@ See [neptune-contrib documentation site](https://neptune-contrib.readthedocs.io)
 pip install neptune-contrib
 ```
 
-Install additional packages depending on which submodule you want to use. 
+Install additional packages depending on which submodule you want to use.
 For example:
 
 ```bash
@@ -37,11 +37,11 @@ The best order of communication is:
  * [neptune community forum](https://community.neptune.ai/)
  * [neptune community Spectrum](https://spectrum.chat/neptune-community?tab=posts)
  * Github issues
- 
+
 # Contributing
 If you see something that you don't like you are more than welcome to contribute!
 There are many options:
-  
+
   * Participate in discussions on [neptune community forum](https://community.neptune.ai/) or [neptune community Spectrum](https://spectrum.chat/neptune-community?tab=posts)
   * Submit a feature request or a bug here, on Github
   * Submit a pull request that deals with an open feature-request or bug

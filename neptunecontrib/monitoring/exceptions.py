@@ -14,7 +14,10 @@
 # limitations under the License.
 #
 
-from neptune.exceptions import NeptuneException, STYLES
+from neptune.exceptions import (
+    STYLES,
+    NeptuneException,
+)
 
 
 class NeptuneLegacyIncompatibilityException(NeptuneException):

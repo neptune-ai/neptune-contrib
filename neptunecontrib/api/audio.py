@@ -18,7 +18,7 @@ import os
 import neptune
 
 __all__ = [
-    'log_audio',
+    "log_audio",
 ]
 
 
@@ -57,14 +57,14 @@ def log_audio(path_to_file, audio_name=None, experiment=None):
 
     _exp = experiment if experiment else neptune
 
-    name, file_ext = os.path.split(path_to_file)[1].split('.')
+    name, file_ext = os.path.split(path_to_file)[1].split(".")
 
     if audio_name is None:
         audio_name = name
     else:
-        assert isinstance(audio_name, str), 'audio_name must be string, got {}'.format(type(audio_name))
+        assert isinstance(audio_name, str), "audio_name must be string, got {}".format(type(audio_name))
 
-    encoded_sound = base64.b64encode(open(path_to_file, 'rb').read())
+    encoded_sound = base64.b64encode(open(path_to_file, "rb").read())
     html = """<!DOCTYPE html>
         <html>
         <body>
@@ -74,9 +74,11 @@ def log_audio(path_to_file, audio_name=None, experiment=None):
         </audio>
 
         </body>
-        </html>""".format(file_ext, encoded_sound.decode())
+        </html>""".format(
+        file_ext, encoded_sound.decode()
+    )
 
     buffer = StringIO(html)
     buffer.seek(0)
 
-    _exp.log_artifact(buffer, 'audio/{}.html'.format(audio_name))
+    _exp.log_artifact(buffer, "audio/{}.html".format(audio_name))

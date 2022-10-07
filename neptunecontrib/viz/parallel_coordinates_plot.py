@@ -20,19 +20,22 @@ import hiplot as hip
 import neptune
 
 __all__ = [
-    'make_parallel_coordinates_plot',
+    "make_parallel_coordinates_plot",
 ]
 
-def make_parallel_coordinates_plot(html_file_path=None,
-                                   metrics=False,
-                                   text_logs=False,
-                                   params=True,
-                                   properties=False,
-                                   experiment_id=None,
-                                   state=None,
-                                   owner=None,
-                                   tag=None,
-                                   min_running_time=None):
+
+def make_parallel_coordinates_plot(
+    html_file_path=None,
+    metrics=False,
+    text_logs=False,
+    params=True,
+    properties=False,
+    experiment_id=None,
+    state=None,
+    owner=None,
+    tag=None,
+    min_running_time=None,
+):
     """Visualize experiments on the parallel coordinates plot.
 
     This function, when executed in Notebook, displays interactive parallel coordinates plot in the cell's output.
@@ -133,59 +136,56 @@ def make_parallel_coordinates_plot(html_file_path=None,
                  See docs: https://docs.neptune.ai/neptune-client/docs/neptune.html#neptune.init"""
         raise ValueError(msg)
 
-    df = neptune.project.get_leaderboard(id=experiment_id,
-                                         state=state,
-                                         owner=owner,
-                                         tag=tag,
-                                         min_running_time=min_running_time)
-    assert df.shape[0] != 0, 'No experiments to show. Try other filters.'
+    df = neptune.project.get_leaderboard(
+        id=experiment_id, state=state, owner=owner, tag=tag, min_running_time=min_running_time
+    )
+    assert df.shape[0] != 0, "No experiments to show. Try other filters."
 
     # Cast columns to int or str
     for column in df.columns.to_list():
-        if column.startswith('channel_'):
+        if column.startswith("channel_"):
             try:
                 df = df.astype({column: float})
-                _all_metrics.append((column, column.replace('channel_', '')))
+                _all_metrics.append((column, column.replace("channel_", "")))
             except ValueError:
                 df = df.astype({column: str})
-                _all_text_logs.append((column, column.replace('channel_', '')))
-        elif column.startswith('parameter_'):
-            try:
-                df = df.astype({column: float})
-            except ValueError:
-                df = df.astype({column: str})
-            _all_params.append((column, column.replace('parameter_', '')))
-        elif column.startswith('property_'):
+                _all_text_logs.append((column, column.replace("channel_", "")))
+        elif column.startswith("parameter_"):
             try:
                 df = df.astype({column: float})
             except ValueError:
                 df = df.astype({column: str})
-            _all_properties.append((column, column.replace('property_', '')))
+            _all_params.append((column, column.replace("parameter_", "")))
+        elif column.startswith("property_"):
+            try:
+                df = df.astype({column: float})
+            except ValueError:
+                df = df.astype({column: str})
+            _all_properties.append((column, column.replace("property_", "")))
 
     # Validate each type of input
-    metrics = _validate_input(metrics, _all_metrics, 'metric')
-    text_logs = _validate_input(text_logs, _all_text_logs, 'text log')
-    params = _validate_input(params, _all_params, 'parameter')
-    properties = _validate_input(properties, _all_properties, 'property')
+    metrics = _validate_input(metrics, _all_metrics, "metric")
+    text_logs = _validate_input(text_logs, _all_text_logs, "text log")
+    params = _validate_input(params, _all_params, "parameter")
+    properties = _validate_input(properties, _all_properties, "property")
 
     # Check for name conflicts
     for column in [k for k, v in Counter(metrics + text_logs + params + properties).items() if v > 1]:
         if column in metrics:
-            metrics = ['metric__' + column if j == column else j for j in metrics]
-            _all_metrics = [(j[0], 'metric__' + column) if j[1] == column else j for j in _all_metrics]
+            metrics = ["metric__" + column if j == column else j for j in metrics]
+            _all_metrics = [(j[0], "metric__" + column) if j[1] == column else j for j in _all_metrics]
         if column in text_logs:
-            text_logs = ['text_log__' + column if j == column else j for j in text_logs]
-            _all_text_logs = [(j[0], 'text_log__' + column) if j[1] == column else j for j in _all_text_logs]
+            text_logs = ["text_log__" + column if j == column else j for j in text_logs]
+            _all_text_logs = [(j[0], "text_log__" + column) if j[1] == column else j for j in _all_text_logs]
         if column in params:
-            params = ['param__' + column if j == column else j for j in params]
-            _all_params = [(j[0], 'param__' + column) if j[1] == column else j for j in _all_params]
+            params = ["param__" + column if j == column else j for j in params]
+            _all_params = [(j[0], "param__" + column) if j[1] == column else j for j in _all_params]
         if column in properties:
-            properties = ['property__' + column if j == column else j for j in properties]
-            _all_properties = [(j[0], 'property__' + column) if j[1] == column else j for j in _all_properties]
+            properties = ["property__" + column if j == column else j for j in properties]
+            _all_properties = [(j[0], "property__" + column) if j[1] == column else j for j in _all_properties]
 
     # Rename columns in DataFrame and sort experiments by neptune id
-    new_col_names = {'id': 'neptune_id',
-                     'owner': 'owner'}
+    new_col_names = {"id": "neptune_id", "owner": "owner"}
 
     metrics = [(j[0], j[1]) for j in _all_metrics if j[1] in metrics]
     text_logs = [(j[0], j[1]) for j in _all_text_logs if j[1] in text_logs]
@@ -199,11 +199,11 @@ def make_parallel_coordinates_plot(html_file_path=None,
 
     df = df[new_col_names.keys()]
     df = df.rename(columns=new_col_names)
-    _exp_ids_series = df['neptune_id'].apply(lambda x: int(x.split('-')[-1]))
-    df.insert(loc=0, column='neptune_exp_number', value=_exp_ids_series)
-    df = df.astype({'neptune_exp_number': int})
-    df = df.sort_values(by='neptune_exp_number', ascending=True)
-    df = df.drop(columns='neptune_exp_number')
+    _exp_ids_series = df["neptune_id"].apply(lambda x: int(x.split("-")[-1]))
+    df.insert(loc=0, column="neptune_exp_number", value=_exp_ids_series)
+    df = df.astype({"neptune_exp_number": int})
+    df = df.sort_values(by="neptune_exp_number", ascending=True)
+    df = df.drop(columns="neptune_exp_number")
 
     # Prepare order of axes, where 'neptune_id' is first, metrics to the right.
     all_axes = df.columns.to_list()
@@ -213,8 +213,8 @@ def make_parallel_coordinates_plot(html_file_path=None,
         for metric in metric_names:
             all_axes.remove(metric)
         all_axes.sort()
-        all_axes.sort(reverse=True, key='owner'.__eq__)
-        all_axes.sort(reverse=True, key='neptune_id'.__eq__)
+        all_axes.sort(reverse=True, key="owner".__eq__)
+        all_axes.sort(reverse=True, key="neptune_id".__eq__)
         all_axes = all_axes + metric_names
 
     # Prepare HiPlot visualization
@@ -225,14 +225,15 @@ def make_parallel_coordinates_plot(html_file_path=None,
 
     # Save to html if requested
     if html_file_path is not None:
-        assert isinstance(html_file_path, str), \
-            '"html_file_path" should be string, but {} is given'.format(type(html_file_path))
+        assert isinstance(html_file_path, str), '"html_file_path" should be string, but {} is given'.format(
+            type(html_file_path)
+        )
         if os.path.dirname(html_file_path):
             os.makedirs(os.path.dirname(html_file_path), exist_ok=True)
         hiplot_vis.to_html(html_file_path)
-    hiplot_vis.display_data(hip.Displays.PARALLEL_PLOT).update({'categoricalMaximumValues': df.shape[0],
-                                                                'hide': ['uid', 'from_uid'],
-                                                                'order': all_axes})
+    hiplot_vis.display_data(hip.Displays.PARALLEL_PLOT).update(
+        {"categoricalMaximumValues": df.shape[0], "hide": ["uid", "from_uid"], "order": all_axes}
+    )
     return hiplot_vis.display()
 
 
@@ -243,12 +244,15 @@ def _validate_input(selected_columns, all_columns, type_name):
     elif selected_columns is False:
         selected_columns = []
     elif isinstance(selected_columns, str):
-        assert selected_columns in all_columns, \
-            'There is no {} with a name "{}" in the project columns.'.format(type_name, selected_columns)
-        selected_columns = [selected_columns, ]
+        assert selected_columns in all_columns, 'There is no {} with a name "{}" in the project columns.'.format(
+            type_name, selected_columns
+        )
+        selected_columns = [
+            selected_columns,
+        ]
     elif isinstance(selected_columns, list):
         for j in selected_columns:
             assert j in all_columns, 'There is no "{}" in the project columns.'.format(j)
     else:
-        raise TypeError('{} must be None, string or list of strings'.format(selected_columns))
+        raise TypeError("{} must be None, string or list of strings".format(selected_columns))
     return selected_columns

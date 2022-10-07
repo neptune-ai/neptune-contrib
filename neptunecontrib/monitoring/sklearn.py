@@ -19,22 +19,43 @@ import neptune
 import pandas as pd
 from scikitplot.estimators import plot_learning_curve
 from scikitplot.metrics import plot_precision_recall
-from sklearn.base import is_regressor, is_classifier
+from sklearn.base import (
+    is_classifier,
+    is_regressor,
+)
 from sklearn.cluster import KMeans
-from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, r2_score, \
-    precision_recall_fscore_support
-from yellowbrick.classifier import ClassificationReport, ConfusionMatrix, ROCAUC, ClassPredictionError
-from yellowbrick.cluster import SilhouetteVisualizer, KElbowVisualizer
+from sklearn.metrics import (
+    explained_variance_score,
+    max_error,
+    mean_absolute_error,
+    precision_recall_fscore_support,
+    r2_score,
+)
+from yellowbrick.classifier import (
+    ROCAUC,
+    ClassificationReport,
+    ClassPredictionError,
+    ConfusionMatrix,
+)
+from yellowbrick.cluster import (
+    KElbowVisualizer,
+    SilhouetteVisualizer,
+)
 from yellowbrick.model_selection import FeatureImportances
-from yellowbrick.regressor import ResidualsPlot, PredictionError, CooksDistance
+from yellowbrick.regressor import (
+    CooksDistance,
+    PredictionError,
+    ResidualsPlot,
+)
 
 from neptunecontrib.api.table import log_csv
 from neptunecontrib.api.utils import log_pickle
 from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
-def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
-                          model_name=None, nrows=1000, experiment=None, log_charts=True):
+def log_regressor_summary(
+    regressor, X_train, X_test, y_train, y_test, model_name=None, nrows=1000, experiment=None, log_charts=True
+):
     """Log sklearn regressor summary.
 
     This method automatically logs all regressor parameters, pickled estimator (model),
@@ -94,7 +115,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
 
             log_regressor_summary(rfr, X_train, X_test, y_train, y_test)
     """
-    assert is_regressor(regressor), 'regressor should be sklearn regressor.'
+    assert is_regressor(regressor), "regressor should be sklearn regressor."
 
     exp = _validate_experiment(experiment)
 
@@ -103,7 +124,7 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
 
     y_pred = regressor.predict(X_test)
     log_test_predictions(regressor, X_test, y_test, y_pred=y_pred, nrows=nrows, experiment=exp)
-    log_scores(regressor, X_test, y_test, y_pred=y_pred, name='test', experiment=exp)
+    log_scores(regressor, X_test, y_test, y_pred=y_pred, name="test", experiment=exp)
 
     # visualizations
     if log_charts:
@@ -114,8 +135,9 @@ def log_regressor_summary(regressor, X_train, X_test, y_train, y_test,
         log_cooks_distance_chart(regressor, X_train, y_train, experiment=exp)
 
 
-def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
-                           model_name=None, nrows=1000, experiment=None, log_charts=True):
+def log_classifier_summary(
+    classifier, X_train, X_test, y_train, y_test, model_name=None, nrows=1000, experiment=None, log_charts=True
+):
     """Log sklearn classifier summary.
 
     This method automatically logs all classifier parameters, pickled estimator (model),
@@ -176,7 +198,7 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
 
             log_classifier_summary(rfc, X_train, X_test, y_train, y_test)
     """
-    assert is_classifier(classifier), 'classifier should be sklearn classifier.'
+    assert is_classifier(classifier), "classifier should be sklearn classifier."
 
     exp = _validate_experiment(experiment)
 
@@ -186,7 +208,7 @@ def log_classifier_summary(classifier, X_train, X_test, y_train, y_test,
 
     y_pred = classifier.predict(X_test)
     log_test_predictions(classifier, X_test, y_test, y_pred=y_pred, nrows=nrows, experiment=exp)
-    log_scores(classifier, X_test, y_test, y_pred=y_pred, name='test', experiment=exp)
+    log_scores(classifier, X_test, y_test, y_pred=y_pred, name="test", experiment=exp)
 
     # visualizations
     if log_charts:
@@ -227,8 +249,9 @@ def log_estimator_params(estimator, experiment=None):
 
             log_estimator_params(rfr)
     """
-    assert is_regressor(estimator) or is_classifier(estimator) or isinstance(estimator, KMeans),\
-        'Estimator should be sklearn regressor, classifier or kmeans clusterer.'
+    assert (
+        is_regressor(estimator) or is_classifier(estimator) or isinstance(estimator, KMeans)
+    ), "Estimator should be sklearn regressor, classifier or kmeans clusterer."
 
     exp = _validate_experiment(experiment)
 
@@ -274,17 +297,17 @@ def log_pickled_model(estimator, model_name=None, experiment=None):
 
             log_pickled_model(rfr, 'my_model')
     """
-    assert is_regressor(estimator) or is_classifier(estimator),\
-        'Estimator should be sklearn regressor or classifier.'
-    assert isinstance(model_name, str) or model_name is None, 'model_name should be str,' \
-                                                              ' {} was passed instead.'.format(type(model_name))
+    assert is_regressor(estimator) or is_classifier(estimator), "Estimator should be sklearn regressor or classifier."
+    assert (
+        isinstance(model_name, str) or model_name is None
+    ), "model_name should be str," " {} was passed instead.".format(type(model_name))
 
     exp = _validate_experiment(experiment)
 
     if model_name:
-        model_name = 'model/{}'.format(model_name)
+        model_name = "model/{}".format(model_name)
     else:
-        model_name = 'model/estimator.skl'
+        model_name = "model/estimator.skl"
 
     log_pickle(model_name, estimator, exp)
 
@@ -334,9 +357,8 @@ def log_test_predictions(estimator, X_test, y_test, y_pred=None, nrows=1000, exp
 
             log_test_predictions(rfr, X_test, y_test)
     """
-    assert is_regressor(estimator) or is_classifier(estimator),\
-        'Estimator should be sklearn regressor or classifier.'
-    assert isinstance(nrows, int), 'nrows should be integer, {} was passed'.format(type(nrows))
+    assert is_regressor(estimator) or is_classifier(estimator), "Estimator should be sklearn regressor or classifier."
+    assert isinstance(nrows, int), "nrows should be integer, {} was passed".format(type(nrows))
 
     exp = _validate_experiment(experiment)
 
@@ -345,16 +367,16 @@ def log_test_predictions(estimator, X_test, y_test, y_pred=None, nrows=1000, exp
 
     # single output
     if len(y_pred.shape) == 1:
-        df = pd.DataFrame(data={'y_true': y_test, 'y_pred': y_pred})
-        log_csv('test_predictions', df.head(nrows), exp)
+        df = pd.DataFrame(data={"y_true": y_test, "y_pred": y_pred})
+        log_csv("test_predictions", df.head(nrows), exp)
 
     # multi output
     if len(y_pred.shape) == 2:
         df = pd.DataFrame()
         for j in range(y_pred.shape[1]):
-            df['y_test_output_{}'.format(j)] = y_test[:, j]
-            df['y_pred_output_{}'.format(j)] = y_pred[:, j]
-        log_csv('test_predictions', df.head(nrows), exp)
+            df["y_test_output_{}".format(j)] = y_test[:, j]
+            df["y_pred_output_{}".format(j)] = y_pred[:, j]
+        log_csv("test_predictions", df.head(nrows), exp)
 
 
 def log_test_preds_proba(classifier, X_test, y_pred_proba=None, nrows=1000, experiment=None):
@@ -400,8 +422,8 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, nrows=1000, expe
 
             log_test_preds_proba(rfc, X_test, y_test)
     """
-    assert is_classifier(classifier), 'Classifier should be sklearn classifier.'
-    assert isinstance(nrows, int), 'nrows should be integer, {} was passed'.format(type(nrows))
+    assert is_classifier(classifier), "Classifier should be sklearn classifier."
+    assert isinstance(nrows, int), "nrows should be integer, {} was passed".format(type(nrows))
 
     exp = _validate_experiment(experiment)
 
@@ -409,11 +431,11 @@ def log_test_preds_proba(classifier, X_test, y_pred_proba=None, nrows=1000, expe
         try:
             y_pred_proba = classifier.predict_proba(X_test)
         except Exception as e:
-            print('This classifier does not provide predictions probabilities. Error: {}'.format(e))
+            print("This classifier does not provide predictions probabilities. Error: {}".format(e))
             return
 
     df = pd.DataFrame(data=y_pred_proba, columns=classifier.classes_)
-    log_csv('test_preds_proba', df.head(nrows), exp)
+    log_csv("test_preds_proba", df.head(nrows), exp)
 
 
 def log_scores(estimator, X, y, y_pred=None, name=None, experiment=None):
@@ -480,9 +502,8 @@ def log_scores(estimator, X, y, y_pred=None, name=None, experiment=None):
 
             log_scores(rfc, X, y, name='test', experiment=exp)
     """
-    assert is_regressor(estimator) or is_classifier(estimator),\
-        'Estimator should be sklearn regressor or classifier.'
-    assert isinstance(name, str), 'name should be str. {} was passed.'.format(type(name))
+    assert is_regressor(estimator) or is_classifier(estimator), "Estimator should be sklearn regressor or classifier."
+    assert isinstance(name, str), "name should be str. {} was passed.".format(type(name))
 
     exp = _validate_experiment(experiment)
 
@@ -497,20 +518,21 @@ def log_scores(estimator, X, y, y_pred=None, name=None, experiment=None):
             mae = mean_absolute_error(y, y_pred)
             r2 = r2_score(y, y_pred)
 
-            exp.log_metric('evs_{}_sklearn'.format(name), evs)
-            exp.log_metric('me_{}_sklearn'.format(name), me)
-            exp.log_metric('mae_{}_sklearn'.format(name), mae)
-            exp.log_metric('r2_{}_sklearn'.format(name), r2)
+            exp.log_metric("evs_{}_sklearn".format(name), evs)
+            exp.log_metric("me_{}_sklearn".format(name), me)
+            exp.log_metric("mae_{}_sklearn".format(name), mae)
+            exp.log_metric("r2_{}_sklearn".format(name), r2)
 
         # multi output
         if len(y_pred.shape) == 2:
             r2 = estimator.score(X, y)
-            exp.log_metric('r2_{}_sklearn'.format(name), r2)
+            exp.log_metric("r2_{}_sklearn".format(name), r2)
     elif is_classifier(estimator):
-        for metric_name, values in zip(['precision', 'recall', 'fbeta_score', 'support'],
-                                       precision_recall_fscore_support(y, y_pred)):
+        for metric_name, values in zip(
+            ["precision", "recall", "fbeta_score", "support"], precision_recall_fscore_support(y, y_pred)
+        ):
             for i, value in enumerate(values):
-                exp.log_metric('{}_class_{}_{}_sklearn'.format(metric_name, i, name), value)
+                exp.log_metric("{}_class_{}_{}_sklearn".format(metric_name, i, name), value)
 
 
 def log_learning_curve_chart(regressor, X_train, y_train, experiment=None):
@@ -546,16 +568,16 @@ def log_learning_curve_chart(regressor, X_train, y_train, experiment=None):
 
             log_learning_curve_chart(rfr, X_train, y_train)
     """
-    assert is_regressor(regressor), 'regressor should be sklearn regressor.'
+    assert is_regressor(regressor), "regressor should be sklearn regressor."
     exp = _validate_experiment(experiment)
 
     try:
         fig, ax = plt.subplots()
         plot_learning_curve(regressor, X_train, y_train, ax=ax)
-        exp.log_image('charts_sklearn', fig, image_name='Learning Curve')
+        exp.log_image("charts_sklearn", fig, image_name="Learning Curve")
         plt.close(fig)
     except Exception as e:
-        print('Did not log learning curve chart. Error: {}'.format(e))
+        print("Did not log learning curve chart. Error: {}".format(e))
 
 
 def log_feature_importance_chart(regressor, X_train, y_train, experiment=None):
@@ -591,7 +613,7 @@ def log_feature_importance_chart(regressor, X_train, y_train, experiment=None):
 
             log_feature_importance_chart(rfr, X_train, y_train)
     """
-    assert is_regressor(regressor), 'regressor should be sklearn regressor.'
+    assert is_regressor(regressor), "regressor should be sklearn regressor."
     exp = _validate_experiment(experiment)
 
     try:
@@ -599,10 +621,10 @@ def log_feature_importance_chart(regressor, X_train, y_train, experiment=None):
         visualizer = FeatureImportances(regressor, is_fitted=True, ax=ax)
         visualizer.fit(X_train, y_train)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='Feature Importance')
+        exp.log_image("charts_sklearn", fig, image_name="Feature Importance")
         plt.close(fig)
     except Exception as e:
-        print('Did not log feature importance chart. Error: {}'.format(e))
+        print("Did not log feature importance chart. Error: {}".format(e))
 
 
 def log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=None):
@@ -642,7 +664,7 @@ def log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=
 
             log_residuals_chart(rfr, X_train, X_test, y_train, y_test, experiment=exp)
     """
-    assert is_regressor(regressor), 'regressor should be sklearn regressor.'
+    assert is_regressor(regressor), "regressor should be sklearn regressor."
     exp = _validate_experiment(experiment)
 
     try:
@@ -651,10 +673,10 @@ def log_residuals_chart(regressor, X_train, X_test, y_train, y_test, experiment=
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='Residuals Plot')
+        exp.log_image("charts_sklearn", fig, image_name="Residuals Plot")
         plt.close(fig)
     except Exception as e:
-        print('Did not log residuals chart. Error: {}'.format(e))
+        print("Did not log residuals chart. Error: {}".format(e))
 
 
 def log_prediction_error_chart(regressor, X_train, X_test, y_train, y_test, experiment=None):
@@ -694,7 +716,7 @@ def log_prediction_error_chart(regressor, X_train, X_test, y_train, y_test, expe
 
             log_prediction_error_chart(rfr, X_train, X_test, y_train, y_test)
     """
-    assert is_regressor(regressor), 'regressor should be sklearn regressor.'
+    assert is_regressor(regressor), "regressor should be sklearn regressor."
     exp = _validate_experiment(experiment)
 
     try:
@@ -703,10 +725,10 @@ def log_prediction_error_chart(regressor, X_train, X_test, y_train, y_test, expe
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='Prediction Error')
+        exp.log_image("charts_sklearn", fig, image_name="Prediction Error")
         plt.close(fig)
     except Exception as e:
-        print('Did not log prediction error chart. Error: {}'.format(e))
+        print("Did not log prediction error chart. Error: {}".format(e))
 
 
 def log_cooks_distance_chart(regressor, X_train, y_train, experiment=None):
@@ -742,7 +764,7 @@ def log_cooks_distance_chart(regressor, X_train, y_train, experiment=None):
 
             log_cooks_distance_chart(rfr, X_train, y_train)
     """
-    assert is_regressor(regressor), 'regressor should be sklearn regressor.'
+    assert is_regressor(regressor), "regressor should be sklearn regressor."
     exp = _validate_experiment(experiment)
 
     try:
@@ -750,10 +772,10 @@ def log_cooks_distance_chart(regressor, X_train, y_train, experiment=None):
         visualizer = CooksDistance(ax=ax)
         visualizer.fit(X_train, y_train)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='Cooks Distance')
+        exp.log_image("charts_sklearn", fig, image_name="Cooks Distance")
         plt.close(fig)
     except Exception as e:
-        print('Did not log cooks distance chart. Error: {}'.format(e))
+        print("Did not log cooks distance chart. Error: {}".format(e))
 
 
 def log_classification_report_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -793,7 +815,7 @@ def log_classification_report_chart(classifier, X_train, X_test, y_train, y_test
 
             log_classification_report_chart(rfc, X_train, X_test, y_train, y_test, experiment=exp)
     """
-    assert is_classifier(classifier), 'classifier should be sklearn classifier.'
+    assert is_classifier(classifier), "classifier should be sklearn classifier."
     exp = _validate_experiment(experiment)
 
     try:
@@ -802,10 +824,10 @@ def log_classification_report_chart(classifier, X_train, X_test, y_train, y_test
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='Classification Report')
+        exp.log_image("charts_sklearn", fig, image_name="Classification Report")
         plt.close(fig)
     except Exception as e:
-        print('Did not log Classification Report chart. Error: {}'.format(e))
+        print("Did not log Classification Report chart. Error: {}".format(e))
 
 
 def log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -845,7 +867,7 @@ def log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, exp
 
             log_confusion_matrix_chart(rfc, X_train, X_test, y_train, y_test)
     """
-    assert is_classifier(classifier), 'classifier should be sklearn classifier.'
+    assert is_classifier(classifier), "classifier should be sklearn classifier."
     exp = _validate_experiment(experiment)
 
     try:
@@ -854,10 +876,10 @@ def log_confusion_matrix_chart(classifier, X_train, X_test, y_train, y_test, exp
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='Confusion Matrix')
+        exp.log_image("charts_sklearn", fig, image_name="Confusion Matrix")
         plt.close(fig)
     except Exception as e:
-        print('Did not log Confusion Matrix chart. Error: {}'.format(e))
+        print("Did not log Confusion Matrix chart. Error: {}".format(e))
 
 
 def log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -897,7 +919,7 @@ def log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=N
 
             log_roc_auc_chart(rfc, X_train, X_test, y_train, y_test, experiment=exp)
     """
-    assert is_classifier(classifier), 'classifier should be sklearn classifier.'
+    assert is_classifier(classifier), "classifier should be sklearn classifier."
     exp = _validate_experiment(experiment)
 
     try:
@@ -906,10 +928,10 @@ def log_roc_auc_chart(classifier, X_train, X_test, y_train, y_test, experiment=N
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='ROC-AUC')
+        exp.log_image("charts_sklearn", fig, image_name="ROC-AUC")
         plt.close(fig)
     except Exception as e:
-        print('Did not log ROC-AUC chart. Error {}'.format(e))
+        print("Did not log ROC-AUC chart. Error {}".format(e))
 
 
 def log_precision_recall_chart(classifier, X_test, y_test, y_pred_proba=None, experiment=None):
@@ -947,24 +969,26 @@ def log_precision_recall_chart(classifier, X_test, y_test, y_pred_proba=None, ex
 
             log_precision_recall_chart(rfc, X_test, y_test)
     """
-    assert is_classifier(classifier), 'classifier should be sklearn classifier.'
+    assert is_classifier(classifier), "classifier should be sklearn classifier."
     exp = _validate_experiment(experiment)
 
     if y_pred_proba is None:
         try:
             y_pred_proba = classifier.predict_proba(X_test)
         except Exception as e:
-            print('Did not log Precision-Recall chart: this classifier does not provide predictions probabilities.'
-                  'Error {}'.format(e))
+            print(
+                "Did not log Precision-Recall chart: this classifier does not provide predictions probabilities."
+                "Error {}".format(e)
+            )
             return
 
     try:
         fig, ax = plt.subplots()
         plot_precision_recall(y_test, y_pred_proba, ax=ax)
-        exp.log_image('charts_sklearn', fig, image_name='Precision Recall Curve')
+        exp.log_image("charts_sklearn", fig, image_name="Precision Recall Curve")
         plt.close(fig)
     except Exception as e:
-        print('Did not log Precision-Recall chart. Error {}'.format(e))
+        print("Did not log Precision-Recall chart. Error {}".format(e))
 
 
 def log_class_prediction_error_chart(classifier, X_train, X_test, y_train, y_test, experiment=None):
@@ -1004,7 +1028,7 @@ def log_class_prediction_error_chart(classifier, X_train, X_test, y_train, y_tes
 
             log_class_prediction_error_chart(rfc, X_train, X_test, y_train, y_test, experiment=exp)
     """
-    assert is_classifier(classifier), 'classifier should be sklearn classifier.'
+    assert is_classifier(classifier), "classifier should be sklearn classifier."
     exp = _validate_experiment(experiment)
 
     try:
@@ -1013,14 +1037,13 @@ def log_class_prediction_error_chart(classifier, X_train, X_test, y_train, y_tes
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='Class Prediction Error')
+        exp.log_image("charts_sklearn", fig, image_name="Class Prediction Error")
         plt.close(fig)
     except Exception as e:
-        print('Did not log Class Prediction Error chart. Error {}'.format(e))
+        print("Did not log Class Prediction Error chart. Error {}".format(e))
 
 
-def log_kmeans_clustering_summary(model, X,
-                                  nrows=1000, experiment=None, **kwargs):
+def log_kmeans_clustering_summary(model, X, nrows=1000, experiment=None, **kwargs):
     """Log sklearn kmeans summary.
 
     This method fit KMeans model to data and logs cluster labels, all kmeans parameters
@@ -1058,7 +1081,7 @@ def log_kmeans_clustering_summary(model, X,
 
             log_kmeans_clustering_summary(km, X=X)
     """
-    assert isinstance(model, KMeans), 'model should be sklearn KMeans instance'
+    assert isinstance(model, KMeans), "model should be sklearn KMeans instance"
 
     exp = _validate_experiment(experiment)
 
@@ -1106,14 +1129,14 @@ def log_cluster_labels(model, X, nrows=1000, experiment=None, **kwargs):
 
             log_cluster_labels(km, X=X)
     """
-    assert isinstance(model, KMeans), 'Model should be sklearn KMeans instance.'
-    assert isinstance(nrows, int), 'nrows should be integer, {} was passed'.format(type(nrows))
+    assert isinstance(model, KMeans), "Model should be sklearn KMeans instance."
+    assert isinstance(nrows, int), "nrows should be integer, {} was passed".format(type(nrows))
     exp = _validate_experiment(experiment)
 
     model.set_params(**kwargs)
     labels = model.fit_predict(X)
-    df = pd.DataFrame(data={'cluster_labels': labels})
-    log_csv('cluster_labels', df.head(nrows), exp)
+    df = pd.DataFrame(data={"cluster_labels": labels})
+    log_csv("cluster_labels", df.head(nrows), exp)
 
 
 def log_kelbow_chart(model, X, experiment=None, **kwargs):
@@ -1149,13 +1172,13 @@ def log_kelbow_chart(model, X, experiment=None, **kwargs):
 
             log_kelbow_chart(km, X=X)
     """
-    assert isinstance(model, KMeans), 'Model should be sklearn KMeans instance.'
+    assert isinstance(model, KMeans), "Model should be sklearn KMeans instance."
     exp = _validate_experiment(experiment)
 
     model.set_params(**kwargs)
 
-    if 'n_clusters' in kwargs:
-        k = kwargs['n_clusters']
+    if "n_clusters" in kwargs:
+        k = kwargs["n_clusters"]
     else:
         k = 10
 
@@ -1164,10 +1187,10 @@ def log_kelbow_chart(model, X, experiment=None, **kwargs):
         visualizer = KElbowVisualizer(model, k=k, ax=ax)
         visualizer.fit(X)
         visualizer.finalize()
-        exp.log_image('charts_sklearn', fig, image_name='KMeans elbow chart')
+        exp.log_image("charts_sklearn", fig, image_name="KMeans elbow chart")
         plt.close(fig)
     except Exception as e:
-        print('Did not log KMeans elbow chart. Error {}'.format(e))
+        print("Did not log KMeans elbow chart. Error {}".format(e))
 
 
 def log_silhouette_chart(model, X, experiment=None, **kwargs):
@@ -1205,15 +1228,15 @@ def log_silhouette_chart(model, X, experiment=None, **kwargs):
 
             log_silhouette_chart(km, X=X, n_clusters=12)
     """
-    assert isinstance(model, KMeans), 'Model should be sklearn KMeans instance.'
+    assert isinstance(model, KMeans), "Model should be sklearn KMeans instance."
     exp = _validate_experiment(experiment)
 
     model.set_params(**kwargs)
 
-    n_clusters = model.get_params()['n_clusters']
+    n_clusters = model.get_params()["n_clusters"]
 
-    for j in range(2, n_clusters+1):
-        model.set_params(**{'n_clusters': j})
+    for j in range(2, n_clusters + 1):
+        model.set_params(**{"n_clusters": j})
         model.fit(X)
 
         try:
@@ -1221,10 +1244,10 @@ def log_silhouette_chart(model, X, experiment=None, **kwargs):
             visualizer = SilhouetteVisualizer(model, is_fitted=True, ax=ax)
             visualizer.fit(X)
             visualizer.finalize()
-            exp.log_image('charts_sklearn', fig, image_name='Silhouette Coefficients for k={}'.format(j))
+            exp.log_image("charts_sklearn", fig, image_name="Silhouette Coefficients for k={}".format(j))
             plt.close(fig)
         except Exception as e:
-            print('Did not log Silhouette Coefficients chart. Error {}'.format(e))
+            print("Did not log Silhouette Coefficients chart. Error {}".format(e))
 
 
 def _validate_experiment(experiment):

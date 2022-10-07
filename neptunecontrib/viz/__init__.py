@@ -19,7 +19,7 @@ from neptunecontrib.viz.parallel_coordinates_plot import make_parallel_coordinat
 from neptunecontrib.viz.projects import project_progress
 
 __all__ = [
-    'channel_curve_compare',
-    'make_parallel_coordinates_plot',
-    'project_progress',
+    "channel_curve_compare",
+    "make_parallel_coordinates_plot",
+    "project_progress",
 ]

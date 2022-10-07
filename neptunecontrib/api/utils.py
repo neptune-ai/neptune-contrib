@@ -21,18 +21,18 @@ import joblib
 import neptune
 import pandas as pd
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 __all__ = [
-    'concat_experiments_on_channel',
-    'extract_project_progress_info',
-    'get_channel_columns',
-    'get_parameter_columns',
-    'get_property_columns',
-    'get_system_columns',
-    'strip_prefices',
-    'log_pickle',
-    'get_pickle'
+    "concat_experiments_on_channel",
+    "extract_project_progress_info",
+    "get_channel_columns",
+    "get_parameter_columns",
+    "get_property_columns",
+    "get_system_columns",
+    "strip_prefices",
+    "log_pickle",
+    "get_pickle",
 ]
 
 
@@ -76,14 +76,13 @@ def concat_experiments_on_channel(experiments, channel_name):
     for experiment in experiments:
         if channel_name in experiment.get_channels().keys():
             channel_df = experiment.get_numeric_channels_values(channel_name)
-            channel_df['id'] = experiment.id
+            channel_df["id"] = experiment.id
             combined_df.append(channel_df)
     combined_df = pd.concat(combined_df, axis=0)
     return combined_df
 
 
-def extract_project_progress_info(leadearboard, metric_colname,
-                                  time_colname='finished'):
+def extract_project_progress_info(leadearboard, metric_colname, time_colname="finished"):
     """Extracts the project progress information from the experiment view.
 
     This function takes the experiment view (leaderboard) and extracts the information
@@ -124,10 +123,10 @@ def extract_project_progress_info(leadearboard, metric_colname,
                                                         metric_colname='channel_IOUT',
                                                         time_colname='finished')
     """
-    system_columns = ['id', 'owner', 'running_time', 'tags']
+    system_columns = ["id", "owner", "running_time", "tags"]
     progress_columns = system_columns + [time_colname, metric_colname]
     progress_df = leadearboard[progress_columns]
-    progress_df.columns = ['id', 'owner', 'running_time', 'tags'] + ['timestamp', 'metric']
+    progress_df.columns = ["id", "owner", "running_time", "tags"] + ["timestamp", "metric"]
 
     progress_df = _prep_time_column(progress_df)
     progress_df = _prep_metric_column(progress_df)
@@ -136,8 +135,19 @@ def extract_project_progress_info(leadearboard, metric_colname,
     progress_df = _get_daily_experiment_counts(progress_df)
     progress_df = _get_current_best(progress_df)
     progress_df = progress_df[
-        ['id', 'metric', 'metric_best', 'running_time', 'running_time_day', 'experiment_count_day',
-         'owner', 'tags', 'timestamp', 'timestamp_day']]
+        [
+            "id",
+            "metric",
+            "metric_best",
+            "running_time",
+            "running_time_day",
+            "experiment_count_day",
+            "owner",
+            "tags",
+            "timestamp",
+            "timestamp_day",
+        ]
+    ]
 
     return progress_df
 
@@ -151,7 +161,7 @@ def get_channel_columns(columns):
     Returns:
         list: A list of channel column names.
     """
-    return [col for col in columns if col.startswith('channel_')]
+    return [col for col in columns if col.startswith("channel_")]
 
 
 def get_parameter_columns(columns):
@@ -163,7 +173,7 @@ def get_parameter_columns(columns):
     Returns:
         list: A list of channel parameter names.
     """
-    return [col for col in columns if col.startswith('parameter_')]
+    return [col for col in columns if col.startswith("parameter_")]
 
 
 def get_property_columns(columns):
@@ -175,7 +185,7 @@ def get_property_columns(columns):
     Returns:
         list: A list of channel property names.
     """
-    return [col for col in columns if col.startswith('property_')]
+    return [col for col in columns if col.startswith("property_")]
 
 
 def get_system_columns(columns):
@@ -187,9 +197,8 @@ def get_system_columns(columns):
     Returns:
         list: A list of channel system names.
     """
-    excluded_prefices = ['channel_', 'parameter_', 'property_']
-    return [col for col in columns if not any([col.startswith(prefix) for
-                                               prefix in excluded_prefices])]
+    excluded_prefices = ["channel_", "parameter_", "property_"]
+    return [col for col in columns if not any([col.startswith(prefix) for prefix in excluded_prefices])]
 
 
 def strip_prefices(columns, prefices):
@@ -207,12 +216,12 @@ def strip_prefices(columns, prefices):
     for col in columns:
         for prefix in prefices:
             if col.startswith(prefix):
-                col = col.replace(prefix, '')
+                col = col.replace(prefix, "")
         new_columns.append(col)
     return new_columns
 
 
-def get_filepaths(dirpath='.', extensions=None):
+def get_filepaths(dirpath=".", extensions=None):
     """Creates a list of all the files with selected extensions.
 
     Args:
@@ -245,7 +254,7 @@ def get_filepaths(dirpath='.', extensions=None):
     warnings.warn(msg, DeprecationWarning)
 
     if not extensions:
-        extensions = ['.py', '.yaml', 'yml']
+        extensions = [".py", ".yaml", "yml"]
     files = []
     for r, _, f in os.walk(dirpath):
         for file in f:
@@ -285,8 +294,8 @@ def log_pickle(filename, obj, experiment=None):
 
 
 def export_pickle(obj):
-    from io import BytesIO
     import pickle
+    from io import BytesIO
 
     buffer = BytesIO()
     pickle.dump(obj, buffer)
@@ -350,36 +359,34 @@ def get_pickled_artifact(experiment, filename):
 
 
 def _prep_time_column(progress_df):
-    progress_df['timestamp'] = pd.to_datetime(progress_df['timestamp'])
-    progress_df.sort_values('timestamp', inplace=True)
-    progress_df['timestamp_day'] = [d.date() for d in progress_df['timestamp']]
+    progress_df["timestamp"] = pd.to_datetime(progress_df["timestamp"])
+    progress_df.sort_values("timestamp", inplace=True)
+    progress_df["timestamp_day"] = [d.date() for d in progress_df["timestamp"]]
     return progress_df
 
 
 def _prep_metric_column(progress_df):
-    progress_df['metric'] = progress_df['metric'].astype(float)
-    progress_df.dropna(subset=['metric'], how='all', inplace=True)
+    progress_df["metric"] = progress_df["metric"].astype(float)
+    progress_df.dropna(subset=["metric"], how="all", inplace=True)
     return progress_df
 
 
 def _get_daily_running_time(progress_df):
-    daily_counts = progress_df.groupby('timestamp_day').sum()[
-        'running_time'].reset_index()
-    daily_counts.columns = ['timestamp_day', 'running_time_day']
-    progress_df = pd.merge(progress_df, daily_counts, on='timestamp_day')
+    daily_counts = progress_df.groupby("timestamp_day").sum()["running_time"].reset_index()
+    daily_counts.columns = ["timestamp_day", "running_time_day"]
+    progress_df = pd.merge(progress_df, daily_counts, on="timestamp_day")
     return progress_df
 
 
 def _get_daily_experiment_counts(progress_df):
-    daily_counts = progress_df.groupby('timestamp_day').count()[
-        'metric'].reset_index()
-    daily_counts.columns = ['timestamp_day', 'experiment_count_day']
-    progress_df = pd.merge(progress_df, daily_counts, on='timestamp_day')
+    daily_counts = progress_df.groupby("timestamp_day").count()["metric"].reset_index()
+    daily_counts.columns = ["timestamp_day", "experiment_count_day"]
+    progress_df = pd.merge(progress_df, daily_counts, on="timestamp_day")
     return progress_df
 
 
 def _get_current_best(progress_df):
-    current_best = progress_df['metric'].cummax()
-    current_best = current_best.fillna(method='bfill')
-    progress_df['metric_best'] = current_best
+    current_best = progress_df["metric"].cummax()
+    current_best = current_best.fillna(method="bfill")
+    progress_df["metric_best"] = current_best
     return progress_df

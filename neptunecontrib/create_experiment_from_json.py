@@ -105,42 +105,44 @@ import neptune
 
 
 def main(arguments):
-    with open(arguments.filepath, 'r') as fp:
+    with open(arguments.filepath, "r") as fp:
         json_exp = json.load(fp)
 
-    neptune.init(api_token=arguments.api_token,
-                 project_qualified_name=arguments.project_name)
+    neptune.init(api_token=arguments.api_token, project_qualified_name=arguments.project_name)
 
-    with neptune.create_experiment(name=json_exp['name'],
-                                   description=json_exp['description'],
-                                   params=json_exp['params'],
-                                   properties=json_exp['properties'],
-                                   tags=json_exp['tags'],
-                                   upload_source_files=json_exp['upload_source_files']):
+    with neptune.create_experiment(
+        name=json_exp["name"],
+        description=json_exp["description"],
+        params=json_exp["params"],
+        properties=json_exp["properties"],
+        tags=json_exp["tags"],
+        upload_source_files=json_exp["upload_source_files"],
+    ):
 
-        for name, channel_xy in json_exp['log_metric'].items():
-            for x, y in zip(channel_xy['x'], channel_xy['y']):
+        for name, channel_xy in json_exp["log_metric"].items():
+            for x, y in zip(channel_xy["x"], channel_xy["y"]):
                 neptune.log_metric(name, x=x, y=y)
 
-        for name, channel_xy in json_exp['log_text'].items():
-            for x, y in zip(channel_xy['x'], channel_xy['y']):
+        for name, channel_xy in json_exp["log_text"].items():
+            for x, y in zip(channel_xy["x"], channel_xy["y"]):
                 neptune.log_text(name, x=x, y=y)
 
-        for name, channel_xy in json_exp['log_image'].items():
-            for x, y in zip(channel_xy['x'], channel_xy['y']):
+        for name, channel_xy in json_exp["log_image"].items():
+            for x, y in zip(channel_xy["x"], channel_xy["y"]):
                 neptune.log_image(name, x=x, y=y)
 
-        for filename in json_exp['log_artifact']:
+        for filename in json_exp["log_artifact"]:
             neptune.log_artifact(filename)
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--filepath')
-    parser.add_argument('-t', '--api_token', default=None)
-    parser.add_argument('-p', '--project_name', default=None)
+    parser.add_argument("-f", "--filepath")
+    parser.add_argument("-t", "--api_token", default=None)
+    parser.add_argument("-p", "--project_name", default=None)
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parse_args()
     main(args)

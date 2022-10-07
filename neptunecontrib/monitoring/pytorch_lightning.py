@@ -15,16 +15,23 @@
 #
 
 from argparse import Namespace
-from typing import Any, Dict, Iterable, Optional, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    Optional,
+    Union,
+)
 
 import neptune
-from neptune.experiments import Experiment
-
 import torch
-from torch import is_tensor
-
-from pytorch_lightning.loggers.base import LightningLoggerBase, rank_zero_experiment
+from neptune.experiments import Experiment
+from pytorch_lightning.loggers.base import (
+    LightningLoggerBase,
+    rank_zero_experiment,
+)
 from pytorch_lightning.utilities import rank_zero_only
+from torch import is_tensor
 
 
 class NeptuneLogger(LightningLoggerBase):
@@ -186,15 +193,15 @@ class NeptuneLogger(LightningLoggerBase):
     LOGGER_JOIN_CHAR = "-"
 
     def __init__(
-            self,
-            api_key: Optional[str] = None,
-            project_name: Optional[str] = None,
-            close_after_fit: Optional[bool] = True,
-            offline_mode: bool = False,
-            experiment_name: Optional[str] = None,
-            experiment_id: Optional[str] = None,
-            prefix: str = "",
-            **kwargs,
+        self,
+        api_key: Optional[str] = None,
+        project_name: Optional[str] = None,
+        close_after_fit: Optional[bool] = True,
+        offline_mode: bool = False,
+        experiment_name: Optional[str] = None,
+        experiment_id: Optional[str] = None,
+        prefix: str = "",
+        **kwargs,
     ):
         if neptune is None:
             raise ImportError(
@@ -312,7 +319,7 @@ class NeptuneLogger(LightningLoggerBase):
 
     @rank_zero_only
     def log_metric(
-            self, metric_name: str, metric_value: Union[torch.Tensor, float, str], step: Optional[int] = None
+        self, metric_name: str, metric_value: Union[torch.Tensor, float, str], step: Optional[int] = None
     ) -> None:
         """
         Log metrics (numeric values) in Neptune experiments.

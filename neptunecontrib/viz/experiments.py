@@ -17,14 +17,11 @@
 import altair as alt
 
 __all__ = [
-    'channel_curve_compare',
+    "channel_curve_compare",
 ]
 
-def channel_curve_compare(experiment_df,
-                          width=800,
-                          heights=(50, 400),
-                          line_size=5,
-                          legend_mark_size=100):
+
+def channel_curve_compare(experiment_df, width=800, heights=(50, 400), line_size=5, legend_mark_size=100):
     """Creates an interactive curve comparison chart for a list of experiments.
 
     It lets you tick or untick experiments that you want to compare by clicking on the legend (shift+click for multi),
@@ -81,67 +78,87 @@ def channel_curve_compare(experiment_df,
 
     """
 
-    assert len(experiment_df.columns) == 3, 'Experiment dataframe should have 3 columns \
+    assert (
+        len(experiment_df.columns) == 3
+    ), 'Experiment dataframe should have 3 columns \
         ["id","x", "CHANNEL_NAME"]. \
-        It has {} namely {}'.format(len(experiment_df.columns), experiment_df.columns)
+        It has {} namely {}'.format(
+        len(experiment_df.columns), experiment_df.columns
+    )
 
     top_height, bottom_height = heights
     prep_cols, channel_name = _preprocess_columns(experiment_df.columns)
     experiment_df.columns = prep_cols
 
-    nearest = alt.selection(type='single', nearest=True, on='mouseover', fields=['x'], empty='none')
-    interval = alt.selection(type='interval', encodings=['x'])
-    legend_selection = alt.selection_multi(fields=['id'])
+    nearest = alt.selection(type="single", nearest=True, on="mouseover", fields=["x"], empty="none")
+    interval = alt.selection(type="interval", encodings=["x"])
+    legend_selection = alt.selection_multi(fields=["id"])
 
-    legend = alt.Chart().mark_point(filled=True, size=legend_mark_size).encode(
-        y=alt.Y('id:N'),
-        color=alt.condition(legend_selection, alt.Color('id:N', legend=None), alt.value('lightgray'))
-    ).add_selection(
-        legend_selection
+    legend = (
+        alt.Chart()
+        .mark_point(filled=True, size=legend_mark_size)
+        .encode(
+            y=alt.Y("id:N"),
+            color=alt.condition(legend_selection, alt.Color("id:N", legend=None), alt.value("lightgray")),
+        )
+        .add_selection(legend_selection)
     )
 
-    selectors = alt.Chart().mark_point().encode(
-        x='x:Q',
-        opacity=alt.value(0),
-    ).add_selection(
-        nearest
+    selectors = (
+        alt.Chart()
+        .mark_point()
+        .encode(
+            x="x:Q",
+            opacity=alt.value(0),
+        )
+        .add_selection(nearest)
     )
 
-    top_view = alt.Chart(width=width, height=top_height).mark_line(size=line_size).encode(
-        x=alt.X('x:Q', title=None),
-        y=alt.Y('y:Q', scale=alt.Scale(zero=False), title=None),
-        color=alt.Color('id:N', legend=None),
-        opacity=alt.condition(legend_selection, alt.OpacityValue(1), alt.OpacityValue(0.0))
-    ).add_selection(
-        interval
+    top_view = (
+        alt.Chart(width=width, height=top_height)
+        .mark_line(size=line_size)
+        .encode(
+            x=alt.X("x:Q", title=None),
+            y=alt.Y("y:Q", scale=alt.Scale(zero=False), title=None),
+            color=alt.Color("id:N", legend=None),
+            opacity=alt.condition(legend_selection, alt.OpacityValue(1), alt.OpacityValue(0.0)),
+        )
+        .add_selection(interval)
     )
 
-    line = alt.Chart().mark_line(size=line_size).encode(
-        x=alt.X('x:Q', title='iteration'),
-        y=alt.Y('y:Q', scale=alt.Scale(zero=False), title=channel_name),
-        color=alt.Color('id:N', legend=None),
-        opacity=alt.condition(legend_selection, alt.OpacityValue(1), alt.OpacityValue(0.0))
+    line = (
+        alt.Chart()
+        .mark_line(size=line_size)
+        .encode(
+            x=alt.X("x:Q", title="iteration"),
+            y=alt.Y("y:Q", scale=alt.Scale(zero=False), title=channel_name),
+            color=alt.Color("id:N", legend=None),
+            opacity=alt.condition(legend_selection, alt.OpacityValue(1), alt.OpacityValue(0.0)),
+        )
     )
 
     points = line.mark_point().encode(
-        color=alt.condition(legend_selection, alt.Color('id:N', legend=None), alt.value('white')),
-        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+        color=alt.condition(legend_selection, alt.Color("id:N", legend=None), alt.value("white")),
+        opacity=alt.condition(nearest, alt.value(1), alt.value(0)),
     )
 
-    text = line.mark_text(align='left', dx=5, dy=-5).encode(
-        text=alt.condition(nearest, 'y:Q', alt.value(' ')),
-        opacity=alt.condition(legend_selection, alt.OpacityValue(1), alt.OpacityValue(0.0))
+    text = line.mark_text(align="left", dx=5, dy=-5).encode(
+        text=alt.condition(nearest, "y:Q", alt.value(" ")),
+        opacity=alt.condition(legend_selection, alt.OpacityValue(1), alt.OpacityValue(0.0)),
     )
 
-    rules = alt.Chart().mark_rule(color='gray').encode(
-        x='x:Q',
-    ).transform_filter(
-        nearest
+    rules = (
+        alt.Chart()
+        .mark_rule(color="gray")
+        .encode(
+            x="x:Q",
+        )
+        .transform_filter(nearest)
     )
 
-    bottom_view = alt.layer(line, selectors, points, rules, text,
-                            width=width, height=bottom_height
-                           ).transform_filter(interval)
+    bottom_view = alt.layer(line, selectors, points, rules, text, width=width, height=bottom_height).transform_filter(
+        interval
+    )
 
     combined = alt.hconcat(alt.vconcat(top_view, bottom_view), legend, data=experiment_df)
     return combined
@@ -152,10 +169,10 @@ def _preprocess_columns(columns):
     prep_cols = []
     for col in columns:
         if col == channel_name:
-            col = 'y'
+            col = "y"
         prep_cols.append(col)
     return prep_cols, channel_name
 
 
 def _get_channel_name(columns):
-    return [col for col in columns if col not in ['id', 'x']][0]
+    return [col for col in columns if col not in ["id", "x"]][0]

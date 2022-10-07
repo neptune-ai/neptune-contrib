@@ -17,7 +17,10 @@ import warnings
 
 import neptune
 
-from neptunecontrib.api import log_chart, pickle_and_log_artifact
+from neptunecontrib.api import (
+    log_chart,
+    pickle_and_log_artifact,
+)
 from neptunecontrib.monitoring.utils import expect_not_a_run
 
 
@@ -67,14 +70,17 @@ class NeptuneCallback:
             neptune_callback = opt_utils.NeptuneCallback(log_charts=True, log_study=True)
     """
 
-    def __init__(self, experiment=None,
-                 log_study=False,
-                 log_charts=False,
-                 log_optimization_history=False,
-                 log_contour=False,
-                 log_parallel_coordinate=False,
-                 log_slice=False,
-                 params=None):  # pylint: disable=W0621
+    def __init__(
+        self,
+        experiment=None,
+        log_study=False,
+        log_charts=False,
+        log_optimization_history=False,
+        log_contour=False,
+        log_parallel_coordinate=False,
+        log_slice=False,
+        params=None,
+    ):  # pylint: disable=W0621
         self.exp = experiment if experiment else neptune
         self.log_study = log_study
 
@@ -101,32 +107,38 @@ class NeptuneCallback:
     def __call__(self, study, trial):
         import optuna.visualization as vis
 
-        self.exp.log_metric('run_score', trial.value)
-        self.exp.log_metric('best_so_far_run_score', study.best_value)
-        self.exp.log_text('run_parameters', str(trial.params))
+        self.exp.log_metric("run_score", trial.value)
+        self.exp.log_metric("best_so_far_run_score", study.best_value)
+        self.exp.log_text("run_parameters", str(trial.params))
 
         if self.log_study:
-            pickle_and_log_artifact(study, 'study.pkl', experiment=self.exp)
+            pickle_and_log_artifact(study, "study.pkl", experiment=self.exp)
 
         if self.log_optimization_history:
-            log_chart(name='optimization_history', chart=vis.plot_optimization_history(study), experiment=self.exp)
+            log_chart(name="optimization_history", chart=vis.plot_optimization_history(study), experiment=self.exp)
         if self.log_contour:
-            log_chart(name='contour', chart=vis.plot_contour(study, params=self.params), experiment=self.exp)
+            log_chart(name="contour", chart=vis.plot_contour(study, params=self.params), experiment=self.exp)
         if self.log_parallel_coordinate:
-            log_chart(name='parallel_coordinate', chart=vis.plot_parallel_coordinate(study, params=self.params),
-                      experiment=self.exp)
+            log_chart(
+                name="parallel_coordinate",
+                chart=vis.plot_parallel_coordinate(study, params=self.params),
+                experiment=self.exp,
+            )
         if self.log_slice:
-            log_chart(name='slice', chart=vis.plot_slice(study, params=self.params), experiment=self.exp)
+            log_chart(name="slice", chart=vis.plot_slice(study, params=self.params), experiment=self.exp)
 
 
-def log_study_info(study, experiment=None,
-                   log_study=True,
-                   log_charts=True,
-                   log_optimization_history=False,
-                   log_contour=False,
-                   log_parallel_coordinate=False,
-                   log_slice=False,
-                   params=None):
+def log_study_info(
+    study,
+    experiment=None,
+    log_study=True,
+    log_charts=True,
+    log_optimization_history=False,
+    log_contour=False,
+    log_parallel_coordinate=False,
+    log_slice=False,
+    params=None,
+):
     """Logs runs results and parameters to neptune.
 
     Logs all hyperparameter optimization results to Neptune. Those include best score ('best_score' metric),
@@ -168,15 +180,15 @@ def log_study_info(study, experiment=None,
 
         You can explore an example experiment in Neptune:
         https://ui.neptune.ai/o/shared/org/showroom/e/SHOW-1016/artifacts
-     """
+    """
     import optuna.visualization as vis
 
     _exp = experiment if experiment else neptune
 
     expect_not_a_run(_exp)
 
-    _exp.log_metric('best_score', study.best_value)
-    _exp.set_property('best_parameters', study.best_params)
+    _exp.log_metric("best_score", study.best_value)
+    _exp.set_property("best_parameters", study.best_params)
 
     if log_charts:
         message = """log_charts argument is depraceted and will be removed in future releases.
@@ -190,12 +202,12 @@ def log_study_info(study, experiment=None,
         log_slice = True
 
     if log_study:
-        pickle_and_log_artifact(study, 'study.pkl', experiment=_exp)
+        pickle_and_log_artifact(study, "study.pkl", experiment=_exp)
     if log_optimization_history:
-        log_chart(name='optimization_history', chart=vis.plot_optimization_history(study), experiment=_exp)
+        log_chart(name="optimization_history", chart=vis.plot_optimization_history(study), experiment=_exp)
     if log_contour:
-        log_chart(name='contour', chart=vis.plot_contour(study, params=params), experiment=_exp)
+        log_chart(name="contour", chart=vis.plot_contour(study, params=params), experiment=_exp)
     if log_parallel_coordinate:
-        log_chart(name='parallel_coordinate', chart=vis.plot_parallel_coordinate(study, params=params), experiment=_exp)
+        log_chart(name="parallel_coordinate", chart=vis.plot_parallel_coordinate(study, params=params), experiment=_exp)
     if log_slice:
-        log_chart(name='slice', chart=vis.plot_slice(study, params=params), experiment=_exp)
+        log_chart(name="slice", chart=vis.plot_slice(study, params=params), experiment=_exp)

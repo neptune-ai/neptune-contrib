@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 import neptune
-
 from kerastuner.engine.logger import Logger
 
 from neptunecontrib.monitoring.utils import expect_not_a_run
@@ -65,10 +64,10 @@ class NeptuneLogger(Logger):
     def report_trial_state(self, trial_id, trial_state):
         """Gives the logger information about trial status."""
 
-        self.exp.log_text('hyperparameters/values', str(trial_state['hyperparameters']['values']))
+        self.exp.log_text("hyperparameters/values", str(trial_state["hyperparameters"]["values"]))
 
-        for name, vals in trial_state['metrics']['metrics'].items():
-            metric_values = vals['observations'][0]['value']
+        for name, vals in trial_state["metrics"]["metrics"].items():
+            metric_values = vals["observations"][0]["value"]
             avg_metric_value = sum(metric_values) / len(metric_values)
             self.exp.log_metric(name, avg_metric_value)
 
@@ -121,23 +120,23 @@ def log_tuner_info(tuner, experiment=None, log_project_dir=True):
 
         You can explore an example experiment in Neptune:
         https://ui.neptune.ai/o/shared/org/keras-tuner-integration/e/KER-19/details
-     """
+    """
     exp = experiment if experiment else neptune
 
     if log_project_dir:
         exp.log_artifact(tuner.project_dir)
 
-    exp.set_property('best_parameters', tuner.get_best_hyperparameters()[0].values)
-    exp.set_property('objective/name', tuner.oracle.objective.name)
-    exp.set_property('objective/direction', tuner.oracle.objective.direction)
-    exp.set_property('objective/direction', tuner.oracle.objective.direction)
-    exp.set_property('tuner_id', tuner.tuner_id)
-    exp.set_property('best_trial_id', tuner.oracle.get_best_trials()[0].trial_id)
+    exp.set_property("best_parameters", tuner.get_best_hyperparameters()[0].values)
+    exp.set_property("objective/name", tuner.oracle.objective.name)
+    exp.set_property("objective/direction", tuner.oracle.objective.direction)
+    exp.set_property("objective/direction", tuner.oracle.objective.direction)
+    exp.set_property("tuner_id", tuner.tuner_id)
+    exp.set_property("best_trial_id", tuner.oracle.get_best_trials()[0].trial_id)
 
     for dim in tuner.oracle.get_space().space:
-        exp.log_text('hyperparameters/space', str(dim))
+        exp.log_text("hyperparameters/space", str(dim))
 
-    exp.log_metric('best_score', tuner.oracle.get_best_trials()[0].score)
+    exp.log_metric("best_score", tuner.oracle.get_best_trials()[0].score)
 
     for _, trial in tuner.oracle.trials.items():
-        exp.log_metric('run_score', trial.score)
+        exp.log_metric("run_score", trial.score)

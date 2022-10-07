@@ -18,7 +18,7 @@ import os
 import neptune
 
 __all__ = [
-    'log_video',
+    "log_video",
 ]
 
 
@@ -62,14 +62,14 @@ def log_video(path_to_file, video_name=None, experiment=None):
 
     _exp = experiment if experiment else neptune
 
-    name, file_ext = os.path.split(path_to_file)[1].split('.')
+    name, file_ext = os.path.split(path_to_file)[1].split(".")
 
     if video_name is None:
         video_name = name
     else:
-        assert isinstance(video_name, str), 'video_name must be string, got {}'.format(type(video_name))
+        assert isinstance(video_name, str), "video_name must be string, got {}".format(type(video_name))
 
-    encoded_video = base64.b64encode(open(path_to_file, 'rb').read())
+    encoded_video = base64.b64encode(open(path_to_file, "rb").read())
     html = """<!DOCTYPE html>
         <html>
         <body>
@@ -79,9 +79,11 @@ def log_video(path_to_file, video_name=None, experiment=None):
         </video>
 
         </body>
-        </html>""".format(file_ext, encoded_video.decode())
+        </html>""".format(
+        file_ext, encoded_video.decode()
+    )
 
     buffer = StringIO(html)
     buffer.seek(0)
 
-    _exp.log_artifact(buffer, 'video/{}.html'.format(video_name))
+    _exp.log_artifact(buffer, "video/{}.html".format(video_name))
