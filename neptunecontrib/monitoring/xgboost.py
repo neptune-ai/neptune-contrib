@@ -225,7 +225,7 @@ def _log_importance(booster, max_num_features, npt, **kwargs):
         import matplotlib.pyplot as plt
     except ImportError:
         raise ImportError('Please install matplotlib to log importance')
-    importance = xgb.plot_importance(booster, max_num_features=max_num_features, **kwargs)  # pylint: disable=E1101
+    importance = xgb.plot_importance(booster, max_num_features=max_num_features, **kwargs)
     npt.log_image('feature_importance', importance.figure)
     plt.close('all')
 
@@ -234,7 +234,7 @@ def _log_trees(booster, tree_list, img_name, npt, **kwargs):
     with tempfile.TemporaryDirectory(dir='.') as d:
         for i in tree_list:
             file_name = 'tree_{}'.format(i)
-            tree = xgb.to_graphviz(booster=booster, num_trees=i, **kwargs) # pylint: disable=E1101
+            tree = xgb.to_graphviz(booster=booster, num_trees=i, **kwargs)
             tree.render(filename=file_name, directory=d, view=False, format='png')
             npt.log_image(img_name,
                           os.path.join(d, '{}.png'.format(file_name)),

@@ -16,9 +16,7 @@ jobs:
         run: |
           pip install -r test_requirements.txt
       - name: Build and test
-        run : |
-          python -m pylint -j 0 -f parseable neptunecontrib tests
-          tox -e py
+        run : tox -e py
   publish:
     needs: test
     runs-on: ubuntu-latest

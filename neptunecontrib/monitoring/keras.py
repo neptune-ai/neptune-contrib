@@ -32,7 +32,7 @@ except ImportError:
 
         As Keras is now part of Tensorflow you should install it by running
             pip install tensorflow"""
-        raise ModuleNotFoundError(msg) # pylint:disable=undefined-variable
+        raise ModuleNotFoundError(msg)
 
 from neptunecontrib.monitoring.utils import expect_not_a_run
 
@@ -109,8 +109,8 @@ class NeptuneMonitor(Callback):
             except NeptuneException:
                 pass
 
-    def on_batch_end(self, batch, logs=None):  # pylint:disable=unused-argument
+    def on_batch_end(self, batch, logs=None):
         self._log_metrics(logs, 'batch')
 
-    def on_epoch_end(self, epoch, logs=None):  # pylint:disable=unused-argument
+    def on_epoch_end(self, epoch, logs=None):
         self._log_metrics(logs, 'epoch')
