@@ -21,4 +21,4 @@ neptunecontrib.logging.log_chart will be removed in future releases.
 """
 warnings.warn(message)
 
-from neptunecontrib.api import log_chart # pylint: disable=C0413, W0611
+from neptunecontrib.api import log_chart

@@ -74,7 +74,7 @@ class NeptuneCallback:
                  log_contour=False,
                  log_parallel_coordinate=False,
                  log_slice=False,
-                 params=None):  # pylint: disable=W0621
+                 params=None):
         self.exp = experiment if experiment else neptune
         self.log_study = log_study
 

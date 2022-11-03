@@ -20,4 +20,4 @@ neptunecontrib.monitoring.xgboost_monitor will be removed in future releases.
 """
 warnings.warn(message)
 
-from neptunecontrib.monitoring.xgboost import * # pylint: disable=C0413, W0611
+from neptunecontrib.monitoring.xgboost import *
